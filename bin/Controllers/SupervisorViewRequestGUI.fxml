@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.GaussianBlur?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="mainAnchor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="867.0" prefWidth="932.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.SupervisorViewRequestGUIController">
+   <children>
+      <VBox alignment="TOP_CENTER" prefHeight="867.0" prefWidth="153.0" spacing="10.0" style="-fx-background-color: #1A2841;">
+         <children>
+            <AnchorPane nodeOrientation="LEFT_TO_RIGHT" prefHeight="96.0" prefWidth="153.0" style="-fx-background-color: #2B3E61;">
+               <children>
+                  <ImageView fitHeight="80.0" fitWidth="80.0" layoutX="37.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/icons8_physics_100px.png" />
+                     </image>
+                     <effect>
+                        <GaussianBlur radius="0.0" />
+                     </effect>
+                  </ImageView>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="101.0" prefWidth="153.0">
+               <children>
+                  <ImageView fitHeight="41.0" fitWidth="37.0" layoutX="59.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/icons8_create_100px_2.png" />
+                     </image>
+                  </ImageView>
+                  <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="16.0" layoutY="75.0" prefHeight="27.0" prefWidth="129.0" text="Issue a request" textAlignment="CENTER" textFill="#5a708f">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="101.0" prefWidth="153.0">
+               <children>
+                  <ImageView fitHeight="41.0" fitWidth="37.0" layoutX="59.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/icons8_spy_100px_1.png" />
+                     </image>
+                  </ImageView>
+                  <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="31.0" layoutY="75.0" prefHeight="27.0" prefWidth="92.0" text="Inspect" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="101.0" prefWidth="153.0">
+               <children>
+                  <ImageView fitHeight="41.0" fitWidth="37.0" layoutX="59.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/icons8_envelope_96px.png" />
+                     </image>
+                  </ImageView>
+                  <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="31.0" layoutY="75.0" prefHeight="27.0" prefWidth="92.0" text="Messages" textAlignment="CENTER" textFill="#5a708f">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="101.0" prefWidth="153.0">
+               <children>
+                  <ImageView fitHeight="41.0" fitWidth="37.0" layoutX="59.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/icons8_myspace_96px.png" />
+                     </image>
+                  </ImageView>
+                  <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="31.0" layoutY="75.0" prefHeight="27.0" prefWidth="92.0" text="Employees" textAlignment="CENTER" textFill="#5a708f">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="101.0" prefWidth="153.0">
+               <children>
+                  <ImageView fitHeight="41.0" fitWidth="37.0" layoutX="59.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/icons8_settings_96px.png" />
+                     </image>
+                  </ImageView>
+                  <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="31.0" layoutY="75.0" prefHeight="27.0" prefWidth="92.0" text="Settings" textAlignment="CENTER" textFill="#5a708f">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </VBox>
+      <AnchorPane layoutX="153.0" prefHeight="97.0" prefWidth="779.0" style="-fx-border-color: #ffffff; -fx-border-width: 2;">
+         <children>
+            <ImageView fitHeight="34.0" fitWidth="28.0" layoutX="731.0" layoutY="35.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Images/icons8_alarm_100px_2.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="34.0" fitWidth="28.0" layoutX="21.0" layoutY="35.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Images/icons8_menu_50px.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="34.0" fitWidth="28.0" layoutX="65.0" layoutY="35.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Images/icons8_search_50px.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="745.0" layoutY="24.0" text="7" textAlignment="CENTER" textFill="#0078a8">
+               <font>
+                  <Font name="System Bold" size="19.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="51.0" fitWidth="67.0" layoutX="650.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Images/the%20rock.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="18.0" fitWidth="18.0" layoutX="705.0" layoutY="54.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Images/icons8_expand_arrow_50px.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+      <Text fill="#6f6f6f" layoutX="381.0" layoutY="146.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Request Details" textAlignment="CENTER" wrappingWidth="323.13671875">
+         <font>
+            <Font size="35.0" />
+         </font>
+      </Text>
+      <Text fill="#3076ff" layoutX="581.0" layoutY="242.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Click here to view more." underline="true" />
+      <VBox layoutX="172.0" layoutY="162.0" prefHeight="120.0" prefWidth="145.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Request ID:" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Relate information system:" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Issued by: " />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Issue date: " />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description:" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Comments: " />
+         </children>
+      </VBox>
+      <VBox layoutX="325.0" layoutY="162.0" prefHeight="120.0" prefWidth="256.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="77" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Software Engineering" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Bshara" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="5/5/2020" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The request is regarding the missleading info..." />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="This is an example comment." />
+         </children>
+      </VBox>
+      <AnchorPane layoutX="172.0" layoutY="347.0" prefHeight="236.0" prefWidth="740.0" style="-fx-border-color: #B2BCCE; -fx-border-width: 2;">
+         <children>
+            <AnchorPane layoutX="305.0" layoutY="70.0" prefHeight="30.0" prefWidth="279.0" style="-fx-border-image-width: 2; -fx-background-radius: 55; -fx-border-color: #5E7495;">
+               <children>
+                  <ImageView fitHeight="27.0" fitWidth="35.0" layoutX="64.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/icons8_checkmark_100px.png" />
+                     </image>
+                  </ImageView>
+                  <Text layoutX="14.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm" />
+                  <ImageView fitHeight="34.0" fitWidth="28.0" layoutX="238.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/icons8_workers_100px_1.png" />
+                     </image>
+                  </ImageView>
+                  <Text layoutX="100.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose other employee" />
+               </children>
+            </AnchorPane>
+            <VBox layoutX="6.0" layoutY="6.0" prefHeight="233.0" prefWidth="186.0" spacing="15.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Phase Name: " />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Estimated time of completion:" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Evaluator (assigned by the system):" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Deadline: " />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Extended Time:" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Completed on: " />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Time Exception: " />
+               </children>
+               <padding>
+                  <Insets top="5.0" />
+               </padding>
+            </VBox>
+            <ImageView fitHeight="27.0" fitWidth="35.0" layoutX="270.0" layoutY="70.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Images/icons8_brake_warning_100px_2.png" />
+               </image>
+            </ImageView>
+            <VBox layoutX="212.0" layoutY="6.0" prefHeight="233.0" prefWidth="173.0" spacing="15.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Execution" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="5 Days" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="John Doe">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Text>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="N/A" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="N/A" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="N/A" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="N/A" />
+               </children>
+               <padding>
+                  <Insets top="5.0" />
+               </padding>
+            </VBox>
+         </children>
+      </AnchorPane>
+      <Text fill="#515050" layoutX="172.0" layoutY="325.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Current Phase Details">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Text>
+   </children>
+</AnchorPane>
