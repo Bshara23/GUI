@@ -2,6 +2,7 @@ package Controllers;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import Controllers.Logic.FxmlNames;
@@ -55,10 +56,10 @@ public class SystemUserGUIController extends Application implements Initializabl
     @FXML
     private HBox hbNavigator;
     
+    private ArrayList<AnchorPane> apList;
     
 	@Override
 	public void start(Stage stage) {
-		
 		stage.initStyle(StageStyle.UNDECORATED);
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("SystemUserGUI.fxml"));
@@ -73,6 +74,9 @@ public class SystemUserGUIController extends Application implements Initializabl
 		stage.setScene(new Scene(root));
 		stage.setTitle("Manager GUI");
 		stage.show();
+		
+		
+
 
 		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 
@@ -81,8 +85,6 @@ public class SystemUserGUIController extends Application implements Initializabl
 				System.exit(1);
 			}
 		});
-
-		new AppManager();
 
 	}
 
@@ -95,17 +97,25 @@ public class SystemUserGUIController extends Application implements Initializabl
 		NavigationBar.imgNavigationBarArrow = imgNavigationBarArrow;
 		NavigationBar.navigationBar = hbNavigator;
 		NavigationBar.apMainContent = apMainContent;
+		
+		apList = new ArrayList<AnchorPane>();
+		apList.add(apBtnIssueRequest);
+		apList.add(apBtnMessages);
+		apList.add(apBtnMyRequests);
+		apList.add(apBtnSettings);
 	}
 
 	@FXML
 	void onIssueRequestPress(MouseEvent event) {
+		
+		menuSelection(apBtnIssueRequest);
 		NavigationBar.clear();
 
 	}
 
 	@FXML
 	void onMessagesPress(MouseEvent event) {
-		//NavigationBar.back(true);
+		menuSelection(apBtnMessages);
 		NavigationBar.clear();
 
 	}
@@ -113,7 +123,7 @@ public class SystemUserGUIController extends Application implements Initializabl
 	@FXML
 	void onMyRequestsPress(MouseEvent event) {
 		
-		apBtnMyRequests.setEffect(new ColorAdjust(0, 0, 0.85, 0));
+		menuSelection(apBtnMyRequests);
 
 		NavigationBar.clear();
 		NavigationBar.next("My Requests", FxmlNames.REQUESTS_LIST);
@@ -122,10 +132,22 @@ public class SystemUserGUIController extends Application implements Initializabl
 	@FXML
 	void onSettingsPress(MouseEvent event) {
 		NavigationBar.clear();
-
+		menuSelection(apBtnSettings);
 		//NavigationBar.next("Settings", "ListOfRequestsGUI.fxml");
 
 	}
+	
+	private void menuSelection(AnchorPane target) {
+		for (AnchorPane anchorPane : apList) {
+			if (target.equals(anchorPane)) {
+				anchorPane.setEffect(new ColorAdjust(0, 0, 0.85, 0));
+			}else {
+				anchorPane.setEffect(null);
+			}
+		}
+	}
+	
+	
 	
 	
 	

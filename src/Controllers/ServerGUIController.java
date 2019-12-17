@@ -80,7 +80,6 @@ public class ServerGUIController extends Application implements Initializable {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		new AppManager();
 		System.out.println("Start");
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("serverGUI.fxml"));
@@ -105,7 +104,6 @@ public class ServerGUIController extends Application implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		AppManager.initilize();
 		gc = canvas.getGraphicsContext2D();
 
 		particles = new ArrayList<Utility.Particle>();

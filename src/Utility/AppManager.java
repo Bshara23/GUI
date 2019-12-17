@@ -34,6 +34,38 @@ public class AppManager {
 	private static List<Func> initialFunctions;
 
 	private static Random rnd;
+	
+	static {
+		initialFunctions = Collections.synchronizedList(new ArrayList<Func>());
+		functions = Collections.synchronizedList(new ArrayList<Func>());
+		uniqueFunctions = Collections.synchronizedMap(new HashMap<String, Func>());
+		functionRemovalQueue = new PriorityQueue<String>();
+		uniqueFunctionsAddingQueue = new PriorityQueue<NamedFunction>();
+		globalTimelines = Collections.synchronizedMap(new HashMap<String, TimelineAndFunc>());
+		timeTriggers = Collections.synchronizedMap(new HashMap<String, FuncAndDouble>());
+		timeTriggersRemovalQueue = new PriorityQueue<String>();
+		startTime = new Date().getTime();
+		rnd = new Random();
+		
+		
+		lastTime = System.nanoTime();
+
+		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(16.6666), event -> {
+
+			time = new Date().getTime() - startTime;
+			time /= 1000;
+
+			long time = System.nanoTime();
+			deltaTime = ((time - lastTime) / 1000000000);
+			lastTime = time;
+
+			callback();
+
+			
+		}));
+		timeline.setCycleCount(Animation.INDEFINITE);
+		timeline.play();
+	}
 
 	// This class has to be static in order to be used in a static function
 	private static class FuncAndDouble {
@@ -60,23 +92,6 @@ public class AppManager {
 	}
 	
 		
-
-
-
-	public AppManager() {
-
-		initialFunctions = Collections.synchronizedList(new ArrayList<Func>());
-		functions = Collections.synchronizedList(new ArrayList<Func>());
-		uniqueFunctions = Collections.synchronizedMap(new HashMap<String, Func>());
-		functionRemovalQueue = new PriorityQueue<String>();
-		uniqueFunctionsAddingQueue = new PriorityQueue<NamedFunction>();
-		globalTimelines = Collections.synchronizedMap(new HashMap<String, TimelineAndFunc>());
-		timeTriggers = Collections.synchronizedMap(new HashMap<String, FuncAndDouble>());
-		timeTriggersRemovalQueue = new PriorityQueue<String>();
-		startTime = new Date().getTime();
-		rnd = new Random();
-	}
-
 	/**
 	 * Adds a function to the first callback loop, needs some work to make it more robust
 	 * for now you can only add functions.
@@ -95,26 +110,7 @@ public class AppManager {
 		functions.remove(f);
 	}
 
-	public static void initilize() {
-		lastTime = System.nanoTime();
-
-		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(16.6666), event -> {
-
-			time = new Date().getTime() - startTime;
-			time /= 1000;
-
-			long time = System.nanoTime();
-			deltaTime = ((time - lastTime) / 1000000000);
-			lastTime = time;
-
-			callback();
-
-			
-		}));
-		timeline.setCycleCount(Animation.INDEFINITE);
-		timeline.play();
-	}
-
+	
 	private static void callback() {
 		
 		synchronized (initialFunctions) {

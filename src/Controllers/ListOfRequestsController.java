@@ -53,7 +53,6 @@ public class ListOfRequestsController implements Initializable {
 
 		tblSupervisorRequests.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-		AppManager.initilize();
 
 		Random rnd = new Random();
 

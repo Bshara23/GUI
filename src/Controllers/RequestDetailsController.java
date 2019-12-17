@@ -11,21 +11,19 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 
-
 public class RequestDetailsController implements Initializable {
 
-	
 	@FXML
-    private ResourceBundle resources;
+	private ResourceBundle resources;
 
-    @FXML
-    private URL location;
+	@FXML
+	private URL location;
 
-    @FXML
-    private Canvas canvasRight;
+	@FXML
+	private Canvas canvasRight;
 
-    @FXML
-    private Canvas canvasLeft;
+	@FXML
+	private Canvas canvasLeft;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -33,20 +31,26 @@ public class RequestDetailsController implements Initializable {
 		ParticlePlexus ppRight = new ParticlePlexus(210, 150, 50, canvasRight.getGraphicsContext2D());
 		ParticlePlexus ppLeft = new ParticlePlexus(210, 150, 50, canvasLeft.getGraphicsContext2D());
 
-		AppManager.updateUnique("drawCallbackLoop", () -> {
-			ppRight.drawCallback();
-			ppLeft.drawCallback();
-
-		});
-		AppManager.updateUnique("particle speed factor", () -> {
-			Particle.globalSpeedFactor = Curve.cubic((Math.cos(AppManager.time * 0) 
-					+ Curve.easeInOut(Math.cos(AppManager.time * 2.54), -0.61803398875)));
-		});
+		AppManager.removeUnique("drawCallbackLoop");
+		AppManager.addTimeTrigger(() -> {
+			AppManager.updateUnique("drawCallbackLoop", () -> {
+				ppRight.drawCallback();
+				ppLeft.drawCallback();
+			});	
+		}, 0.2, "dd");
 		
+
+		
+		
+		AppManager.removeUnique("fffs");
+		AppManager.addTimeTrigger(() -> {
+			AppManager.updateUnique("fffs", () -> {
+				Particle.globalSpeedFactor = Curve.cubic((Math.cos(AppManager.time * 0)
+						+ Curve.easeInOut(Math.cos(AppManager.time * 2.54), -0.61803398875)));
+			});
+		}, 0.2, "ddf");
+		
+
 	}
 
-    
-
-    
-    
 }

@@ -10,14 +10,14 @@ public class Particle {
 	private double x;
     private double y;
     
-    private Vector2D velocity;;
+    private Vector2D velocity;
     private Color color;
     
     private double life;
     private boolean active = true;
 
-    private double sizeX = 10;
-    private double sizeY = 10;
+    private double sizeX = 8;
+    private double sizeY = 8;
     private ArrayList<Particle> neighbours;
     private int neighboursSize = 6;
     public Particle() {

@@ -87,8 +87,6 @@ public class SupervisorGUIController extends Application implements Initializabl
 			}
 		});
 		
-		new AppManager();
-
 	}
 
 	public static void main(String[] args) {
@@ -102,7 +100,6 @@ public class SupervisorGUIController extends Application implements Initializabl
 		tblSupervisorRequests.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
 		
-		AppManager.initilize();
 		
 		Random rnd = new Random();
 		
