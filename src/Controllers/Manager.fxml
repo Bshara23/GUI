@@ -236,7 +236,7 @@
             <Image url="@../Images/icons8_collapse_arrow_100px_1.png" />
          </image>
          <cursor>
-            <Cursor fx:constant="HAND" />
+            <Cursor fx:constant="CLOSED_HAND" />
          </cursor>
       </ImageView>
       <ImageView fitHeight="19.0" fitWidth="18.0" layoutX="531.0" layoutY="214.0" pickOnBounds="true" preserveRatio="true">
@@ -244,7 +244,7 @@
             <Image url="@../Images/icons8_expand_arrow_100px_2.png" />
          </image>
          <cursor>
-            <Cursor fx:constant="HAND" />
+            <Cursor fx:constant="OPEN_HAND" />
          </cursor>
       </ImageView>
       <HBox layoutX="347.0" layoutY="258.0" prefHeight="100.0" prefWidth="774.0">

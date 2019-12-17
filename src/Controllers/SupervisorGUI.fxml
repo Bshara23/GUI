@@ -168,6 +168,6 @@
             <Image url="@../Images/icons8_open_pane_100px.png" />
          </image>
       </ImageView>
-      <Text fill="#5e5e5e" layoutX="205.0" layoutY="126.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Open table configurations" />
+      <Text fill="#5e5e5e" layoutX="205.0" layoutY="126.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Open table configurssssssssssssssssssssssations" />
    </children>
 </AnchorPane>

@@ -13,10 +13,11 @@ public class MySqlTableCreator {
 	public static void main(String[] args) {
 
 		MySQL db = new MySQL("root", "Aa123456", "ICM", null);
-		//db.createTable(new SystemUser("", 5, "", ""));
-		//db.createTable(new Message(1, "", "", "", true));
-		Blob blob;
-		System.out.println(Blob.class.toString());
+		db.createTable(new SystemUser("", "", "", "", "", ""));
+		db.createTable(new Message(1, "", "", "", true));
+		
+		
+		
 		
 		
 	}
