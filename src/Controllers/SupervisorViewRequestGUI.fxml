@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.effect.GaussianBlur?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="mainAnchor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="867.0" prefWidth="932.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.SupervisorViewRequestGUIController">
+<AnchorPane fx:id="mainAnchor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="867.0" prefWidth="932.0" style="-fx-background-color: #EEEEEE;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.SupervisorViewRequestGUIController">
    <children>
       <VBox alignment="TOP_CENTER" prefHeight="867.0" prefWidth="153.0" spacing="10.0" style="-fx-background-color: #1A2841;">
          <children>
@@ -101,7 +103,7 @@
             <Insets />
          </opaqueInsets>
       </VBox>
-      <AnchorPane layoutX="153.0" prefHeight="97.0" prefWidth="779.0" style="-fx-border-color: #ffffff; -fx-border-width: 2;">
+      <AnchorPane layoutX="153.0" prefHeight="97.0" prefWidth="779.0">
          <children>
             <ImageView fitHeight="34.0" fitWidth="28.0" layoutX="731.0" layoutY="35.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -135,51 +137,70 @@
             </ImageView>
          </children>
       </AnchorPane>
-      <Text fill="#6f6f6f" layoutX="381.0" layoutY="146.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Request Details" textAlignment="CENTER" wrappingWidth="323.13671875">
+      <Text fill="#6f6f6f" layoutX="360.0" layoutY="196.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Request Details" textAlignment="CENTER" wrappingWidth="323.13671875">
          <font>
             <Font size="35.0" />
          </font>
       </Text>
-      <Text fill="#3076ff" layoutX="581.0" layoutY="242.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Click here to view more." underline="true" />
-      <VBox layoutX="172.0" layoutY="162.0" prefHeight="120.0" prefWidth="145.0">
+      <Text fill="#515050" layoutX="174.0" layoutY="519.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Current Phase Details">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Text>
+      <HBox id="container" layoutX="174.0" layoutY="270.0" prefHeight="187.0" prefWidth="696.0" stylesheets="@blueBorder.css">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Request ID:" />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Relate information system:" />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Issued by: " />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Issue date: " />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description:" />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Comments: " />
-         </children>
-      </VBox>
-      <VBox layoutX="325.0" layoutY="162.0" prefHeight="120.0" prefWidth="256.0">
-         <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="77" />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Software Engineering" />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Bshara" />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="5/5/2020" />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The request is regarding the missleading info..." />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="This is an example comment." />
-         </children>
-      </VBox>
-      <AnchorPane layoutX="172.0" layoutY="347.0" prefHeight="236.0" prefWidth="740.0" style="-fx-border-color: #B2BCCE; -fx-border-width: 2;">
-         <children>
-            <AnchorPane layoutX="305.0" layoutY="70.0" prefHeight="30.0" prefWidth="279.0" style="-fx-border-image-width: 2; -fx-background-radius: 55; -fx-border-color: #5E7495;">
+            <VBox prefHeight="120.0" prefWidth="145.0" spacing="15.0">
                <children>
-                  <ImageView fitHeight="27.0" fitWidth="35.0" layoutX="64.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../Images/icons8_checkmark_100px.png" />
-                     </image>
-                  </ImageView>
-                  <Text layoutX="14.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm" />
-                  <ImageView fitHeight="34.0" fitWidth="28.0" layoutX="238.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../Images/icons8_workers_100px_1.png" />
-                     </image>
-                  </ImageView>
-                  <Text layoutX="100.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose other employee" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Request ID:" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Relate information system:" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Issued by: " />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Issue date: " />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description:" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Comments: " />
                </children>
-            </AnchorPane>
-            <VBox layoutX="6.0" layoutY="6.0" prefHeight="233.0" prefWidth="186.0" spacing="15.0">
+               <padding>
+                  <Insets top="5.0" />
+               </padding>
+            </VBox>
+            <VBox prefHeight="120.0" prefWidth="256.0" spacing="15.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="77" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Software Engineering" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Bshara" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="5/5/2020" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The request is regarding the missleading info..." />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="This is an example comment." />
+               </children>
+               <padding>
+                  <Insets top="5.0" />
+               </padding>
+            </VBox>
+            <VBox prefHeight="120.0" prefWidth="256.0" spacing="15.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
+                  <Text fill="#3076ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Click here to view more." underline="true" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
+               </children>
+               <padding>
+                  <Insets top="5.0" />
+               </padding>
+            </VBox>
+         </children>
+         <padding>
+            <Insets left="5.0" />
+         </padding>
+      </HBox>
+      <Text fill="#515050" layoutX="174.0" layoutY="247.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Request Details">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Text>
+      <HBox id="container" layoutX="174.0" layoutY="543.0" prefHeight="187.0" prefWidth="696.0" spacing="15.0" stylesheets="@blueBorder.css">
+         <children>
+            <VBox prefHeight="233.0" prefWidth="186.0" spacing="15.0">
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Phase Name: " />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Estimated time of completion:" />
@@ -193,12 +214,7 @@
                   <Insets top="5.0" />
                </padding>
             </VBox>
-            <ImageView fitHeight="27.0" fitWidth="35.0" layoutX="270.0" layoutY="70.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../Images/icons8_brake_warning_100px_2.png" />
-               </image>
-            </ImageView>
-            <VBox layoutX="212.0" layoutY="6.0" prefHeight="233.0" prefWidth="173.0" spacing="15.0">
+            <VBox prefHeight="214.0" prefWidth="81.0" spacing="15.0">
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Execution" />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="5 Days" />
@@ -216,12 +232,240 @@
                   <Insets top="5.0" />
                </padding>
             </VBox>
+            <VBox prefHeight="213.0" prefWidth="277.0" spacing="3.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" opacity="0.0" spacing="5.0">
+                     <children>
+                        <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8_brake_warning_100px_2.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8_checkmark_100px.png" />
+                           </image>
+                        </ImageView>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm" />
+                        <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8_workers_100px_1.png" />
+                           </image>
+                        </ImageView>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Choose other employee" />
+                     </children>
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" opacity="0.0" spacing="5.0">
+                     <children>
+                        <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8_brake_warning_100px_2.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8_checkmark_100px.png" />
+                           </image>
+                        </ImageView>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm" />
+                        <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8_workers_100px_1.png" />
+                           </image>
+                        </ImageView>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Choose other employee" />
+                     </children>
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8_brake_warning_100px_2.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/Different%20Colors/icons8_checkmark_100px_2.png" />
+                           </image>
+                        </ImageView>
+                        <Text fill="#0090ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm" underline="true">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Text>
+                        <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/Different%20Colors/icons8_workers_100px_2.png" />
+                           </image>
+                        </ImageView>
+                        <Text fill="#0090ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Assign other employee" />
+                     </children>
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" opacity="0.0" spacing="5.0">
+                     <children>
+                        <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8_brake_warning_100px_2.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8_checkmark_100px.png" />
+                           </image>
+                        </ImageView>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm" />
+                        <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8_workers_100px_1.png" />
+                           </image>
+                        </ImageView>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Choose other employee" />
+                     </children>
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" opacity="0.0" spacing="5.0">
+                     <children>
+                        <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8_brake_warning_100px_2.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8_checkmark_100px.png" />
+                           </image>
+                        </ImageView>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm" />
+                        <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8_workers_100px_1.png" />
+                           </image>
+                        </ImageView>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Choose other employee" />
+                     </children>
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" opacity="0.0" spacing="5.0">
+                     <children>
+                        <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8_brake_warning_100px_2.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8_checkmark_100px.png" />
+                           </image>
+                        </ImageView>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm" />
+                        <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8_workers_100px_1.png" />
+                           </image>
+                        </ImageView>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Choose other employee" />
+                     </children>
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" opacity="0.0" spacing="5.0">
+                     <children>
+                        <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8_brake_warning_100px_2.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8_checkmark_100px.png" />
+                           </image>
+                        </ImageView>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm" />
+                        <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/icons8_workers_100px_1.png" />
+                           </image>
+                        </ImageView>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Choose other employee" />
+                     </children>
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </VBox>
          </children>
-      </AnchorPane>
-      <Text fill="#515050" layoutX="172.0" layoutY="325.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Current Phase Details">
+         <padding>
+            <Insets left="5.0" top="5.0" />
+         </padding>
+      </HBox>
+      <ImageView fitHeight="34.0" fitWidth="28.0" layoutX="748.0" layoutY="510.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Images/Different%20Colors/icons8_card_exchange_100px_1.png" />
+         </image>
+      </ImageView>
+      <Text fill="#0090ff" layoutX="787.0" layoutY="528.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Browse Phases">
          <font>
-            <Font size="20.0" />
+            <Font name="System Bold" size="12.0" />
          </font>
       </Text>
+      <HBox alignment="CENTER_LEFT" layoutX="153.0" layoutY="97.0" prefHeight="36.0" prefWidth="779.0" spacing="3.0" style="-fx-border-color: #DDDDDD;">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Examine">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Text>
+            <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Images/general/icons8_forward_100px.png" />
+               </image>
+            </ImageView>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Requests List">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Text>
+            <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Images/general/icons8_forward_100px.png" />
+               </image>
+            </ImageView>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Request Details">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Text>
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <padding>
+            <Insets bottom="3.0" left="5.0" top="3.0" />
+         </padding>
+      </HBox>
    </children>
 </AnchorPane>

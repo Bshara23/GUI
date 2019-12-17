@@ -4,13 +4,17 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import Controllers.SystemUserGUIController;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 public class ControllerSwapper {
+
 
 	public static Stage Show(Stage stage, URL location, String title) {
 		
@@ -44,4 +48,20 @@ public class ControllerSwapper {
 		return null;
 	}
 
+
+
+	public static void loadAnchorContent(AnchorPane destination, String fxmlFileName) {
+		
+		// Reference a class that exist in the same folder as the FXML files
+		URL url = SystemUserGUIController.class.getResource(fxmlFileName);
+
+		AnchorPane loader = null;
+		try {
+			loader = FXMLLoader.load(url);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+		destination.getChildren().setAll(loader);
+	}
 }

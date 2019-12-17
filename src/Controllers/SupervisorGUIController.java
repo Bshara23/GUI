@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Random;
 import java.util.ResourceBundle;
 
+import Utility.AppManager;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -19,6 +20,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -53,6 +56,12 @@ public class SupervisorGUIController extends Application implements Initializabl
 	@FXML
 	private TableColumn<TableDataRequests, String> tcDeadline;
 
+	
+
+    @FXML
+    private ImageView imgRubinCube;
+    
+    
 	@Override
 	public void start(Stage stage) {
 		stage.initStyle(StageStyle.UNDECORATED);
@@ -77,6 +86,8 @@ public class SupervisorGUIController extends Application implements Initializabl
 				System.exit(1);
 			}
 		});
+		
+		new AppManager();
 
 	}
 
@@ -87,7 +98,12 @@ public class SupervisorGUIController extends Application implements Initializabl
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		initTable();
+		
+		tblSupervisorRequests.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
+		
+		AppManager.initilize();
+		
 		Random rnd = new Random();
 		
 		String[] phases = new String[] {"Evaluation", "Closing", "Execution", "Testing", "Decision"};
@@ -95,7 +111,7 @@ public class SupervisorGUIController extends Application implements Initializabl
 
 		ArrayList<TableDataRequests> strs = new ArrayList<SupervisorGUIController.TableDataRequests>();
 		
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 19; i++) {
 			String s1 = i + "";
 			
 			int day = rnd.nextInt(20);
@@ -114,6 +130,10 @@ public class SupervisorGUIController extends Application implements Initializabl
 		}
 
 		addContentToTable(strs);
+		
+		
+		
+		
 	}
 
 	private void initTable() {
@@ -166,4 +186,31 @@ public class SupervisorGUIController extends Application implements Initializabl
 		
 	}
 
+	private double hue = 0.0;
+	private int cnt = 0;
+	
+	@FXML
+	private void onBtnCubePress() {
+		
+		
+		AppManager.update(() -> {
+			
+			cnt = cnt > 100 ? -100 : cnt + 1;
+			
+			// Instantiating the ColorAdjust class
+			ColorAdjust colorAdjust = new ColorAdjust();
+
+			hue = cnt / 100.0;
+			System.out.println(hue);
+			// Setting the brightness value
+			colorAdjust.setHue(hue);
+
+			// Applying color adjust effect to the ImageView node
+			imgRubinCube.setEffect(colorAdjust);
+			
+		});
+	}
+	
+	
+	
 }
