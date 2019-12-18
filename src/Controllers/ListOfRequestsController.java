@@ -5,18 +5,26 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.ResourceBundle.Control;
 
+import Controllers.Logic.CommonEffects;
+import Controllers.Logic.ControllerManager;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Utility.AppManager;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.shape.Line;
+import javafx.scene.text.Text;
 
 public class ListOfRequestsController implements Initializable {
 
@@ -46,13 +54,91 @@ public class ListOfRequestsController implements Initializable {
 
 	@FXML
 	private TableColumn<TableDataRequests, String> tcDeadline;
+	@FXML
+	private HBox hbRequestsType;
+
+	@FXML
+	private HBox apAnalyze;
+
+	@FXML
+	private HBox apDecide;
+
+	@FXML
+	private HBox apExecute;
+
+	@FXML
+	private HBox apExamine;
+
+	@FXML
+	private ImageView imgSettings;
+
+	@FXML
+	private ImageView imgRefresh;
+
+	@FXML
+	private ImageView imgMenu;
+
+	@FXML
+	private ImageView imgSearch;
+
+	@FXML
+	private ImageView imgBack;
+
+	@FXML
+	private ImageView imgForward;
+
+	@FXML
+	private HBox apSupervise;
+
+	@FXML
+	private Line lineTableJob;
+
+	private ArrayList<Node> tableButtons, jobs;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		initTable();
 
-		tblSupervisorRequests.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+		tableButtons = new ArrayList<Node>();
+		jobs = new ArrayList<Node>();
 
+		jobs.addAll(hbRequestsType.getChildren());
+
+		tableButtons.add(imgSearch);
+		tableButtons.add(imgSettings);
+		tableButtons.add(imgRefresh);
+		tableButtons.add(imgMenu);
+
+		tableButtons.add(imgBack);
+		tableButtons.add(imgForward);
+
+		// Set the on mouse pressed even for the jobs
+		for (Node node : jobs) {
+			node.setOnMousePressed(event -> {
+				selectNode(node);
+			});
+			node.setOnMouseEntered(event -> {
+				ControllerManager.setEffectConditioned(node, CommonEffects.BLACK, CommonEffects.BLUE);
+			});
+			node.setOnMouseExited(event -> {
+				ControllerManager.setEffectConditioned(node, CommonEffects.GRAY, CommonEffects.BLUE);
+			});
+		}
+
+		// Set the on mouse pressed even for the table buttons
+		for (Node node : tableButtons) {
+			node.setOnMouseEntered(event -> {
+				ControllerManager.setEffect(node, CommonEffects.BLACK);
+			});
+			node.setOnMouseExited(event -> {
+				ControllerManager.setEffect(node, CommonEffects.GRAY);
+			});
+		}
+
+		ControllerManager.setEffect(jobs, CommonEffects.GRAY);
+		ControllerManager.setEffect(tableButtons, CommonEffects.GRAY);
+
+		tblSupervisorRequests.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
 		Random rnd = new Random();
 
@@ -81,6 +167,38 @@ public class ListOfRequestsController implements Initializable {
 
 		addContentToTable(strs);
 
+		// TODO: bug. the line does not work unless the function has been called by the
+		// mouse pressed event!!
+		// Select the first job at the initialization
+		if (jobs.size() != 0) {
+			Node node = jobs.get(0);
+			selectNode(node);
+		}
+	}
+
+	private void selectNode(Node node) {
+
+		ControllerManager.setEffect(jobs, CommonEffects.GRAY);
+		ControllerManager.setEffect(node, CommonEffects.BLUE);
+		lineTableJob.setStartX(node.getBoundsInParent().getMinX() - 76);
+		lineTableJob.setEndX(node.getBoundsInParent().getMaxX() - 76);
+		
+		updateRequestsTableByJob(node);
+	}
+
+	private void updateRequestsTableByJob(Node node) {
+		Node textNode = ((HBox)node).getChildren().get(1);
+		String text = ((Text)textNode).getText();
+		
+		switch (text) {
+		case "Analyze":
+			
+			break;
+
+		default:
+			break;
+		}
+		
 	}
 
 	private void initTable() {
@@ -134,7 +252,6 @@ public class ListOfRequestsController implements Initializable {
 			return "TableDataRequests [s1=" + s1 + ", s2=" + s2 + ", s3=" + s3 + ", s4=" + s4 + ", s5=" + s5 + "]";
 		}
 
-		
 	}
 
 	@FXML
@@ -142,8 +259,8 @@ public class ListOfRequestsController implements Initializable {
 		if (event.getClickCount() == 2) // Checking double click
 		{
 
-			//System.out.println(tblSupervisorRequests.getSelectionModel().getSelectedItem().toString());
-			
+			// System.out.println(tblSupervisorRequests.getSelectionModel().getSelectedItem().toString());
+
 			NavigationBar.next("Request Details", FxmlNames.REQUEST_DETAILS);
 
 		}

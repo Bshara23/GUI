@@ -15,10 +15,7 @@ public class MySqlTableCreator {
 		MySQL db = new MySQL("root", "Aa123456", "ICM", null);
 		db.createTable(new SystemUser("", "", "", "", "", ""));
 		db.createTable(new Message(1, "", "", "", true));
-		
-		
-		
-		
+
 		
 	}
 

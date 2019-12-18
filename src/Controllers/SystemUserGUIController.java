@@ -20,17 +20,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
 public class SystemUserGUIController extends Application implements Initializable {
-
-	@FXML
-	private ResourceBundle resources;
-
-	@FXML
-	private URL location;
 
 	@FXML
 	private AnchorPane mainAnchor;
@@ -39,10 +34,40 @@ public class SystemUserGUIController extends Application implements Initializabl
 	private AnchorPane apMainContent;
 
 	@FXML
+	private VBox vbMenu;
+
+	@FXML
+	private AnchorPane apBtnLogoMain;
+
+	@FXML
 	private AnchorPane apBtnIssueRequest;
 
 	@FXML
 	private AnchorPane apBtnMyRequests;
+
+	@FXML
+	private AnchorPane apBtnAnalytics;
+
+	@FXML
+	private AnchorPane apHeader;
+
+	@FXML
+	private AnchorPane apBtnSupervise;
+
+	@FXML
+	private AnchorPane apBtnEvaluate;
+
+	@FXML
+	private AnchorPane apBtnDecisions;
+
+	@FXML
+	private AnchorPane apBtnExecute;
+
+	@FXML
+	private AnchorPane apBtnExamine;
+
+	@FXML
+	private AnchorPane apBtnEmployees;
 
 	@FXML
 	private AnchorPane apBtnMessages;
@@ -50,14 +75,20 @@ public class SystemUserGUIController extends Application implements Initializabl
 	@FXML
 	private AnchorPane apBtnSettings;
 
-    @FXML
-    private ImageView imgNavigationBarArrow;
-    
-    @FXML
-    private HBox hbNavigator;
-    
-    private ArrayList<AnchorPane> apList;
-    
+	@FXML
+	private ImageView imgNavigationBarArrow;
+
+	@FXML
+	private HBox hbNavigator;
+
+	private AnchorPane selectedMenuElement;
+
+	private ArrayList<AnchorPane> apList;
+
+	private Stage stage;
+	private static double xOffset = 0;
+	private static double yOffset = 0;
+
 	@Override
 	public void start(Stage stage) {
 		stage.initStyle(StageStyle.UNDECORATED);
@@ -70,13 +101,10 @@ public class SystemUserGUIController extends Application implements Initializabl
 
 			e.printStackTrace();
 		}
-
 		stage.setScene(new Scene(root));
 		stage.setTitle("Manager GUI");
 		stage.show();
-		
-		
-
+		this.stage = stage;
 
 		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 
@@ -97,59 +125,161 @@ public class SystemUserGUIController extends Application implements Initializabl
 		NavigationBar.imgNavigationBarArrow = imgNavigationBarArrow;
 		NavigationBar.navigationBar = hbNavigator;
 		NavigationBar.apMainContent = apMainContent;
-		
+
 		apList = new ArrayList<AnchorPane>();
+
+		apList.add(apBtnLogoMain);
+
 		apList.add(apBtnIssueRequest);
 		apList.add(apBtnMessages);
 		apList.add(apBtnMyRequests);
 		apList.add(apBtnSettings);
+
+		apList.add(apBtnAnalytics);
+		apList.add(apBtnEmployees);
+
+		apList.add(apBtnEvaluate);
+		apList.add(apBtnExecute);
+		apList.add(apBtnExamine);
+		apList.add(apBtnSupervise);
+		apList.add(apBtnDecisions);
+
+		// Remove icons here
+		vbMenu.getChildren().remove(apBtnDecisions);
+		// vbMenu.getChildren().remove(apBtnAnalytics);
+		vbMenu.getChildren().remove(apBtnEmployees);
+		vbMenu.getChildren().remove(apBtnEvaluate);
+		vbMenu.getChildren().remove(apBtnExecute);
+		vbMenu.getChildren().remove(apBtnExamine);
+		// vbMenu.getChildren().remove(apBtnDecisions);
+
+		// Remove icons here END
+		selectedMenuElement = null;
+		addElementsBehavior();
+
+
+	}
+
+	//TODO: not working
+	@FXML
+	void HeaderSetOnMouseDragged(MouseEvent event) {
+		//stage.setX(event.getScreenX() + xOffset);
+		//stage.setY(event.getScreenY() + yOffset);
+	}
+
+	@FXML
+	void headerSetOnMousePressed(MouseEvent event) {
+		//xOffset = stage.getX() - event.getScreenX();
+		//yOffset = stage.getY() - event.getScreenY();
 	}
 
 	@FXML
 	void onIssueRequestPress(MouseEvent event) {
-		
-		menuSelection(apBtnIssueRequest);
-		NavigationBar.clear();
+
+		commondMenuBehavior(apBtnIssueRequest, "Issue Request", "");
 
 	}
 
 	@FXML
 	void onMessagesPress(MouseEvent event) {
-		menuSelection(apBtnMessages);
-		NavigationBar.clear();
+
+		commondMenuBehavior(apBtnMessages, "Messages", "");
 
 	}
 
 	@FXML
 	void onMyRequestsPress(MouseEvent event) {
-		
-		menuSelection(apBtnMyRequests);
 
-		NavigationBar.clear();
-		NavigationBar.next("My Requests", FxmlNames.REQUESTS_LIST);
+		commondMenuBehavior(apBtnMyRequests, "My Requests", FxmlNames.REQUESTS_LIST);
 	}
 
 	@FXML
 	void onSettingsPress(MouseEvent event) {
-		NavigationBar.clear();
-		menuSelection(apBtnSettings);
-		//NavigationBar.next("Settings", "ListOfRequestsGUI.fxml");
+
+		commondMenuBehavior(apBtnSettings, "Settings", "");
 
 	}
-	
+
+	@FXML
+	void onAnalyticsPress(MouseEvent event) {
+
+		commondMenuBehavior(apBtnAnalytics, "Analytics", FxmlNames.ANALYTICS);
+	}
+
+	@FXML
+	void onDecisionsPress(MouseEvent event) {
+
+		commondMenuBehavior(apBtnDecisions, "Decisions", "");
+	}
+
+	@FXML
+	void onEmployeesPress(MouseEvent event) {
+
+		commondMenuBehavior(apBtnEmployees, "Employees", "");
+	}
+
+	@FXML
+	void onEvaluatePress(MouseEvent event) {
+
+		commondMenuBehavior(apBtnEvaluate, "Evaluate", "");
+	}
+
+	@FXML
+	void onExaminePress(MouseEvent event) {
+
+		commondMenuBehavior(apBtnExamine, "Examine", "");
+	}
+
+	@FXML
+	void onExecutePress(MouseEvent event) {
+
+		commondMenuBehavior(apBtnExecute, "Execute", "");
+
+	}
+
+	@FXML
+	void onLogoMainPress(MouseEvent event) {
+		commondMenuBehavior(apBtnLogoMain, "Home", "");
+	}
+
+	@FXML
+	void onSupervisePress(MouseEvent event) {
+		commondMenuBehavior(apBtnSupervise, "Supervise", "");
+
+	}
+
+	private void commondMenuBehavior(AnchorPane ap, String pageName, String fxmlName) {
+		selectedMenuElement = ap;
+		menuSelection(ap);
+		NavigationBar.clear();
+		NavigationBar.next(pageName, fxmlName);
+	}
+
 	private void menuSelection(AnchorPane target) {
 		for (AnchorPane anchorPane : apList) {
+
 			if (target.equals(anchorPane)) {
 				anchorPane.setEffect(new ColorAdjust(0, 0, 0.85, 0));
-			}else {
+			} else {
 				anchorPane.setEffect(null);
 			}
 		}
 	}
-	
-	
-	
-	
-	
+
+	private void addElementsBehavior() {
+		for (AnchorPane anchorPane : apList) {
+			anchorPane.setOnMouseEntered(event -> {
+				if (selectedMenuElement == null || !selectedMenuElement.equals(anchorPane)) {
+					anchorPane.setEffect(new ColorAdjust(0, 0, 0.45, 0));
+				}
+			});
+
+			anchorPane.setOnMouseExited(event -> {
+				if (selectedMenuElement == null || !selectedMenuElement.equals(anchorPane)) {
+					anchorPane.setEffect(null);
+				}
+			});
+		}
+	}
 
 }
