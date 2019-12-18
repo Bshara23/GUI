@@ -140,6 +140,18 @@ public class ListOfRequestsController implements Initializable {
 
 		tblSupervisorRequests.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
+		addRandomDataToTable();
+
+		// TODO: bug. the line does not work unless the function has been called by the
+		// mouse pressed event!!
+		// Select the first job at the initialization
+		if (jobs.size() != 0) {
+			Node node = jobs.get(0);
+			selectNode(node);
+		}
+	}
+
+	private void addRandomDataToTable() {
 		Random rnd = new Random();
 
 		String[] phases = new String[] { "Evaluation", "Closing", "Execution", "Testing", "Decision" };
@@ -166,14 +178,6 @@ public class ListOfRequestsController implements Initializable {
 		}
 
 		addContentToTable(strs);
-
-		// TODO: bug. the line does not work unless the function has been called by the
-		// mouse pressed event!!
-		// Select the first job at the initialization
-		if (jobs.size() != 0) {
-			Node node = jobs.get(0);
-			selectNode(node);
-		}
 	}
 
 	private void selectNode(Node node) {
@@ -191,11 +195,32 @@ public class ListOfRequestsController implements Initializable {
 		String text = ((Text)textNode).getText();
 		
 		switch (text) {
-		case "Analyze":
-			
+		case "Supervise":
+			addRandomDataToTable();
+			System.out.println("Supervise");
 			break;
+		case "Analyze":
+			addRandomDataToTable();
+			System.out.println("Analyze");
 
+			break;
+		case "Decide":
+			addRandomDataToTable();
+			System.out.println("Decide");
+
+			break;
+		case "Execute":
+			addRandomDataToTable();
+			System.out.println("Execute");
+
+			break;
+		case "Examine":
+			addRandomDataToTable();
+			System.out.println("Examine");
+
+			break;
 		default:
+			System.err.println("Error, case not defined! [updateRequestsTableByJob]");
 			break;
 		}
 		

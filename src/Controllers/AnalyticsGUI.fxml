@@ -130,7 +130,7 @@
             <DropShadow color="#00000040" offsetX="-5.0" offsetY="5.0" radius="7.032500000000001" width="9.13" />
          </effect>
       </HBox>
-      <Text fill="#0090ff" layoutX="1257.0" layoutY="143.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Export .pdf">
+      <Text fill="#0090ff" layoutX="1257.0" layoutY="155.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Export .pdf">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
@@ -143,7 +143,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </ImageView>
-      <Text fill="#0090ff" layoutX="1167.0" layoutY="143.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Print">
+      <Text fill="#0090ff" layoutX="1167.0" layoutY="155.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Print">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>

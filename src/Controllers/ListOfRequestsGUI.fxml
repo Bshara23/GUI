@@ -90,7 +90,7 @@
                               <Image url="@../Images/Table/icons8_spy_50px_1.png" />
                            </image>
                         </ImageView>
-                        <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Analyze">
+                        <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Supervise">
                            <effect>
                               <ColorAdjust />
                            </effect>
