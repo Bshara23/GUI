@@ -39,7 +39,7 @@
       <TextField layoutX="76.0" layoutY="163.0" prefHeight="26.0" prefWidth="223.0" promptText="Search requests by id" />
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="1348.0">
          <children>
-            <Text fill="#6b6b6b" strokeType="OUTSIDE" strokeWidth="0.0" text="List of requests">
+            <Text fx:id="txtPageHeader" fill="#6b6b6b" strokeType="OUTSIDE" strokeWidth="0.0" text="List of requests for treatment">
                <font>
                   <Font size="53.0" />
                </font>
@@ -80,7 +80,7 @@
       </AnchorPane>
       <AnchorPane layoutX="22.0" layoutY="253.0">
          <children>
-            <Line endX="974.5999755859375" layoutX="341.0" layoutY="48.0" startX="-331.0" stroke="#a4a3a3" strokeWidth="0.75" />
+            <Line fx:id="lineBottomJobs" endX="974.5999755859375" layoutX="341.0" layoutY="48.0" startX="-331.0" stroke="#a4a3a3" strokeWidth="0.75" />
             <HBox fx:id="hbRequestsType" alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="1317.0" spacing="15.0">
                <children>
                   <HBox fx:id="apSupervise" alignment="CENTER_LEFT" prefWidth="157.0" spacing="10.0">
@@ -110,7 +110,7 @@
                               <Image url="@../Images/Table/icons8_analyze_50px.png" />
                            </image>
                         </ImageView>
-                        <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Analyze">
+                        <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Evaluate">
                            <effect>
                               <ColorAdjust />
                            </effect>

@@ -3,53 +3,29 @@ package Controllers;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import Utility.AppManager;
-import Utility.Curve;
-import Utility.Particle;
-import Utility.Graphics.ParticlePlexus;
+import Controllers.Logic.CommonEffects;
+import Controllers.Logic.ControllerManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.canvas.Canvas;
+import javafx.scene.Cursor;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 
 public class RequestDetailsController implements Initializable {
 
 	@FXML
-	private ResourceBundle resources;
+	private AnchorPane apLoadRequestDetails;
 
 	@FXML
-	private URL location;
-
-	@FXML
-	private Canvas canvasRight;
-
-	@FXML
-	private Canvas canvasLeft;
+	private HBox hbHide;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		ParticlePlexus ppRight = new ParticlePlexus(210, 150, 50, canvasRight.getGraphicsContext2D());
-		ParticlePlexus ppLeft = new ParticlePlexus(210, 150, 50, canvasLeft.getGraphicsContext2D());
-
-		AppManager.removeUnique("drawCallbackLoop");
-		AppManager.addTimeTrigger(() -> {
-			AppManager.updateUnique("drawCallbackLoop", () -> {
-				ppRight.drawCallback();
-				ppLeft.drawCallback();
-			});	
-		}, 0.2, "dd");
-		
-
-		
-		
-		AppManager.removeUnique("fffs");
-		AppManager.addTimeTrigger(() -> {
-			AppManager.updateUnique("fffs", () -> {
-				Particle.globalSpeedFactor = Curve.cubic((Math.cos(AppManager.time * 0)
-						+ Curve.easeInOut(Math.cos(AppManager.time * 2.54), -0.61803398875)));
-			});
-		}, 0.2, "ddf");
-		
+		hbHide.setCursor(Cursor.HAND);
+		ControllerManager.setEffect(hbHide, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		ControllerManager.setOnHoverEffect(hbHide, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
+				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 
 	}
 

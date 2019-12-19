@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="876.0" prefWidth="1348.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.RequestDetailsController">
+<AnchorPane prefHeight="876.0" prefWidth="1348.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.RequestDetailsUserController">
    <children>
       <Text fill="#6f6f6f" layoutX="522.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Request Details" textAlignment="CENTER" wrappingWidth="323.13671875">
          <font>

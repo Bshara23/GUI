@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="876.0" prefWidth="1348.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.RequestDetailsController">
+<AnchorPane prefHeight="876.0" prefWidth="1348.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.RequestDetailsUserController">
    <children>
       <Text fill="#6f6f6f" layoutX="522.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Request Details" textAlignment="CENTER" wrappingWidth="323.13671875">
          <font>
@@ -41,7 +41,7 @@
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="77" />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Moodle" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Bshara" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Dwayne (You)" />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="5/5/2020" />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The request is regarding the missleading info..." />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="This is an example comment." />
@@ -298,7 +298,7 @@
             <Font name="System Bold" size="12.0" />
          </font>
       </Text>
-      <Canvas fx:id="canvasRight" height="743.0" layoutX="-5.0" layoutY="2.0" width="305.0" />
-      <Canvas fx:id="canvasLeft" height="743.0" layoutX="1067.0" width="281.0" />
+      <Canvas fx:id="canvasRight" height="872.0" layoutX="-5.0" layoutY="6.0" width="305.0" />
+      <Canvas fx:id="canvasLeft" height="872.0" layoutX="1067.0" layoutY="6.0" width="281.0" />
    </children>
 </AnchorPane>
