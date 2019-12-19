@@ -63,7 +63,15 @@ public class NavigationBar {
 				goTo(pageName);
 			}
 		});
+		ControllerManager.setEffect(txt, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
 
+		txt.setOnMouseEntered(event -> {
+			ControllerManager.setEffect(txt, CommonEffects.REQUESTS_TABLE_ELEMENT_BLACK);
+		});
+		txt.setOnMouseExited(event -> {
+			ControllerManager.setEffect(txt, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
+		});
+		
 		txt.setCursor(Cursor.HAND);
 
 		navigationBar.getChildren().add(txt);

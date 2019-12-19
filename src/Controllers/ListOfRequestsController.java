@@ -15,6 +15,7 @@ import Utility.AppManager;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -118,25 +119,28 @@ public class ListOfRequestsController implements Initializable {
 				selectNode(node);
 			});
 			node.setOnMouseEntered(event -> {
-				ControllerManager.setEffectConditioned(node, CommonEffects.BLACK, CommonEffects.BLUE);
+				ControllerManager.setEffectConditioned(node, CommonEffects.REQUESTS_TABLE_ELEMENT_BLACK, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE);
 			});
 			node.setOnMouseExited(event -> {
-				ControllerManager.setEffectConditioned(node, CommonEffects.GRAY, CommonEffects.BLUE);
+				ControllerManager.setEffectConditioned(node, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE);
 			});
 		}
+
+		ControllerManager.setEffect(lineTableJob, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE);
 
 		// Set the on mouse pressed even for the table buttons
 		for (Node node : tableButtons) {
+			node.setCursor(Cursor.HAND);
 			node.setOnMouseEntered(event -> {
-				ControllerManager.setEffect(node, CommonEffects.BLACK);
+				ControllerManager.setEffect(node, CommonEffects.REQUESTS_TABLE_ELEMENT_BLACK);
 			});
 			node.setOnMouseExited(event -> {
-				ControllerManager.setEffect(node, CommonEffects.GRAY);
+				ControllerManager.setEffect(node, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
 			});
 		}
 
-		ControllerManager.setEffect(jobs, CommonEffects.GRAY);
-		ControllerManager.setEffect(tableButtons, CommonEffects.GRAY);
+		ControllerManager.setEffect(jobs, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
+		ControllerManager.setEffect(tableButtons, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
 
 		tblSupervisorRequests.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
@@ -159,8 +163,8 @@ public class ListOfRequestsController implements Initializable {
 
 		ArrayList<TableDataRequests> strs = new ArrayList<TableDataRequests>();
 
-		for (int i = 0; i < 19; i++) {
-			String s1 = i + "";
+		for (int i = 0; i < 20; i++) {
+			String s1 = i + 1 + "";
 
 			int day = rnd.nextInt(20);
 			Date d = new Date(2020, 3, rnd.nextInt(28));
@@ -182,8 +186,8 @@ public class ListOfRequestsController implements Initializable {
 
 	private void selectNode(Node node) {
 
-		ControllerManager.setEffect(jobs, CommonEffects.GRAY);
-		ControllerManager.setEffect(node, CommonEffects.BLUE);
+		ControllerManager.setEffect(jobs, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
+		ControllerManager.setEffect(node, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE);
 		lineTableJob.setStartX(node.getBoundsInParent().getMinX() - 76);
 		lineTableJob.setEndX(node.getBoundsInParent().getMaxX() - 76);
 		

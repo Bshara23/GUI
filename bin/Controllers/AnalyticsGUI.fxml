@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="876.0" prefWidth="1348.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.AnalyticsGUIController">
+   <children>
+      <LineChart fx:id="chartSaReqestExecution" layoutX="8.0" layoutY="411.0" prefHeight="450.0" prefWidth="1338.0">
+        <xAxis>
+          <CategoryAxis side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis side="LEFT" />
+        </yAxis>
+      </LineChart>
+      <HBox alignment="CENTER_LEFT" layoutX="8.0" layoutY="112.0" prefHeight="64.0" prefWidth="697.0" spacing="80.0">
+         <children>
+            <Label text="Last week" textFill="#515151">
+               <font>
+                  <Font size="22.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Label>
+            <Label text="Last 30 days" textFill="#515151">
+               <font>
+                  <Font size="22.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Label>
+            <Label text="Last year" textFill="#515151">
+               <font>
+                  <Font size="22.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Label>
+            <Label text="Date range" textFill="#515151">
+               <font>
+                  <Font size="22.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Label>
+         </children>
+         <padding>
+            <Insets left="20.0" />
+         </padding>
+      </HBox>
+      <Line endX="975.7999267578125" layoutX="353.0" layoutY="176.0" startX="-331.0" stroke="#757575" strokeWidth="0.75" />
+      <Line endX="26.0" layoutX="98.0" layoutY="175.0" startX="-75.0" stroke="#0090ff" strokeLineCap="ROUND" strokeWidth="2.5" />
+      <HBox layoutX="193.0" layoutY="284.0" prefHeight="100.0" prefWidth="774.0">
+         <children>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff; -fx-border-color: #D8D8D8;">
+               <children>
+                  <Text fx:id="lblRequestsCanceled" fill="#ff3b3b" layoutX="21.0" layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0" text="30%" wrappingWidth="63.26953125">
+                     <font>
+                        <Font size="32.0" />
+                     </font>
+                  </Text>
+                  <Text fill="#545454" layoutX="97.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Requests Canceled" wrappingWidth="80.00000000000006">
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Text>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff; -fx-border-color: #D8D8D8;">
+               <children>
+                  <Text fx:id="lblRequestsLocked" fill="#f2ca07" layoutX="21.0" layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0" text="30%" wrappingWidth="63.26953125">
+                     <font>
+                        <Font size="32.0" />
+                     </font>
+                  </Text>
+                  <Text fill="#545454" layoutX="97.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Requests Locked" wrappingWidth="80.00000000000006">
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Text>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff; -fx-border-color: #D8D8D8;">
+               <children>
+                  <Text fx:id="lblRequestsClosed" fill="#3d94ff" layoutX="21.0" layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0" text="30%" wrappingWidth="63.26953125">
+                     <font>
+                        <Font size="32.0" />
+                     </font>
+                  </Text>
+                  <Text fill="#545454" layoutX="97.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Requests Closed" wrappingWidth="80.00000000000006">
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Text>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff; -fx-border-color: #D8D8D8;">
+               <children>
+                  <Text fx:id="lblRequestsActive" fill="#07c600" layoutX="21.0" layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0" text="30%" wrappingWidth="63.26953125">
+                     <font>
+                        <Font size="32.0" />
+                     </font>
+                  </Text>
+                  <Text fill="#545454" layoutX="97.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Requests Active" wrappingWidth="80.00000000000006">
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Text>
+               </children>
+            </AnchorPane>
+         </children>
+         <effect>
+            <DropShadow color="#00000040" offsetX="-5.0" offsetY="5.0" radius="7.032500000000001" width="9.13" />
+         </effect>
+      </HBox>
+      <Text fill="#0090ff" layoutX="1257.0" layoutY="155.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Export .pdf">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Text>
+      <ImageView fitHeight="34.0" fitWidth="28.0" layoutX="1221.0" layoutY="137.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Images/icons8_export_pdf_100px_1.png" />
+         </image>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </ImageView>
+      <Text fill="#0090ff" layoutX="1167.0" layoutY="155.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Print">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Text>
+      <ImageView fitHeight="34.0" fitWidth="28.0" layoutX="1130.0" layoutY="137.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Images/icons8_print_100px.png" />
+         </image>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </ImageView>
+      <HBox alignment="TOP_CENTER" layoutX="397.0" layoutY="215.0" onScroll="#onMouseScrollStatType" prefHeight="45.0" prefWidth="365.0" spacing="4.0">
+         <children>
+            <Text fx:id="txtStatTitle" fill="#434242" strokeType="OUTSIDE" strokeWidth="0.0" text="Requests Executions">
+               <font>
+                  <Font size="36.0" />
+               </font>
+            </Text>
+            <VBox alignment="CENTER" prefHeight="31.0" prefWidth="23.0">
+               <children>
+                  <ImageView fitHeight="27.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/icons8_collapse_arrow_100px_1.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="19.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/icons8_expand_arrow_100px_2.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </VBox>
+         </children>
+         <cursor>
+            <Cursor fx:constant="V_RESIZE" />
+         </cursor>
+      </HBox>
+      <HBox alignment="CENTER" layoutX="3.0" layoutY="14.0" prefHeight="78.0" prefWidth="1348.0">
+         <children>
+            <Text fill="#6b6b6b" strokeType="OUTSIDE" strokeWidth="0.0" text="Analytics">
+               <font>
+                  <Font size="53.0" />
+               </font>
+            </Text>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>

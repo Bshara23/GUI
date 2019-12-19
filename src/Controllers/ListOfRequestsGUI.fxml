@@ -16,7 +16,7 @@
 
 <AnchorPane prefHeight="876.0" prefWidth="1348.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ListOfRequestsController">
    <children>
-      <TableView fx:id="tblSupervisorRequests" layoutX="16.0" layoutY="320.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#clickItem" prefHeight="522.0" prefWidth="1321.0" scaleShape="false" style="-fx-background-color: #B2BCCE;">
+      <TableView fx:id="tblSupervisorRequests" layoutX="16.0" layoutY="320.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#clickItem" prefHeight="519.0" prefWidth="1321.0" scaleShape="false" style="-fx-background-color: #B2BCCE;">
          <columns>
             <TableColumn fx:id="tcRequestID" prefWidth="147.0" text="Request ID" />
             <TableColumn fx:id="tcIssueDate" minWidth="1.0" prefWidth="238.0" text="Issue date" />
@@ -117,7 +117,7 @@
                         </Text>
                      </children>
                      <effect>
-                        <ColorAdjust brightness="0.67" contrast="1.0" hue="-0.78" />
+                        <ColorAdjust brightness="0.55" contrast="1.0" hue="-0.78" />
                      </effect>
                      <cursor>
                         <Cursor fx:constant="HAND" />
@@ -175,6 +175,6 @@
             </HBox>
          </children>
       </AnchorPane>
-      <Line fx:id="lineTableJob" endX="460.0" layoutX="95.0" layoutY="301.0" startX="300.0" stroke="#78a6ff" strokeLineCap="ROUND" strokeWidth="3.0" />
+      <Line fx:id="lineTableJob" endX="460.0" layoutX="95.0" layoutY="301.0" startX="300.0" stroke="RED" strokeLineCap="ROUND" strokeWidth="3.0" />
    </children>
 </AnchorPane>

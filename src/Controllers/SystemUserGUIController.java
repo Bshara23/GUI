@@ -5,6 +5,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import Controllers.Logic.CommonEffects;
+import Controllers.Logic.ControllerManager;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Utility.AppManager;
@@ -13,6 +15,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.effect.ColorAdjust;
@@ -49,22 +53,7 @@ public class SystemUserGUIController extends Application implements Initializabl
 	private AnchorPane apBtnAnalytics;
 
 	@FXML
-	private AnchorPane apHeader;
-
-	@FXML
-	private AnchorPane apBtnSupervise;
-
-	@FXML
-	private AnchorPane apBtnEvaluate;
-
-	@FXML
-	private AnchorPane apBtnDecisions;
-
-	@FXML
-	private AnchorPane apBtnExecute;
-
-	@FXML
-	private AnchorPane apBtnExamine;
+	private AnchorPane apBtnRequestsTreatment;
 
 	@FXML
 	private AnchorPane apBtnEmployees;
@@ -76,6 +65,9 @@ public class SystemUserGUIController extends Application implements Initializabl
 	private AnchorPane apBtnSettings;
 
 	@FXML
+	private AnchorPane apHeader;
+
+	@FXML
 	private ImageView imgNavigationBarArrow;
 
 	@FXML
@@ -83,7 +75,7 @@ public class SystemUserGUIController extends Application implements Initializabl
 
 	private AnchorPane selectedMenuElement;
 
-	private ArrayList<AnchorPane> apList;
+	private ArrayList<Node> apList;
 
 	private Stage stage;
 	private static double xOffset = 0;
@@ -126,7 +118,7 @@ public class SystemUserGUIController extends Application implements Initializabl
 		NavigationBar.navigationBar = hbNavigator;
 		NavigationBar.apMainContent = apMainContent;
 
-		apList = new ArrayList<AnchorPane>();
+		apList = new ArrayList<Node>();
 
 		apList.add(apBtnLogoMain);
 
@@ -138,39 +130,48 @@ public class SystemUserGUIController extends Application implements Initializabl
 		apList.add(apBtnAnalytics);
 		apList.add(apBtnEmployees);
 
-		apList.add(apBtnEvaluate);
-		apList.add(apBtnExecute);
-		apList.add(apBtnExamine);
-		apList.add(apBtnSupervise);
-		apList.add(apBtnDecisions);
+		
+		apList.add(apBtnRequestsTreatment);
+		
+		
+		for (Node node : apList) {
+			node.setCursor(Cursor.HAND);
+			node.setOnMouseEntered(event -> {
+				ControllerManager.setEffect(node, CommonEffects.MENU_ELEMENT_ON_HOVER);
+			});
+			node.setOnMouseExited(event -> {
+				ControllerManager.setEffect(node, CommonEffects.MENU_ELEMENT_IDLE);
+			});
+			node.setOnMousePressed(event -> {
+				ControllerManager.setEffect(apList, CommonEffects.MENU_ELEMENT_IDLE);
+				ControllerManager.setEffect(node, CommonEffects.MENU_ELEMENT_PRESSED);
+			});
+		}
+		
 
 		// Remove icons here
-		vbMenu.getChildren().remove(apBtnDecisions);
 		// vbMenu.getChildren().remove(apBtnAnalytics);
 		vbMenu.getChildren().remove(apBtnEmployees);
-		vbMenu.getChildren().remove(apBtnEvaluate);
-		vbMenu.getChildren().remove(apBtnExecute);
-		vbMenu.getChildren().remove(apBtnExamine);
+	
 		// vbMenu.getChildren().remove(apBtnDecisions);
 
 		// Remove icons here END
 		selectedMenuElement = null;
 		addElementsBehavior();
 
-
 	}
 
-	//TODO: not working
+	// TODO: not working
 	@FXML
 	void HeaderSetOnMouseDragged(MouseEvent event) {
-		//stage.setX(event.getScreenX() + xOffset);
-		//stage.setY(event.getScreenY() + yOffset);
+		// stage.setX(event.getScreenX() + xOffset);
+		// stage.setY(event.getScreenY() + yOffset);
 	}
 
 	@FXML
 	void headerSetOnMousePressed(MouseEvent event) {
-		//xOffset = stage.getX() - event.getScreenX();
-		//yOffset = stage.getY() - event.getScreenY();
+		// xOffset = stage.getX() - event.getScreenX();
+		// yOffset = stage.getY() - event.getScreenY();
 	}
 
 	@FXML
@@ -206,11 +207,7 @@ public class SystemUserGUIController extends Application implements Initializabl
 		commondMenuBehavior(apBtnAnalytics, "Analytics", FxmlNames.ANALYTICS);
 	}
 
-	@FXML
-	void onDecisionsPress(MouseEvent event) {
-
-		commondMenuBehavior(apBtnDecisions, "Decisions", "");
-	}
+	
 
 	@FXML
 	void onEmployeesPress(MouseEvent event) {
@@ -218,24 +215,7 @@ public class SystemUserGUIController extends Application implements Initializabl
 		commondMenuBehavior(apBtnEmployees, "Employees", "");
 	}
 
-	@FXML
-	void onEvaluatePress(MouseEvent event) {
 
-		commondMenuBehavior(apBtnEvaluate, "Evaluate", "");
-	}
-
-	@FXML
-	void onExaminePress(MouseEvent event) {
-
-		commondMenuBehavior(apBtnExamine, "Examine", "");
-	}
-
-	@FXML
-	void onExecutePress(MouseEvent event) {
-
-		commondMenuBehavior(apBtnExecute, "Execute", "");
-
-	}
 
 	@FXML
 	void onLogoMainPress(MouseEvent event) {
@@ -243,31 +223,21 @@ public class SystemUserGUIController extends Application implements Initializabl
 	}
 
 	@FXML
-	void onSupervisePress(MouseEvent event) {
-		commondMenuBehavior(apBtnSupervise, "Supervise", "");
+	void onRequestTreatmentPress(MouseEvent event) {
+		commondMenuBehavior(apBtnRequestsTreatment, "Requests Treatment", "");
 
 	}
 
 	private void commondMenuBehavior(AnchorPane ap, String pageName, String fxmlName) {
 		selectedMenuElement = ap;
-		menuSelection(ap);
 		NavigationBar.clear();
 		NavigationBar.next(pageName, fxmlName);
 	}
 
-	private void menuSelection(AnchorPane target) {
-		for (AnchorPane anchorPane : apList) {
-
-			if (target.equals(anchorPane)) {
-				anchorPane.setEffect(new ColorAdjust(0, 0, 0.85, 0));
-			} else {
-				anchorPane.setEffect(null);
-			}
-		}
-	}
+	
 
 	private void addElementsBehavior() {
-		for (AnchorPane anchorPane : apList) {
+		for (Node anchorPane : apList) {
 			anchorPane.setOnMouseEntered(event -> {
 				if (selectedMenuElement == null || !selectedMenuElement.equals(anchorPane)) {
 					anchorPane.setEffect(new ColorAdjust(0, 0, 0.45, 0));

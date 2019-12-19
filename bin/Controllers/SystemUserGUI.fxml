@@ -80,82 +80,14 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </AnchorPane>
-            <AnchorPane fx:id="apBtnSupervise" onMouseClicked="#onSupervisePress" prefHeight="101.0" prefWidth="153.0">
+            <AnchorPane fx:id="apBtnRequestsTreatment" onMouseClicked="#onRequestTreatmentPress" prefHeight="101.0" prefWidth="153.0">
                <children>
-                  <ImageView fitHeight="41.0" fitWidth="37.0" layoutX="59.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="41.0" fitWidth="37.0" layoutX="59.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../Images/Main%20Menu/icons8_spy_100px_6.png" />
+                        <Image url="@../Images/Main%20Menu/icons8_check_50px.png" />
                      </image>
                   </ImageView>
-                  <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="31.0" layoutY="75.0" prefHeight="27.0" prefWidth="92.0" text="Supervise" textAlignment="CENTER" textFill="#5a708f">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </Label>
-               </children>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </AnchorPane>
-            <AnchorPane fx:id="apBtnEvaluate" onMouseClicked="#onEvaluatePress" prefHeight="101.0" prefWidth="153.0">
-               <children>
-                  <ImageView fitHeight="43.0" fitWidth="44.0" layoutX="55.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../Images/Main%20Menu/icons8_intelligence_100px.png" />
-                     </image>
-                  </ImageView>
-                  <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="31.0" layoutY="75.0" prefHeight="27.0" prefWidth="92.0" text="Evaluate" textAlignment="CENTER" textFill="#5a708f">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </Label>
-               </children>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </AnchorPane>
-            <AnchorPane fx:id="apBtnDecisions" onMouseClicked="#onDecisionsPress" prefHeight="101.0" prefWidth="153.0">
-               <children>
-                  <ImageView fitHeight="43.0" fitWidth="44.0" layoutX="55.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../Images/Main%20Menu/icons8_scales_100px.png" />
-                     </image>
-                  </ImageView>
-                  <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="31.0" layoutY="75.0" prefHeight="27.0" prefWidth="92.0" text="Decisions" textAlignment="CENTER" textFill="#5a708f">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </Label>
-               </children>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </AnchorPane>
-            <AnchorPane fx:id="apBtnExecute" onMouseClicked="#onExecutePress" prefHeight="101.0" prefWidth="153.0">
-               <children>
-                  <ImageView fitHeight="43.0" fitWidth="44.0" layoutX="55.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../Images/Main%20Menu/icons8_flash_on_100px.png" />
-                     </image>
-                  </ImageView>
-                  <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="31.0" layoutY="75.0" prefHeight="27.0" prefWidth="92.0" text="Execute" textAlignment="CENTER" textFill="#5a708f">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </Label>
-               </children>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </AnchorPane>
-            <AnchorPane fx:id="apBtnExamine" onMouseClicked="#onExaminePress" prefHeight="101.0" prefWidth="153.0">
-               <children>
-                  <ImageView fitHeight="41.0" fitWidth="37.0" layoutX="59.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../Images/Main%20Menu/icons8_pass_fail_100px_1.png" />
-                     </image>
-                  </ImageView>
-                  <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="31.0" layoutY="75.0" prefHeight="27.0" prefWidth="92.0" text="Examine" textAlignment="CENTER" textFill="#5a708f">
+                  <Label alignment="TOP_RIGHT" contentDisplay="CENTER" layoutX="31.0" layoutY="66.0" prefHeight="60.0" prefWidth="92.0" text="Requests  Treatment" textAlignment="CENTER" textFill="#5a708f" wrapText="true">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -167,7 +99,7 @@
             </AnchorPane>
             <AnchorPane fx:id="apBtnEmployees" onMouseClicked="#onEmployeesPress" prefHeight="101.0" prefWidth="153.0">
                <children>
-                  <ImageView fitHeight="41.0" fitWidth="37.0" layoutX="59.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="41.0" fitWidth="37.0" layoutX="59.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../Images/Main%20Menu/icons8_workers_100px.png" />
                      </image>
