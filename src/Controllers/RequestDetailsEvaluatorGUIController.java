@@ -24,7 +24,6 @@ public class RequestDetailsEvaluatorGUIController implements Initializable {
     @FXML
     private Canvas canvasLeft;
 
-
     @FXML
     private VBox vbLoadRequestDetails;
 
@@ -37,19 +36,16 @@ public class RequestDetailsEvaluatorGUIController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
 		
 		// Apply the effects for the canvas
 		RequestDetailsUserController.applyCanvasEffects(canvasRight, canvasLeft);
 		ControllerSwapper.loadAnchorContent(vbLoadRequestDetails, FxmlNames.REQUEST_DETAILS);
+		ControllerSwapper.loadAnchorContent(vbEvaluationReport, FxmlNames.EVALUATION_REPORT_PAGE_1);
 
 		hbSendExecutionDetails.setCursor(Cursor.HAND);
 		ControllerManager.setEffect(hbSendExecutionDetails, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 		ControllerManager.setOnHoverEffect(hbSendExecutionDetails, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
 				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
-		
-		
-		ControllerSwapper.loadAnchorContent(vbEvaluationReport, FxmlNames.EVALUATION_REPORT_PAGE_1);
 
 	}
 

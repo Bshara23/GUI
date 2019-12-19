@@ -136,7 +136,7 @@ public class ManagerGUIController extends Application implements Initializable {
 
 	}
 
-	String[] statTitles = new String[] { "Requests Executions", "Requests Delays", "Requests Delays222" };
+	String[] statTitles = new String[] { "Requests Executions", "Requests Delays" };
 	int statTitlesCurrIndex = 0;
 	@FXML
 	private void onMouseScrollStatType(ScrollEvent event) {

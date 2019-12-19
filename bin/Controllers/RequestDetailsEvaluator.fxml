@@ -21,9 +21,9 @@
             <Font size="35.0" />
          </font>
       </Text>
-      <VBox layoutX="336.0" layoutY="99.41796875" spacing="35.0">
+      <VBox layoutX="336.0" layoutY="73.0" prefHeight="810.0" prefWidth="682.0" spacing="35.0">
          <children>
-            <VBox fx:id="vbLoadRequestDetails" spacing="15.0">
+            <VBox fx:id="vbLoadRequestDetails" prefWidth="682.0" spacing="15.0">
                <children>
                   <Text fill="#515050" strokeType="OUTSIDE" strokeWidth="0.0" text="Request Details">
                      <font>
@@ -85,7 +85,7 @@
                         <Font size="20.0" />
                      </font>
                   </Text>
-                  <VBox id="container" prefHeight="153.0" prefWidth="672.0" spacing="15.0" stylesheets="@blueBorder.css">
+                  <VBox id="container" prefHeight="153.0" prefWidth="483.0" spacing="15.0" stylesheets="@blueBorder.css">
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Place:" />
                         <TextField />

@@ -29,50 +29,50 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
-public class SystemUserGUIController extends Application implements Initializable {
+public class ClientGUI extends Application implements Initializable {
 
 	@FXML
-	private AnchorPane mainAnchor;
+    private AnchorPane mainAnchor;
 
-	@FXML
-	private AnchorPane apMainContent;
+    @FXML
+    private AnchorPane apMainContent;
 
-	@FXML
-	private VBox vbMenu;
+    @FXML
+    private VBox vbMenu;
 
-	@FXML
-	private AnchorPane apBtnLogoMain;
+    @FXML
+    private AnchorPane apBtnLogoMain;
 
-	@FXML
-	private AnchorPane apBtnIssueRequest;
+    @FXML
+    private AnchorPane apBtnIssueRequest;
 
-	@FXML
-	private AnchorPane apBtnMyRequests;
+    @FXML
+    private AnchorPane apBtnMyRequests;
 
-	@FXML
-	private AnchorPane apBtnAnalytics;
+    @FXML
+    private AnchorPane apBtnAnalytics;
 
-	@FXML
-	private AnchorPane apBtnRequestsTreatment;
+    @FXML
+    private AnchorPane apBtnRequestsTreatment;
 
-	@FXML
-	private AnchorPane apBtnEmployees;
+    @FXML
+    private AnchorPane apBtnEmployees;
 
-	@FXML
-	private AnchorPane apBtnMessages;
+    @FXML
+    private AnchorPane apBtnMessages;
 
-	@FXML
-	private AnchorPane apBtnSettings;
+    @FXML
+    private AnchorPane apBtnSettings;
 
-	@FXML
-	private AnchorPane apHeader;
+    @FXML
+    private AnchorPane apHeader;
 
-	@FXML
-	private ImageView imgNavigationBarArrow;
+    @FXML
+    private ImageView imgNavigationBarArrow;
 
-	@FXML
-	private HBox hbNavigator;
-
+    @FXML
+    private HBox hbNavigator;
+    
 	private AnchorPane selectedMenuElement;
 
 	private ArrayList<Node> apList;
@@ -85,7 +85,7 @@ public class SystemUserGUIController extends Application implements Initializabl
 	public void start(Stage stage) {
 		stage.initStyle(StageStyle.UNDECORATED);
 
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("SystemUserGUI.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource(FxmlNames.GLOBAL_MENUS));
 		Parent root = null;
 		try {
 			root = loader.load();
@@ -94,7 +94,7 @@ public class SystemUserGUIController extends Application implements Initializabl
 			e.printStackTrace();
 		}
 		stage.setScene(new Scene(root));
-		stage.setTitle("Manager GUI");
+		stage.setTitle("ICM System");
 		stage.show();
 		this.stage = stage;
 
@@ -126,22 +126,15 @@ public class SystemUserGUIController extends Application implements Initializabl
 		apList.add(apBtnMessages);
 		apList.add(apBtnMyRequests);
 		apList.add(apBtnSettings);
-
 		apList.add(apBtnAnalytics);
 		apList.add(apBtnEmployees);
-
-		
 		apList.add(apBtnRequestsTreatment);
 		
 		
 		for (Node node : apList) {
 			node.setCursor(Cursor.HAND);
-			node.setOnMouseEntered(event -> {
-				ControllerManager.setEffect(node, CommonEffects.MENU_ELEMENT_ON_HOVER);
-			});
-			node.setOnMouseExited(event -> {
-				ControllerManager.setEffect(node, CommonEffects.MENU_ELEMENT_IDLE);
-			});
+			ControllerManager.setOnHoverEffectConditioned(node, CommonEffects.MENU_ELEMENT_ON_HOVER,
+					CommonEffects.MENU_ELEMENT_IDLE, CommonEffects.MENU_ELEMENT_PRESSED);
 			node.setOnMousePressed(event -> {
 				ControllerManager.setEffect(apList, CommonEffects.MENU_ELEMENT_IDLE);
 				ControllerManager.setEffect(node, CommonEffects.MENU_ELEMENT_PRESSED);
@@ -151,13 +144,12 @@ public class SystemUserGUIController extends Application implements Initializabl
 
 		// Remove icons here
 		// vbMenu.getChildren().remove(apBtnAnalytics);
-		vbMenu.getChildren().remove(apBtnEmployees);
+		//vbMenu.getChildren().remove(apBtnEmployees);
 	
 		// vbMenu.getChildren().remove(apBtnDecisions);
 
 		// Remove icons here END
 		selectedMenuElement = null;
-		addElementsBehavior();
 
 	}
 
@@ -185,11 +177,13 @@ public class SystemUserGUIController extends Application implements Initializabl
 	void onMessagesPress(MouseEvent event) {
 
 		commondMenuBehavior(apBtnMessages, "Messages", "");
-
 	}
 
 	@FXML
 	void onMyRequestsPress(MouseEvent event) {
+
+		ListOfRequestsController.disableAllJobs = true;
+		ListOfRequestsController.pageHeader = "List of My Requests";
 
 		commondMenuBehavior(apBtnMyRequests, "My Requests", FxmlNames.REQUESTS_LIST);
 	}
@@ -224,7 +218,10 @@ public class SystemUserGUIController extends Application implements Initializabl
 
 	@FXML
 	void onRequestTreatmentPress(MouseEvent event) {
-		commondMenuBehavior(apBtnRequestsTreatment, "Requests Treatment", "");
+		
+		ListOfRequestsController.disableAllJobs = false;
+		ListOfRequestsController.pageHeader = "List of Requests for Treatment";
+		commondMenuBehavior(apBtnMyRequests, "Requests Treatment", FxmlNames.REQUESTS_LIST);
 
 	}
 
@@ -236,20 +233,6 @@ public class SystemUserGUIController extends Application implements Initializabl
 
 	
 
-	private void addElementsBehavior() {
-		for (Node anchorPane : apList) {
-			anchorPane.setOnMouseEntered(event -> {
-				if (selectedMenuElement == null || !selectedMenuElement.equals(anchorPane)) {
-					anchorPane.setEffect(new ColorAdjust(0, 0, 0.45, 0));
-				}
-			});
 
-			anchorPane.setOnMouseExited(event -> {
-				if (selectedMenuElement == null || !selectedMenuElement.equals(anchorPane)) {
-					anchorPane.setEffect(null);
-				}
-			});
-		}
-	}
 
 }

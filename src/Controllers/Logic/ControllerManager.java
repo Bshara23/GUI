@@ -11,11 +11,14 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.Effect;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.control.Alert.AlertType;
 
 public class ControllerManager {
+
+	
 
 	/**
 	 * Displays an alert message
@@ -60,6 +63,39 @@ public class ControllerManager {
 	public static void setEffectConditioned(Node node, Effect effect, Effect exceptThisEffect) {
 		if (!node.getEffect().equals(exceptThisEffect))
 			node.setEffect(effect);
+	}
+	
+	
+	public static ArrayList<Node> getAllNodes(Pane root) {
+	    ArrayList<Node> nodes = new ArrayList<Node>();
+	    addAllDescendents(root, nodes);
+	    return nodes;
+	}
+
+	private static void addAllDescendents(Pane parent, ArrayList<Node> nodes) {
+	    for (Node node : parent.getChildrenUnmodifiable()) {
+	        nodes.add(node);
+	        if (node instanceof Pane)
+	            addAllDescendents((Pane)node, nodes);
+	    }
+	}
+	
+	public static void setOnHoverEffect(Node node, Effect onEntered, Effect onExited) {
+		node.setOnMouseEntered(event -> {
+			ControllerManager.setEffect(node, onEntered);
+		});
+		node.setOnMouseExited(event -> {
+			ControllerManager.setEffect(node, onExited);
+		});
+	}
+	
+	public static void setOnHoverEffectConditioned(Node node, Effect onEntered, Effect onExited, Effect condition) {
+		node.setOnMouseEntered(event -> {
+			ControllerManager.setEffectConditioned(node, onEntered, condition);
+		});
+		node.setOnMouseExited(event -> {
+			ControllerManager.setEffectConditioned(node, onExited, condition);
+		});
 	}
 
 }

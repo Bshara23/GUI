@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.sun.javafx.cursor.CursorType;
 
+import Controllers.Logic.NavigationBar.NextPage;
 import Utility.ControllerSwapper;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -22,9 +23,42 @@ public class NavigationBar {
 
 	private static ArrayList<String> pageNameList, fxmlFileNameList;
 
+	
+	public static class NextPage {
+		private String pageTitle, pageLocation;
+
+		public String getPageTitle() {
+			return pageTitle;
+		}
+
+		public void setPageTitle(String pageTitle) {
+			this.pageTitle = pageTitle;
+		}
+
+		public String getPageLocation() {
+			return pageLocation;
+		}
+
+		public void setPageLocation(String pageLocation) {
+			this.pageLocation = pageLocation;
+		}
+		
+	}
+	public static NextPage nextPage;
+
+	public static NextPage getNextPage() {
+		return nextPage;
+	}
+	public static void setCurrentPage(String title, String location) {
+		nextPage.setPageTitle(title);
+		nextPage.setPageLocation(location);
+	}
+
+	
 	static {
 		pageNameList = new ArrayList<String>();
 		fxmlFileNameList = new ArrayList<String>();
+		nextPage = new NextPage();
 	}
 
 	public static void clear() {

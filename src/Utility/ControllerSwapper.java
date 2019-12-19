@@ -4,13 +4,18 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import Controllers.SystemUserGUIController;
+import Controllers.ClientGUI;
+import Controllers.Logic.CommonEffects;
+import Controllers.Logic.ControllerManager;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class ControllerSwapper {
@@ -49,11 +54,12 @@ public class ControllerSwapper {
 	}
 
 
+	
 
-	public static void loadAnchorContent(AnchorPane destination, String fxmlFileName) {
+	public static void loadAnchorContent(Pane destination, String fxmlFileName) {
 		
 		// Reference a class that exist in the same folder as the FXML files
-		URL url = SystemUserGUIController.class.getResource(fxmlFileName);
+		URL url = ClientGUI.class.getResource(fxmlFileName);
 
 		AnchorPane loader = null;
 		try {
