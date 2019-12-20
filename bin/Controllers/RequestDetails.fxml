@@ -16,7 +16,7 @@
             <Font size="20.0" />
          </font>
       </Text>
-      <HBox id="container" layoutY="39.58203125" prefHeight="258.0" prefWidth="696.0" spacing="5.0" stylesheets="@blueBorder.css">
+      <HBox id="container" layoutY="40.0" prefHeight="289.0" prefWidth="696.0" spacing="5.0" stylesheets="@blueBorder.css">
          <children>
             <VBox spacing="15.0">
                <children>
@@ -28,6 +28,7 @@
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description of current state:" />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description of requested change:" />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Comments: " />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Attached Files:" />
                </children>
                <padding>
                   <Insets top="5.0" />
@@ -45,6 +46,7 @@
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The system is not given me the info." />
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="A change is needed regarding the misslead..." />
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="This is an example comment." />
+                        <Text fill="#3076ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Screenshot55.jpg" underline="true" />
                      </children>
                      <padding>
                         <Insets top="5.0" />

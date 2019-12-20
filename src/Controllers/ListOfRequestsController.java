@@ -1,7 +1,9 @@
 package Controllers;
 
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Random;
@@ -193,20 +195,36 @@ public class ListOfRequestsController implements Initializable {
 		ArrayList<TableDataRequests> strs = new ArrayList<TableDataRequests>();
 
 		for (int i = 0; i < 20; i++) {
-			String s1 = i + 1 + "";
+			String s1 = rnd.nextInt(200) + 1 + "";
 
-			int day = rnd.nextInt(20);
-			GregorianCalendar  d = new GregorianCalendar(2020, 3, rnd.nextInt(28));
-			String s2 = d.getGregorianChange().toGMTString();
+			int day = rnd.nextInt(28);
+			
+			
+			Calendar calendar = new GregorianCalendar(2013, 1, day);
+			
+
+			int year = calendar.get(Calendar.YEAR);
+			int month = calendar.get(Calendar.MONTH);
+			int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+						
+			
+			String s2 = dayOfMonth + "/" + month + "/" + year;
 
 
 			String s4 = statuses[rnd.nextInt(statuses.length)];
 
-			day += rnd.nextInt(8);
-			Date d2 = new Date(2020, 3, day);
-			String s5 = d2.getDate() + "/" + d2.getMonth() + "/" + d2.getYear();
+			int rand = rnd.nextInt(8);
+			calendar.add(Calendar.DAY_OF_MONTH, rand);
+			
+			
+			int year1 = calendar.get(Calendar.YEAR);
+			int month1 = calendar.get(Calendar.MONTH);
+			int dayOfMonth1 = calendar.get(Calendar.DAY_OF_MONTH);
+						
+			
+			String s5 = dayOfMonth1 + "/" + month1 + "/" + year1;
 
-			String s3 = "";
+			String s3 = rand + " Days";
 
 			
 			strs.add(new TableDataRequests(s1, s2, s3, s4, s5));
@@ -236,7 +254,7 @@ public class ListOfRequestsController implements Initializable {
 			break;
 		case "Evaluate":
 			addRandomDataToTable();
-			NavigationBar.setCurrentPage("Request Details", FxmlNames.REQUEST_DETAILS_EVALUATE);
+			NavigationBar.setCurrentPage("Request Details (Evaluator View)", FxmlNames.REQUEST_DETAILS_EVALUATE);
 			
 			break;
 		case "Decide":

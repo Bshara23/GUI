@@ -18,14 +18,17 @@ import javafx.scene.layout.HBox;
 
 public class IssueRequestController implements Initializable {
 
-	@FXML
-	private HBox hbIssueRequest;
+    @FXML
+    private HBox hbAttachFiles;
 
-	@FXML
-	private Canvas canvasRight;
+    @FXML
+    private HBox hbIssueRequest1;
 
-	@FXML
-	private Canvas canvasLeft;
+    @FXML
+    private Canvas canvasRight;
+
+    @FXML
+    private Canvas canvasLeft;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -33,9 +36,15 @@ public class IssueRequestController implements Initializable {
 		// Apply the effects for the canvas
 		RequestDetailsUserController.applyCanvasEffects(canvasRight, canvasLeft);
 
-		hbIssueRequest.setCursor(Cursor.HAND);
-		ControllerManager.setEffect(hbIssueRequest, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
-		ControllerManager.setOnHoverEffect(hbIssueRequest, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
+		hbIssueRequest1.setCursor(Cursor.HAND);
+		ControllerManager.setEffect(hbIssueRequest1, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		ControllerManager.setOnHoverEffect(hbIssueRequest1, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
+				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		
+		
+		hbAttachFiles.setCursor(Cursor.HAND);
+		ControllerManager.setEffect(hbAttachFiles, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		ControllerManager.setOnHoverEffect(hbAttachFiles, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
 				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 	
 	}

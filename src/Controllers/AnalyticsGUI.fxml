@@ -80,7 +80,7 @@
       </HBox>
       <Line endX="975.7999267578125" layoutX="359.0" layoutY="176.0" startX="-331.0" stroke="#757575" strokeWidth="0.75" />
       <Line endX="26.0" layoutX="105.0" layoutY="175.0" startX="-75.0" stroke="#0090ff" strokeLineCap="ROUND" strokeWidth="2.5" />
-      <HBox layoutX="193.0" layoutY="284.0" prefHeight="100.0" prefWidth="774.0">
+      <HBox layoutX="308.0" layoutY="283.0" prefHeight="100.0" prefWidth="774.0">
          <children>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff; -fx-border-color: #D8D8D8;">
                <children>
@@ -209,9 +209,9 @@
          </children>
       </HBox>
       <PieChart fx:id="pieChartRequests" layoutX="427.0" layoutY="404.0" prefHeight="432.0" prefWidth="535.0" />
-      <VBox layoutX="1121.0" layoutY="323.0" spacing="15.0">
+      <VBox layoutX="1131.0" layoutY="189.0" spacing="15.0">
          <children>
-            <Text fill="#727272" strokeType="OUTSIDE" strokeWidth="0.0" text="Select Chart Different Type">
+            <Text fill="#727272" strokeType="OUTSIDE" strokeWidth="0.0" text="Select Different Chart Type">
                <font>
                   <Font size="17.0" />
                </font>
@@ -259,5 +259,21 @@
             </HBox>
          </children>
       </VBox>
+      <HBox layoutX="31.0" layoutY="196.0" prefHeight="70.0" prefWidth="177.0" spacing="10.0">
+         <children>
+            <VBox prefHeight="200.0" prefWidth="63.0" spacing="15.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Standard Deviation:" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Median:" />
+               </children>
+            </VBox>
+            <VBox prefHeight="200.0" prefWidth="63.0" spacing="15.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="0.521" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="0.857" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
    </children>
 </AnchorPane>

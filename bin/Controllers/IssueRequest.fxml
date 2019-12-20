@@ -82,16 +82,38 @@
                   <TextArea minHeight="-Infinity" prefHeight="85.0" prefWidth="526.0" promptText="Enter comments about the request" />
                </children>
             </HBox>
+            <HBox spacing="15.0">
+               <children>
+                  <HBox minWidth="180.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Attach files:" />
+                     </children>
+                  </HBox>
+                  <HBox fx:id="hbAttachFiles" alignment="CENTER_RIGHT" minWidth="125.0" prefHeight="26.0" prefWidth="125.0" spacing="10.0">
+                     <children>
+                        <ImageView fitHeight="33.0" fitWidth="39.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/charts/icons8_browse_folder_50px_2.png" />
+                           </image>
+                        </ImageView>
+                        <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Browse files" />
+                     </children>
+                     <padding>
+                        <Insets right="5.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </HBox>
             <HBox alignment="CENTER_RIGHT" spacing="15.0">
                <children>
-                  <HBox fx:id="hbIssueRequest" alignment="CENTER_RIGHT" minWidth="125.0" prefHeight="26.0" prefWidth="125.0" spacing="10.0">
+                  <HBox fx:id="hbIssueRequest1" alignment="CENTER_RIGHT" minWidth="125.0" prefHeight="26.0" prefWidth="125.0" spacing="10.0">
                      <children>
                         <ImageView fitHeight="33.0" fitWidth="39.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../Images/Request%20Details/icons8_send_50px.png" />
                            </image>
                         </ImageView>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Issue Request" />
+                        <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Issue Request" />
                      </children>
                      <padding>
                         <Insets right="5.0" />

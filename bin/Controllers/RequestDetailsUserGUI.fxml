@@ -17,12 +17,12 @@
             <Font size="35.0" />
          </font>
       </Text>
-      <Text fill="#515050" layoutX="336.0" layoutY="395.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Current Phase Details">
+      <Text fill="#515050" layoutX="336.0" layoutY="430.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Current Phase Details">
          <font>
             <Font size="20.0" />
          </font>
       </Text>
-      <HBox id="container" layoutX="336.0" layoutY="148.0" prefHeight="197.0" prefWidth="696.0" stylesheets="@blueBorder.css">
+      <HBox id="container" layoutX="336.0" layoutY="148.0" prefHeight="221.0" prefWidth="696.0" stylesheets="@blueBorder.css">
          <children>
             <VBox prefHeight="120.0" prefWidth="145.0" spacing="15.0">
                <children>
@@ -32,6 +32,7 @@
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Issue date: " />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description:" />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Comments: " />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Attatched Files:" />
                </children>
                <padding>
                   <Insets top="5.0" />
@@ -45,12 +46,13 @@
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="5/5/2020" />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The request is regarding the missleading info..." />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="This is an example comment." />
+                  <Text fill="#0095ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Screenshot55.jpg" underline="true" />
                </children>
                <padding>
                   <Insets top="5.0" />
                </padding>
             </VBox>
-            <VBox prefHeight="120.0" prefWidth="256.0" spacing="15.0">
+            <VBox prefHeight="237.0" prefWidth="254.0" spacing="15.0">
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
@@ -73,7 +75,7 @@
             <Font size="20.0" />
          </font>
       </Text>
-      <HBox id="container" layoutX="336.0" layoutY="421.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="106.0" prefWidth="696.0" spacing="15.0" stylesheets="@blueBorder.css">
+      <HBox id="container" layoutX="336.0" layoutY="456.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="106.0" prefWidth="696.0" spacing="15.0" stylesheets="@blueBorder.css">
          <children>
             <VBox prefHeight="172.0" prefWidth="186.0" spacing="15.0">
                <children>
