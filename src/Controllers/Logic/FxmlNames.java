@@ -1,6 +1,10 @@
 package Controllers.Logic;
 
 public class FxmlNames {
+	
+	
+	public static final String ISSUE_REQUEST = "IssueRequest.fxml";
+
 
 	public static final String REQUEST_DETAILS_MY = "RequestDetailsUserGUI.fxml";
 	public static final String SYSTEM_USER = "SystemUserGUI.fxml";
@@ -12,11 +16,20 @@ public class FxmlNames {
 	public static final String REQUEST_DETAILS_EXAMINER = "RequestDetailsExaminer.fxml";
 	public static final String REQUEST_DETAILS_EXECUTIONER = "RequestDetailsExecutioner.fxml";
 	public static final String REQUEST_DETAILS_EVALUATE = "RequestDetailsEvaluator.fxml";
+	public static final String REQUEST_DETAILS_DECISION = "RequestDetailsDecision.fxml";
 
 	
 	public static final String EVALUATION_REPORT_PAGE_1 = "EvaluationReportPage1.fxml";
 	public static final String EVALUATION_REPORT_PAGE_2 = "EvaluationReportPage2.fxml";
 
 	
+	public static final String EVALUATION_REPORT_REVIEW_PAGE_1 = "EvaluationReportReviewPage1.fxml";
+	public static final String EVALUATION_REPORT_REVIEW_PAGE_2 = "EvaluationReportReviewPage2.fxml";
+	public static final String EVALUATION_REPORT_REVIEW_PAGE_3 = "EvaluationReportReviewPage3.fxml";
+
+	
 	public static final String ANALYTICS = "AnalyticsGUI.fxml";
+	
+	public static final String SETTINGS = "SettingsGUI.fxml";
+
 }

@@ -12,7 +12,7 @@
 
 <AnchorPane prefHeight="876.0" prefWidth="1348.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.RequestDetailsSupervisorController">
    <children>
-      <Text fill="#6f6f6f" layoutX="522.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Request Details" textAlignment="CENTER" wrappingWidth="323.13671875">
+      <Text fill="#6f6f6f" layoutX="522.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Supervise" textAlignment="CENTER" wrappingWidth="323.13671875">
          <font>
             <Font size="35.0" />
          </font>

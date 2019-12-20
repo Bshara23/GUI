@@ -26,47 +26,59 @@
           <NumberAxis side="LEFT" />
         </yAxis>
       </LineChart>
-      <HBox alignment="CENTER_LEFT" layoutX="8.0" layoutY="112.0" prefHeight="64.0" prefWidth="697.0" spacing="80.0">
+      <HBox alignment="CENTER_LEFT" layoutX="8.0" layoutY="112.0" prefHeight="64.0" prefWidth="746.0" spacing="80.0">
          <children>
-            <Label text="Last week" textFill="#515151">
+            <Label prefHeight="64.0" prefWidth="112.0" styleClass="d" stylesheets="@MainCombobox.css" text="Last week" textFill="#515151" textOverrun="CLIP">
                <font>
                   <Font size="22.0" />
                </font>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
+               <padding>
+                  <Insets left="5.0" right="5.0" />
+               </padding>
             </Label>
-            <Label text="Last 30 days" textFill="#515151">
+            <Label prefHeight="80.0" style="-fx-blend-mode: 0;" styleClass="d" stylesheets="@MainCombobox.css" text="Last 30 days" textFill="#515151" textOverrun="CLIP">
                <font>
                   <Font size="22.0" />
                </font>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
+               <padding>
+                  <Insets left="5.0" right="5.0" />
+               </padding>
             </Label>
-            <Label text="Last year" textFill="#515151">
+            <Label prefHeight="64.0" prefWidth="104.0" styleClass="d" stylesheets="@MainCombobox.css" text="Last year" textFill="#515151" textOverrun="CLIP">
                <font>
                   <Font size="22.0" />
                </font>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
+               <padding>
+                  <Insets left="5.0" right="5.0" />
+               </padding>
             </Label>
-            <Label text="Date range" textFill="#515151">
+            <Label prefHeight="64.0" prefWidth="132.0" styleClass="d" stylesheets="@MainCombobox.css" text="Date range" textFill="#515151" textOverrun="CLIP">
                <font>
                   <Font size="22.0" />
                </font>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
+               <padding>
+                  <Insets left="5.0" right="5.0" />
+               </padding>
             </Label>
          </children>
          <padding>
             <Insets left="20.0" />
          </padding>
       </HBox>
-      <Line endX="975.7999267578125" layoutX="353.0" layoutY="176.0" startX="-331.0" stroke="#757575" strokeWidth="0.75" />
-      <Line endX="26.0" layoutX="98.0" layoutY="175.0" startX="-75.0" stroke="#0090ff" strokeLineCap="ROUND" strokeWidth="2.5" />
+      <Line endX="975.7999267578125" layoutX="359.0" layoutY="176.0" startX="-331.0" stroke="#757575" strokeWidth="0.75" />
+      <Line endX="26.0" layoutX="98.0" layoutY="175.0" opacity="0.0" startX="-75.0" stroke="#0090ff" strokeLineCap="ROUND" strokeWidth="2.5" />
       <HBox layoutX="193.0" layoutY="284.0" prefHeight="100.0" prefWidth="774.0">
          <children>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff; -fx-border-color: #D8D8D8;">

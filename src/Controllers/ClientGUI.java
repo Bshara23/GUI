@@ -32,47 +32,47 @@ import javafx.stage.WindowEvent;
 public class ClientGUI extends Application implements Initializable {
 
 	@FXML
-    private AnchorPane mainAnchor;
+	private AnchorPane mainAnchor;
 
-    @FXML
-    private AnchorPane apMainContent;
+	@FXML
+	private AnchorPane apMainContent;
 
-    @FXML
-    private VBox vbMenu;
+	@FXML
+	private VBox vbMenu;
 
-    @FXML
-    private AnchorPane apBtnLogoMain;
+	@FXML
+	private AnchorPane apBtnLogoMain;
 
-    @FXML
-    private AnchorPane apBtnIssueRequest;
+	@FXML
+	private AnchorPane apBtnIssueRequest;
 
-    @FXML
-    private AnchorPane apBtnMyRequests;
+	@FXML
+	private AnchorPane apBtnMyRequests;
 
-    @FXML
-    private AnchorPane apBtnAnalytics;
+	@FXML
+	private AnchorPane apBtnAnalytics;
 
-    @FXML
-    private AnchorPane apBtnRequestsTreatment;
+	@FXML
+	private AnchorPane apBtnRequestsTreatment;
 
-    @FXML
-    private AnchorPane apBtnEmployees;
+	@FXML
+	private AnchorPane apBtnEmployees;
 
-    @FXML
-    private AnchorPane apBtnMessages;
+	@FXML
+	private AnchorPane apBtnMessages;
 
-    @FXML
-    private AnchorPane apBtnSettings;
+	@FXML
+	private AnchorPane apBtnSettings;
 
-    @FXML
-    private AnchorPane apHeader;
+	@FXML
+	private AnchorPane apHeader;
 
-    @FXML
-    private ImageView imgNavigationBarArrow;
+	@FXML
+	private ImageView imgNavigationBarArrow;
 
-    @FXML
-    private HBox hbNavigator;
-    
+	@FXML
+	private HBox hbNavigator;
+
 	private AnchorPane selectedMenuElement;
 
 	private ArrayList<Node> apList;
@@ -129,26 +129,15 @@ public class ClientGUI extends Application implements Initializable {
 		apList.add(apBtnAnalytics);
 		apList.add(apBtnEmployees);
 		apList.add(apBtnRequestsTreatment);
-		
-		
+
 		for (Node node : apList) {
-			node.setCursor(Cursor.HAND);
-			ControllerManager.setOnHoverEffectConditioned(node, CommonEffects.MENU_ELEMENT_ON_HOVER,
-					CommonEffects.MENU_ELEMENT_IDLE, CommonEffects.MENU_ELEMENT_PRESSED);
-			node.setOnMousePressed(event -> {
-				ControllerManager.setEffect(apList, CommonEffects.MENU_ELEMENT_IDLE);
-				ControllerManager.setEffect(node, CommonEffects.MENU_ELEMENT_PRESSED);
-			});
+
+			ControllerManager.setMouseHoverPressEffects(node, CommonEffects.MENU_ELEMENT_ON_HOVER,
+					CommonEffects.MENU_ELEMENT_IDLE, CommonEffects.MENU_ELEMENT_PRESSED, apList, Cursor.HAND);
+			
 		}
+
 		
-
-		// Remove icons here
-		// vbMenu.getChildren().remove(apBtnAnalytics);
-		//vbMenu.getChildren().remove(apBtnEmployees);
-	
-		// vbMenu.getChildren().remove(apBtnDecisions);
-
-		// Remove icons here END
 		selectedMenuElement = null;
 
 	}
@@ -169,7 +158,7 @@ public class ClientGUI extends Application implements Initializable {
 	@FXML
 	void onIssueRequestPress(MouseEvent event) {
 
-		commondMenuBehavior(apBtnIssueRequest, "Issue Request", "");
+		commondMenuBehavior(apBtnIssueRequest, "Issue Request", FxmlNames.ISSUE_REQUEST);
 
 	}
 
@@ -191,7 +180,7 @@ public class ClientGUI extends Application implements Initializable {
 	@FXML
 	void onSettingsPress(MouseEvent event) {
 
-		commondMenuBehavior(apBtnSettings, "Settings", "");
+		commondMenuBehavior(apBtnSettings, "Settings", FxmlNames.SETTINGS);
 
 	}
 
@@ -201,15 +190,11 @@ public class ClientGUI extends Application implements Initializable {
 		commondMenuBehavior(apBtnAnalytics, "Analytics", FxmlNames.ANALYTICS);
 	}
 
-	
-
 	@FXML
 	void onEmployeesPress(MouseEvent event) {
 
 		commondMenuBehavior(apBtnEmployees, "Employees", "");
 	}
-
-
 
 	@FXML
 	void onLogoMainPress(MouseEvent event) {
@@ -218,7 +203,7 @@ public class ClientGUI extends Application implements Initializable {
 
 	@FXML
 	void onRequestTreatmentPress(MouseEvent event) {
-		
+
 		ListOfRequestsController.disableAllJobs = false;
 		ListOfRequestsController.pageHeader = "List of Requests for Treatment";
 		commondMenuBehavior(apBtnMyRequests, "Requests Treatment", FxmlNames.REQUESTS_LIST);
@@ -230,9 +215,5 @@ public class ClientGUI extends Application implements Initializable {
 		NavigationBar.clear();
 		NavigationBar.next(pageName, fxmlName);
 	}
-
-	
-
-
 
 }

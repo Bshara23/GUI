@@ -2,7 +2,9 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -11,17 +13,17 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="876.0" prefWidth="1348.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.RequestDetailsExecutionerGUIController">
+<AnchorPane prefHeight="876.0" prefWidth="1348.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.RequestDetailsDecisionGUIController">
    <children>
       <TextArea layoutX="-150.0" layoutY="26.0" prefHeight="0.0" prefWidth="0.0" />
-      <Text fill="#6f6f6f" layoutX="522.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Execute" textAlignment="CENTER" wrappingWidth="323.13671875">
+      <Text fill="#6f6f6f" layoutX="522.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Decision" textAlignment="CENTER" wrappingWidth="323.13671875">
          <font>
             <Font size="35.0" />
          </font>
       </Text>
-      <VBox layoutX="336.0" layoutY="99.41796875" spacing="60.0">
+      <VBox layoutX="336.0" layoutY="73.0" prefHeight="810.0" prefWidth="682.0" spacing="35.0">
          <children>
-            <VBox fx:id="vbLoadRequestDetails" spacing="15.0">
+            <VBox fx:id="vbLoadRequestDetails" prefWidth="682.0" spacing="15.0">
                <children>
                   <Text fill="#515050" strokeType="OUTSIDE" strokeWidth="0.0" text="Request Details">
                      <font>
@@ -76,20 +78,31 @@
                   </HBox>
                </children>
             </VBox>
-            <VBox spacing="15.0">
+            <VBox fx:id="vbEvaluationReport" spacing="15.0">
                <children>
-                  <Text fill="#515050" strokeType="OUTSIDE" strokeWidth="0.0" text="Execution Details">
+                  <Text fill="#515050" strokeType="OUTSIDE" strokeWidth="0.0" text="Evaluation Report">
                      <font>
                         <Font size="20.0" />
                      </font>
                   </Text>
-                  <VBox id="container" prefHeight="153.0" prefWidth="672.0" spacing="15.0" stylesheets="@blueBorder.css">
+                  <VBox id="container" prefHeight="153.0" prefWidth="483.0" spacing="15.0" stylesheets="@blueBorder.css">
                      <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Please fill the following details after executing the request:" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Execution Location" />
-                        <TextArea minHeight="-Infinity" prefHeight="72.0" prefWidth="682.0" promptText="Enter location" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Execution Description" />
-                        <TextArea minHeight="-Infinity" prefHeight="122.0" prefWidth="682.0" promptText="Enter description" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Place:" />
+                        <TextField />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description of required change:" />
+                        <TextArea prefHeight="200.0" prefWidth="200.0" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Accepted results (benefit):" />
+                        <TextArea prefHeight="200.0" prefWidth="200.0" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Constraints:" />
+                        <TextArea prefHeight="200.0" prefWidth="200.0" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Risks:" />
+                        <TextArea prefHeight="200.0" prefWidth="200.0" />
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Estimated execution time:" />
+                              <DatePicker />
+                           </children>
+                        </HBox>
                         <HBox alignment="CENTER_RIGHT">
                            <children>
                               <HBox fx:id="hbSendExecutionDetails" alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="73.0" spacing="10.0">

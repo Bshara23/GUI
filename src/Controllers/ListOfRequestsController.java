@@ -169,7 +169,6 @@ public class ListOfRequestsController implements Initializable {
 			selectNode(node);
 		}
 
-		System.out.println("Disable jobs = " + disableAllJobs);
 		ArrayList<Node> nodes = ControllerManager.getAllNodes(hbRequestsType);
 		nodes.add(lineTableJob);
 		nodes.add(lineBottomJobs);
@@ -234,7 +233,6 @@ public class ListOfRequestsController implements Initializable {
 		case "Supervise":
 			addRandomDataToTable();
 			NavigationBar.setCurrentPage("Request Details (Supervisor View)", FxmlNames.REQUEST_DETAILS_SUPERVISOR);
-			System.out.println("Supervise");
 			break;
 		case "Evaluate":
 			addRandomDataToTable();
@@ -243,19 +241,17 @@ public class ListOfRequestsController implements Initializable {
 			break;
 		case "Decide":
 			addRandomDataToTable();
-			System.out.println("Decide");
+			NavigationBar.setCurrentPage("Request Details (Committee Members View)", FxmlNames.REQUEST_DETAILS_DECISION);
 
 			break;
 		case "Execute":
 			addRandomDataToTable();
-			System.out.println("Execute");
 			NavigationBar.setCurrentPage("Request Details (Executer View)", FxmlNames.REQUEST_DETAILS_EXECUTIONER);
 
 
 			break;
 		case "Examine":
 			addRandomDataToTable();
-			System.out.println("Examine");
 			NavigationBar.setCurrentPage("Request Details (Examiner View)", FxmlNames.REQUEST_DETAILS_EXAMINER);
 
 			break;
@@ -324,7 +320,6 @@ public class ListOfRequestsController implements Initializable {
 		if (event.getClickCount() == 2) // Checking double click
 		{
 
-			// System.out.println(tblSupervisorRequests.getSelectionModel().getSelectedItem().toString());
 
 			NavigationBar.next(NavigationBar.getNextPage().getPageTitle(),
 					NavigationBar.getNextPage().getPageLocation());
