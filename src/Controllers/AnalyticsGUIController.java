@@ -1,19 +1,29 @@
 package Controllers;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.ResourceBundle;
 
+import Controllers.Logic.CommonEffects;
+import Controllers.Logic.ControllerManager;
 import Utility.ControllerSwapper;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.PieChart.Data;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -48,12 +58,47 @@ public class AnalyticsGUIController implements Initializable {
 	@FXML
 	private Text txtStatTitle;
 
-	
+	@FXML
+	private PieChart pieChartRequests;
+
+	@FXML
+	private HBox hbBtnLineChart;
+
+	@FXML
+	private HBox hbBtnPieChart;
+
+	private ArrayList<Node> buttons;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
+		
+		buttons = new ArrayList<Node>();
+		
+		buttons.add(hbBtnLineChart);
+		buttons.add(hbBtnPieChart);
+		
+		hbBtnLineChart.setOnMouseClicked(event -> {
+			pieChartRequests.setOpacity(0);
+			chartSaReqestExecution.setOpacity(1);
+		});
+		
+		hbBtnPieChart.setOnMouseClicked(event -> {
+			pieChartRequests.setOpacity(1);
+			chartSaReqestExecution.setOpacity(0);
+		});
+		
+		for (Node node : buttons) {
+			ControllerManager.setMouseHoverPressEffects(node, CommonEffects.REQUEST_DETAILS_BUTTON_BLACK,
+					CommonEffects.REQUEST_DETAILS_BUTTON_GRAY, CommonEffects.REQUEST_DETAILS_BUTTON_BLUE, buttons,
+					Cursor.HAND);
+		}
+		
+		ControllerManager.setEffect(hbBtnLineChart, CommonEffects.REQUEST_DETAILS_BUTTON_BLUE);
+		pieChartRequests.setOpacity(0);
+		
+		
 		// chartSaReqestExecution.setTitle("Requests Status");
-
+		
 		Series<String, Number> s1 = new XYChart.Series<String, Number>();
 		Series<String, Number> s2 = new XYChart.Series<String, Number>();
 		Series<String, Number> s3 = new XYChart.Series<String, Number>();
@@ -98,11 +143,27 @@ public class AnalyticsGUIController implements Initializable {
 		lblRequestsClosed.setText(percentile(requestsClosed, requestsNumber));
 
 		chartSaReqestExecution.getData().addAll(s4, s2, s3, s1);
+
+		pieChartRequests.setData(getChartData(percentile(requestsCanceled, requestsNumber, 1),
+				percentile(requestsLocked, requestsNumber, 1), percentile(requestsActive, requestsNumber, 1),
+				percentile(requestsClosed, requestsNumber, 1)));
+	}
+
+	private ObservableList<Data> getChartData(int a, int b, int c, int d) {
+		ObservableList<Data> list = FXCollections.observableArrayList();
+		list.addAll(new PieChart.Data("Canceled", a), new PieChart.Data("Locked", b), new PieChart.Data("Active", c),
+				new PieChart.Data("Closed", d));
+		return list;
 	}
 
 	private String percentile(int num, int whole) {
-		System.out.println(whole);
+
 		return ((100 * num / whole)) + "%";
+	}
+
+	private int percentile(int num, int whole, int dummy) {
+
+		return ((100 * num / whole));
 	}
 
 	@FXML

@@ -16,12 +16,16 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -72,6 +76,8 @@ public class ClientGUI extends Application implements Initializable {
 
 	@FXML
 	private HBox hbNavigator;
+	
+
 
 	private AnchorPane selectedMenuElement;
 
@@ -134,13 +140,18 @@ public class ClientGUI extends Application implements Initializable {
 
 			ControllerManager.setMouseHoverPressEffects(node, CommonEffects.MENU_ELEMENT_ON_HOVER,
 					CommonEffects.MENU_ELEMENT_IDLE, CommonEffects.MENU_ELEMENT_PRESSED, apList, Cursor.HAND);
-			
+
 		}
 
-		
 		selectedMenuElement = null;
 
 	}
+
+	private int index = 0;
+	private int size = BlendMode.values().length;
+
+	
+	
 
 	// TODO: not working
 	@FXML
