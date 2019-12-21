@@ -32,7 +32,9 @@ public class FxmlNames {
 
 	
 	public static final String ANALYTICS = "AnalyticsGUI.fxml";
-	
+	public static final String MESSAGES = "ListOfMessages.fxml";
+	public static final String EMPLOYEES = "ListOfEmployees.fxml";
 	public static final String SETTINGS = "SettingsGUI.fxml";
+	public static final String HOME = "Home.fxml";
 
 }

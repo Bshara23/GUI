@@ -142,8 +142,11 @@ public class ClientGUI extends Application implements Initializable {
 					CommonEffects.MENU_ELEMENT_IDLE, CommonEffects.MENU_ELEMENT_PRESSED, apList, Cursor.HAND);
 
 		}
-
+		ControllerManager.setMouseHoverPressEffects(apBtnLogoMain, CommonEffects.MENU_ELEMENT_ON_HOVER,
+				CommonEffects.MENU_ELEMENT_IDLE, CommonEffects.LOGO_SELECT, apList, Cursor.HAND);
 		selectedMenuElement = null;
+		commondMenuBehavior(apBtnLogoMain, "Home", FxmlNames.HOME);
+		ControllerManager.setEffect(apBtnLogoMain, CommonEffects.LOGO_SELECT);
 
 	}
 
@@ -176,7 +179,7 @@ public class ClientGUI extends Application implements Initializable {
 	@FXML
 	void onMessagesPress(MouseEvent event) {
 
-		commondMenuBehavior(apBtnMessages, "Messages", "");
+		commondMenuBehavior(apBtnMessages, "Messages", FxmlNames.MESSAGES);
 	}
 
 	@FXML
@@ -204,12 +207,12 @@ public class ClientGUI extends Application implements Initializable {
 	@FXML
 	void onEmployeesPress(MouseEvent event) {
 
-		commondMenuBehavior(apBtnEmployees, "Employees", "");
+		commondMenuBehavior(apBtnEmployees, "Employees", FxmlNames.EMPLOYEES);
 	}
 
 	@FXML
 	void onLogoMainPress(MouseEvent event) {
-		commondMenuBehavior(apBtnLogoMain, "Home", "");
+		commondMenuBehavior(apBtnLogoMain, "Home", FxmlNames.HOME);
 	}
 
 	@FXML

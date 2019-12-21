@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -21,7 +20,7 @@
             <Font size="35.0" />
          </font>
       </Text>
-      <VBox layoutX="336.0" layoutY="73.0" prefHeight="810.0" prefWidth="682.0" spacing="35.0">
+      <VBox layoutX="336.0" layoutY="65.0" prefHeight="810.0" prefWidth="682.0" spacing="25.0">
          <children>
             <VBox fx:id="vbLoadRequestDetails" prefWidth="682.0" spacing="15.0">
                <children>
@@ -85,7 +84,7 @@
                         <Font size="20.0" />
                      </font>
                   </Text>
-                  <VBox id="container" prefHeight="153.0" prefWidth="483.0" spacing="15.0" stylesheets="@blueBorder.css">
+                  <VBox id="container" prefHeight="443.0" prefWidth="682.0" spacing="15.0" stylesheets="@blueBorder.css">
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Place:" />
                         <TextField />
@@ -97,12 +96,7 @@
                         <TextArea prefHeight="200.0" prefWidth="200.0" />
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Risks:" />
                         <TextArea prefHeight="200.0" prefWidth="200.0" />
-                        <HBox alignment="CENTER_LEFT" spacing="15.0">
-                           <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Estimated execution time:" />
-                              <DatePicker />
-                           </children>
-                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0" />
                         <HBox alignment="CENTER_RIGHT">
                            <children>
                               <HBox fx:id="hbSendExecutionDetails" alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="73.0" spacing="10.0">

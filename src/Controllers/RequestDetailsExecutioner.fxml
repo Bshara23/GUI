@@ -19,7 +19,7 @@
             <Font size="35.0" />
          </font>
       </Text>
-      <VBox layoutX="336.0" layoutY="99.41796875" spacing="60.0">
+      <VBox layoutX="336.0" layoutY="73.41796875" spacing="35.0">
          <children>
             <VBox fx:id="vbLoadRequestDetails" spacing="15.0">
                <children>

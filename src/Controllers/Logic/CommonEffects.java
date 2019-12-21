@@ -19,5 +19,6 @@ public final class CommonEffects {
 	public final static ColorAdjust REQUEST_DETAILS_BUTTON_BLACK = new ColorAdjust(0.0, 0.0, -0.48, -1.0); 
 	public final static ColorAdjust REQUEST_DETAILS_BUTTON_BLUE = new ColorAdjust(-0.78, 0.0, 0.55, 1.0); 
 
-	
+	public final static ColorAdjust LOGO_SELECT = new ColorAdjust(0.21, 0, 0.17, 0); 
+
 }

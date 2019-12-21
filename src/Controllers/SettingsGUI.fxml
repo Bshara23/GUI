@@ -21,7 +21,7 @@
             <Font size="35.0" />
          </font>
       </Text>
-      <VBox layoutX="336.0" layoutY="73.0" prefHeight="810.0" prefWidth="682.0" spacing="40.0">
+      <VBox layoutX="336.0" layoutY="37.0" prefHeight="880.0" prefWidth="682.0" spacing="40.0">
          <children>
             <HBox spacing="15.0">
                <children>
@@ -60,6 +60,28 @@
                         <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                      </padding>
                      <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="25.0" prefWidth="467.0" spacing="15.0">
+                           <children>
+                              <HBox prefHeight="25.0" prefWidth="160.0">
+                                 <children>
+                                    <Text fill="#434343" strokeType="OUTSIDE" strokeWidth="0.0" text="Action">
+                                       <font>
+                                          <Font name="System Bold" size="15.0" />
+                                       </font>
+                                    </Text>
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="25.0" prefWidth="160.0">
+                                 <children>
+                                    <Text fill="#434343" strokeType="OUTSIDE" strokeWidth="0.0" text="Keys Combination">
+                                       <font>
+                                          <Font name="System Bold" size="15.0" />
+                                       </font>
+                                    </Text>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="25.0" prefWidth="467.0" spacing="15.0">
                            <children>
                               <HBox prefHeight="25.0" prefWidth="160.0">

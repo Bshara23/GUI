@@ -18,6 +18,9 @@ public class RequestDetailsController implements Initializable {
 
 	@FXML
 	private HBox hbHide;
+	
+    @FXML
+    private HBox hbEditRequestDetails;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -25,6 +28,12 @@ public class RequestDetailsController implements Initializable {
 		hbHide.setCursor(Cursor.HAND);
 		ControllerManager.setEffect(hbHide, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 		ControllerManager.setOnHoverEffect(hbHide, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
+				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		
+		
+		hbEditRequestDetails.setCursor(Cursor.HAND);
+		ControllerManager.setEffect(hbEditRequestDetails, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		ControllerManager.setOnHoverEffect(hbEditRequestDetails, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
 				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 
 	}
