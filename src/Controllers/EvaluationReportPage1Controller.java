@@ -42,5 +42,11 @@ public class EvaluationReportPage1Controller implements Initializable {
 
 
 	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		
+	}
 
 }

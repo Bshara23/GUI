@@ -6,7 +6,7 @@ public class ChangeRequest extends SqlObject {
 
 	public long requestID;
 	public String username;
-	public Date dateOfRequest;
+	public Date dateOfRequest, estimatedTimeForExecution, endDateOfRequest;
 	public String fileGroup, commentsLT, requestDescriptionLT;
 	public String descriptionOfRequestedChangeLT;
 	public String descriptionOfCurrentStateLT;
@@ -16,6 +16,7 @@ public class ChangeRequest extends SqlObject {
 	public ChangeRequest(long requestID, String username, Date dateOfRequest, String fileGroup, String commentsLT,
 			String requestDescriptionLT, String descriptionOfRequestedChangeLT, String descriptionOfCurrentStateLT,
 			String relatedInformationSystem) {
+		super();
 		this.requestID = requestID;
 		this.username = username;
 		this.dateOfRequest = dateOfRequest;

@@ -4,13 +4,22 @@ public abstract class Report extends SqlObject {
 
 	public long reportID;
 	public long requestID;
-	public String contentLT;
-	
-	public Report(long reportID, long requestID, String contentLT) {
+	public String contentLT, place;
+
+	public Report(long reportID, long requestID, String contentLT, String place) {
 		super();
 		this.reportID = reportID;
 		this.requestID = requestID;
 		this.contentLT = contentLT;
+		this.place = place;
+	}
+
+	String getPlace() {
+		return place;
+	}
+
+	void setPlace(String place) {
+		this.place = place;
 	}
 
 	public long getReportID() {

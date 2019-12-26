@@ -285,7 +285,7 @@ public class MySQL extends MySqlConnBase {
 
 		QueryBuilder qb = new QueryBuilder();
 
-		String updateQuery = qb.update(obj.getTableName()).set(obj.getFieldsAndValues()).where(obj.getKeyName())
+		String updateQuery = qb.update(obj.getTableName()).set(obj.getFieldsAndValues()).where(obj.getPrimaryKeyName())
 				.eq(obj.getKeyValue()).toString();
 
 		int numOfRowsChanged = executePreparedStatement(updateQuery, null);
@@ -357,7 +357,7 @@ public class MySQL extends MySqlConnBase {
 
 	public void deleteObject(SqlObject obj) {
 
-		String query = qb.deleteFrom(obj.getTableName()).where(obj.getKeyName()).eq(obj.getKeyValue()).toString();
+		String query = qb.deleteFrom(obj.getTableName()).where(obj.getPrimaryKeyName()).eq(obj.getKeyValue()).toString();
 
 		executePreparedStatement(query, null);
 
@@ -367,7 +367,8 @@ public class MySQL extends MySqlConnBase {
 
 		StringBuilder query = new StringBuilder();
 		query.append("CREATE TABLE ");
-		query.append(obj.tableInfo());
+		query.append(obj.tableInfo());		  
+		
 		query.append(";");
 
 		executePreparedStatement(query.toString(), null);

@@ -2,32 +2,25 @@ package Entities;
 
 public class ExecutionChangesCommitteeMember extends Employee {
 	
-	public long empNumber;
-	public String position;
-	
+	public boolean isManager;
+
 	public ExecutionChangesCommitteeMember(String userName, String password, String email, String firstName,
 			String lastName, String phoneNo, long empNumber, String empDepartment, String organizationalRole,
-			long empNumber2, String position) {
+			boolean isManager) {
 		super(userName, password, email, firstName, lastName, phoneNo, empNumber, empDepartment, organizationalRole);
-		empNumber = empNumber2;
-		this.position = position;
+		this.isManager = isManager;
 	}
 
-	public long getEmpNumber() {
-		return empNumber;
+	boolean isManager() {
+		return isManager;
 	}
 
-	public void setEmpNumber(long empNumber) {
-		this.empNumber = empNumber;
+	void setManager(boolean isManager) {
+		this.isManager = isManager;
 	}
+	
 
-	public String getPosition() {
-		return position;
-	}
-
-	public void setPosition(String position) {
-		this.position = position;
-	}
+	
 	
 	
 	

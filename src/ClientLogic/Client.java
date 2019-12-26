@@ -1,6 +1,6 @@
 package ClientLogic;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import Utility.VoidFunc;
 import Utility.StringFunc;
@@ -11,29 +11,26 @@ import ocsf.client.*;
 public class Client extends AbstractClient {
 
 	private static Client instance;
-	private static ArrayList<VoidFunc> serverExceptionEvents;
-	private static ArrayList<VoidFunc> serverConnectionClosedEvents;
-	private static ArrayList<VoidFunc> serverConnectionEstablishedEvents;
+	private static HashMap<String, VoidFunc> serverExceptionEvents;
+	private static HashMap<String, VoidFunc> serverConnectionClosedEvents;
+	private static HashMap<String, VoidFunc> serverConnectionEstablishedEvents;
 
-	private static ArrayList<ObjectFunc> objectRecievedFromServerEvents;
-	private static ArrayList<StringFunc> stringRecievedFromServerEvents;
-
+	private static HashMap<String, ObjectFunc> objectRecievedFromServerEvents;
+	private static HashMap<String, StringFunc> stringRecievedFromServerEvents;
 
 	static {
 		instance = new Client("10.0.0.127", 5555);
-		serverExceptionEvents = new ArrayList<VoidFunc>();
-		serverConnectionClosedEvents = new ArrayList<VoidFunc>();
-		serverConnectionEstablishedEvents = new ArrayList<VoidFunc>();
-		objectRecievedFromServerEvents = new ArrayList<ObjectFunc>();
-		stringRecievedFromServerEvents = new ArrayList<StringFunc>();
+		serverExceptionEvents = new HashMap<String, VoidFunc>();
+		serverConnectionClosedEvents = new HashMap<String, VoidFunc>();
+		serverConnectionEstablishedEvents = new HashMap<String, VoidFunc>();
+		objectRecievedFromServerEvents = new HashMap<String, ObjectFunc>();
+		stringRecievedFromServerEvents = new HashMap<String, StringFunc>();
 	}
 
 	public static Client getInstance() {
 
 		return instance;
 	}
-	
-	
 
 	// Initialize the client
 	public void initialize(String host, int port) {
@@ -52,14 +49,14 @@ public class Client extends AbstractClient {
 
 			@Override
 			public void run() {
-				for (ObjectFunc f : objectRecievedFromServerEvents) {
+				for (ObjectFunc f : objectRecievedFromServerEvents.values()) {
 					if (f != null)
 						f.call(msg);
 				}
-				
+
 				if (msg instanceof String) {
 					String str = (String) msg;
-					for (StringFunc f : stringRecievedFromServerEvents) {
+					for (StringFunc f : stringRecievedFromServerEvents.values()) {
 						if (f != null)
 							f.call(str);
 					}
@@ -78,7 +75,7 @@ public class Client extends AbstractClient {
 
 			@Override
 			public void run() {
-				for (VoidFunc voidFunc : serverExceptionEvents) {
+				for (VoidFunc voidFunc : serverExceptionEvents.values()) {
 					if (voidFunc != null)
 						voidFunc.call();
 				}
@@ -86,57 +83,53 @@ public class Client extends AbstractClient {
 		});
 	}
 
-	
 	@Override
 	protected void connectionClosed() {
-		
+
 		Platform.runLater(new Runnable() {
 
 			@Override
 			public void run() {
-				for (VoidFunc voidFunc : serverConnectionClosedEvents) {
+				for (VoidFunc voidFunc : serverConnectionClosedEvents.values()) {
 					if (voidFunc != null)
 						voidFunc.call();
 				}
 			}
 		});
-		
+
 	}
-	
+
 	@Override
 	protected void connectionEstablished() {
 		Platform.runLater(new Runnable() {
 
 			@Override
 			public void run() {
-				for (VoidFunc voidFunc : serverConnectionEstablishedEvents) {
+				for (VoidFunc voidFunc : serverConnectionEstablishedEvents.values()) {
 					if (voidFunc != null)
 						voidFunc.call();
 				}
 			}
 		});
 	}
-	
-	
-	
-	
-	public static void addServerConnectionEstablishedEvent(VoidFunc voidFunc) {
-		serverConnectionEstablishedEvents.add(voidFunc);
-	}
-	
-	public static void addServerConnectionClosedEvent(VoidFunc voidFunc) {
-		serverConnectionClosedEvents.add(voidFunc);
-	}
-	
-	public static void addServerExceptionEvent(VoidFunc voidFunc) {
-		serverExceptionEvents.add(voidFunc);
+
+	public static void addServerConnectionEstablishedEvent(String key, VoidFunc voidFunc) {
+		serverConnectionEstablishedEvents.put(key, voidFunc);
 	}
 
-	public void addStringRecievedFromServer(StringFunc stringFunc) {
-		stringRecievedFromServerEvents.add(stringFunc);
+	public static void addServerConnectionClosedEvent(String key, VoidFunc voidFunc) {
+		serverConnectionClosedEvents.put(key, voidFunc);
 	}
-	
-	public void addObjectRecievedFromServer(ObjectFunc objectFunc) {
-		objectRecievedFromServerEvents.add(objectFunc);
+
+	public static void addServerExceptionEvent(String key, VoidFunc voidFunc) {
+		serverExceptionEvents.put(key, voidFunc);
+	}
+
+	public void addStringRecievedFromServer(String key, StringFunc stringFunc) {
+		stringRecievedFromServerEvents.put(key, stringFunc);
+	}
+
+	public void addObjectRecievedFromServer(String key, ObjectFunc objectFunc) {
+		objectRecievedFromServerEvents.put(key, objectFunc);
 	}
 }

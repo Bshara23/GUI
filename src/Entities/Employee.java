@@ -4,6 +4,7 @@ public class Employee extends SystemUser {
 
 	
 	public long empNumber;
+	public String userName;
 	public String empDepartment, organizationalRole;
 	
 	
@@ -15,6 +16,11 @@ public class Employee extends SystemUser {
 		this.empNumber = empNumber;
 		this.empDepartment = empDepartment;
 		this.organizationalRole = organizationalRole;
+		setForeignKeyIndex(1);
+		setPrimaryKeyIndex(0);
+		setForeignKeyName(userName);
+		setReferenceTable(super.getTableName());
+
 	}
 
 

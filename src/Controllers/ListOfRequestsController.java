@@ -19,6 +19,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
@@ -159,8 +160,10 @@ public class ListOfRequestsController implements Initializable {
 		ControllerManager.setEffect(jobs, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
 		ControllerManager.setEffect(tableButtons, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
 
+		
+		
+		
 		tblSupervisorRequests.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
 		final ObservableList<TablePosition> selectedCells = tblSupervisorRequests.getSelectionModel().getSelectedCells();
 		selectedCells.addListener(new ListChangeListener<TablePosition>() {
 		    @Override
@@ -175,6 +178,7 @@ public class ListOfRequestsController implements Initializable {
 		        }
 		    };
 		});
+		
 		
 		addRandomDataToTable();
 
@@ -287,15 +291,17 @@ public class ListOfRequestsController implements Initializable {
 	}
 
 	private void initTable() {
+		
 		tcRequestID.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S1"));
 		tcIssueDate.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S2"));
 		tcCurrentPhase.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S3"));
 		tcStatus.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S4"));
 		tcDeadline.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S5"));
-
+		
 	}
 
 	private void addContentToTable(ArrayList<TableDataRequests> strs) {
+		tblSupervisorRequests.getSelectionModel().setCellSelectionEnabled(true);
 
 		tblSupervisorRequests.setItems(FXCollections.observableArrayList(strs));
 
