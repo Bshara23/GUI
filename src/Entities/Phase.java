@@ -5,12 +5,19 @@ import java.util.ArrayList;
 
 public class Phase extends SqlObject {
 
+	
+	private static Phase emptyInstance = new Phase(0, 0, null, null, 0, null, null, null, 0);
+	public static Phase getEmptyInstance() {
+		return emptyInstance;
+	}
+	
 	public long phaseID;
+	public long requestID;
 	public String phaseName, status;
 	public long empNumber;
 
 	public Date deadline, estimatedTimeOfCompletion, timeOfCompletion;
-	public boolean hasBeenTimeExtended;
+	public int hasBeenTimeExtended;
 
 	private PhaseTimeExtensionRequest phaseTimeExtensionRequest;
 	
@@ -20,10 +27,15 @@ public class Phase extends SqlObject {
 	
 
 
-	public Phase(long phaseID, String phaseName, String status, long empNumber, Date deadline,
-			Date estimatedTimeOfCompletion, Date timeOfCompletion, boolean hasBeenTimeExtended) {
+
+
+
+	
+	public Phase(long phaseID, long requestID, String phaseName, String status, long empNumber, Date deadline,
+			Date estimatedTimeOfCompletion, Date timeOfCompletion, int hasBeenTimeExtended) {
 		super();
 		this.phaseID = phaseID;
+		this.requestID = requestID;
 		this.phaseName = phaseName;
 		this.status = status;
 		this.empNumber = empNumber;
@@ -35,6 +47,17 @@ public class Phase extends SqlObject {
 		files = new ArrayList<File>();
 		phases = new ArrayList<Phase>(5);
 	}
+
+
+	public long getRequestID() {
+		return requestID;
+	}
+
+
+	public void setRequestID(long requestID) {
+		this.requestID = requestID;
+	}
+
 
 	EvaluationReport getEvaluationReport() {
 		return evaluationReport;
@@ -125,12 +148,48 @@ public class Phase extends SqlObject {
 		this.timeOfCompletion = timeOfCompletion;
 	}
 
-	public boolean isHasBeenTimeExtended() {
+	public int isHasBeenTimeExtended() {
 		return hasBeenTimeExtended;
 	}
 
-	public void setHasBeenTimeExtended(boolean hasBeenTimeExtended) {
+	public void setHasBeenTimeExtended(int hasBeenTimeExtended) {
 		this.hasBeenTimeExtended = hasBeenTimeExtended;
+	}
+
+	@Override
+	public int getPrimaryKeyIndex() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getForeignKeyIndex() {
+		// TODO Auto-generated method stub
+		return 1;
+	}
+
+	@Override
+	public String getReferenceTableName() {
+		// TODO Auto-generated method stub
+		return "ChangeRequest";
+	}
+
+	@Override
+	public boolean hasForeignKey() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public String getReferenceTableForeignKeyName() {
+		// TODO Auto-generated method stub
+		return "requestID";
+	}
+
+	@Override
+	public int fieldsLastIndex() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 	

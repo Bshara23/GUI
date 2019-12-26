@@ -12,6 +12,7 @@ public abstract class SqlObject implements Serializable {
 		public static final String sqlLong = "BIGINT(8)";
 		public static final String sqlInt = "INT";
 		public static final String sqlDate = "DATE";
+		public static final String sqlBlob = "LONGBLOB";
 		public static final String sqlBoolean = "BOOLEAN";
 		public static final String sqlString = "VARCHAR(256)";
 		public static final String sqlLongText = "LONGTEXT";
@@ -24,52 +25,17 @@ public abstract class SqlObject implements Serializable {
 
 	}
 
+	private int fieldsCount;
+
 	private String tableName;
 
-	String getForeignKeyName() {
-		return foreignKeyName;
-	}
-
-	void setForeignKeyName(String foreignKeyName) {
-		this.foreignKeyName = foreignKeyName;
-	}
-
-	private int primaryKeyIndex, foreignKeyIndex;
-	private String primaryKeyName, foreignKeyName, referenceTable;
 	private Field[] fields;
 	private String[] fieldsNames;
 
 	public SqlObject() {
-		this(0, -1);
-	}
-
-	int getPrimaryKeyIndex() {
-		return primaryKeyIndex;
-	}
-
-	void setPrimaryKeyIndex(int primaryKeyIndex) {
-		this.primaryKeyIndex = primaryKeyIndex;
-	}
-
-	int getForeignKeyIndex() {
-		return foreignKeyIndex;
-	}
-
-	void setForeignKeyIndex(int foreignKeyIndex) {
-		this.foreignKeyIndex = foreignKeyIndex;
-	}
-
-	void setPrimaryKeyName(String primaryKeyName) {
-		this.primaryKeyName = primaryKeyName;
-	}
-
-	public SqlObject(int primaryKeyIndex, int foreignKeyIndex) {
-		
-		this.primaryKeyIndex = primaryKeyIndex;
-		this.foreignKeyIndex = primaryKeyIndex;
-
 		fields = this.getClass().getFields();
-		this.foreignKeyName = "";
+
+		fieldsCount = fieldsLastIndex() > 0 ? fieldsLastIndex() + (hasForeignKey() ? 1 : 0) : fields.length;
 		tableName = this.getClass().getName();
 
 		// Table name should not contain dots.
@@ -79,10 +45,6 @@ public abstract class SqlObject implements Serializable {
 			tableName = tableName.substring(tableName.lastIndexOf('.') + 1);
 
 		}
-
-		primaryKeyName = this.getClass().getFields()[primaryKeyIndex].getName();
-		if (foreignKeyIndex != -1)
-			foreignKeyName = this.getClass().getFields()[foreignKeyIndex].getName();
 
 		fieldsNames = calFieldsNames();
 	}
@@ -111,7 +73,8 @@ public abstract class SqlObject implements Serializable {
 
 		Field[] fields = getClass().getFields();
 
-		for (int i = 0; i < fields.length; i++) {
+
+		for (int i = 0; i < fieldsCount; i++) {
 
 			String fieldName = fields[i].getName();
 			sb.append("`" + fieldName + "` ");
@@ -137,7 +100,12 @@ public abstract class SqlObject implements Serializable {
 				sb.append(Config.sqlDate);
 
 				break;
+				
+			case "interface java.sql.Blob":
+				sb.append(Config.sqlBlob);
 
+				break;
+				
 			case "class java.lang.String":
 
 				// If the field name ends with this suffix then configure it as a long text
@@ -154,6 +122,7 @@ public abstract class SqlObject implements Serializable {
 
 			default:
 				sb.append(Config.sqlDefault);
+				System.err.println("Error: type [" + fieldType + "] not recognized! in class " + this.getClass().getName());
 
 				break;
 			}
@@ -164,12 +133,17 @@ public abstract class SqlObject implements Serializable {
 
 		// Adding the primary key
 
-		sb.append("PRIMARY KEY (`" + getPrimaryKeyName() + "`))");
+		sb.append("PRIMARY KEY (`" + getPrimaryKeyName() + "`)");
 
-		if (foreignKeyIndex != -1) {
-			sb.deleteCharAt(sb.length() - 1);
-			sb.append(",FOREIGN KEY ('" + getForeignKeyName() + "') REFERENCES " + getReferenceTable() + " ('"
-					+ getForeignKeyName() + "') ON DELETE CASCADE ON UPDATE CASCADE");
+		if (hasForeignKey()) {
+			sb.append(", CONSTRAINT `" + getReferenceTableForeignKeyName() + tableName + "FK` FOREIGN KEY (`"
+					+ getForeignKeyName() + "`) ");
+			sb.append("REFERENCES `" + Config.schemaName + "`.`" + getReferenceTableName() + "` (`"
+					+ getReferenceTableForeignKeyName() + "`) ");
+			sb.append("ON DELETE CASCADE ON UPDATE CASCADE )");
+		} else {
+			sb.append(")");
+
 		}
 
 		return sb.toString();
@@ -179,26 +153,57 @@ public abstract class SqlObject implements Serializable {
 	 * By default, the key is the first public field in the class. Override this
 	 * method to change the key.
 	 */
-	public String getPrimaryKeyName() {
-		return primaryKeyName;
-	}
 
-	public String getReferenceTable() {
-		return referenceTable;
-	}
+	
+	
+	public abstract int getPrimaryKeyIndex();
 
-	void setReferenceTable(String referenceTable) {
-		this.referenceTable = referenceTable;
-	}
+	public abstract int getForeignKeyIndex();
 
+	public abstract String getReferenceTableName();
+
+	public abstract boolean hasForeignKey();
+
+	public abstract String getReferenceTableForeignKeyName();
+
+	public abstract int fieldsLastIndex();
 
 	/**
 	 * returns the value of the primary key as an String object.
 	 */
-	public String getKeyValue() {
+	public String getForeignKeyName() {
+		return getFieldName(getForeignKeyIndex());
+	}
+
+	/**
+	 * returns the value of the primary key as an String object.
+	 */
+	public String getPrimaryKeyName() {
+		return getFieldName(getPrimaryKeyIndex());
+	}
+
+	/**
+	 * returns the value of the primary key as an String object.
+	 */
+	public String getPrimaryKeyValue() {
+		return getFieldValue(getPrimaryKeyIndex());
+	}
+
+
+	private String getFieldValue(int index) {
 		try {
-			return getClass().getFields()[primaryKeyIndex].get(this).toString();
+			return getClass().getFields()[index].get(this).toString();
 		} catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
+	}
+
+	public String getFieldName(int index) {
+		try {
+			return getClass().getFields()[index].getName();
+		} catch (IllegalArgumentException | SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -208,9 +213,9 @@ public abstract class SqlObject implements Serializable {
 	public String[] getFieldsAndValues() {
 
 		Field[] fields = getClass().getFields();
-		String[] results = new String[fields.length * 2];
+		String[] results = new String[fieldsCount * 2];
 
-		for (int i = 0, j = 0; i < fields.length; i++, j += 2) {
+		for (int i = 0, j = 0; i < fieldsCount; i++, j += 2) {
 			results[j] = fields[i].getName();
 			try {
 				results[j + 1] = fields[i].get(this).toString();
@@ -226,9 +231,9 @@ public abstract class SqlObject implements Serializable {
 	private String[] calFieldsNames() {
 
 		Field[] fields = getClass().getFields();
-		String[] results = new String[fields.length];
+		String[] results = new String[fieldsCount];
 
-		for (int i = 0; i < fields.length; i++) {
+		for (int i = 0; i < fieldsCount; i++) {
 			results[i] = fields[i].getName();
 		}
 		return results;
@@ -241,11 +246,12 @@ public abstract class SqlObject implements Serializable {
 	public String[] getFieldsValues() {
 
 		Field[] fields = getClass().getFields();
-		String[] results = new String[fields.length];
+		String[] results = new String[fieldsCount];
 
-		for (int i = 0; i < fields.length; i++) {
+		for (int i = 0; i < fieldsCount; i++) {
 			try {
 				results[i] = "'" + fields[i].get(this).toString() + "'";
+
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

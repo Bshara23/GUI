@@ -4,15 +4,21 @@ import java.sql.Date;
 
 public class Message extends SqlObject {
 
+	
+	private static Message emptyInstance = new Message(0, null, null, null, null, 0, null, 0, 0, 0);
+	public static Message getEmptyInstance() {
+		return emptyInstance;
+	}
+	
 	public long messageID;
 	public String subject, from, to, messageContentLT;
-	public boolean hasBeenViewed;
+	public int hasBeenViewed;
 	public Date sentAt;
-	public boolean isStarred, isRead, isArchived;
+	public int isStarred, isRead, isArchived;
 	
 
 	public Message(long messageID, String subject, String from, String to, String messageContentLT,
-			boolean hasBeenViewed, Date sentAt, boolean isStarred, boolean isRead, boolean isArchived) {
+			int hasBeenViewed, Date sentAt, int isStarred, int isRead, int isArchived) {
 		super();
 		this.messageID = messageID;
 		this.subject = subject;
@@ -26,27 +32,27 @@ public class Message extends SqlObject {
 		this.isArchived = isArchived;
 	}
 
-	boolean isStarred() {
+	int isStarred() {
 		return isStarred;
 	}
 
-	void setStarred(boolean isStarred) {
+	void setStarred(int isStarred) {
 		this.isStarred = isStarred;
 	}
 
-	boolean isRead() {
+	int isRead() {
 		return isRead;
 	}
 
-	void setRead(boolean isRead) {
+	void setRead(int isRead) {
 		this.isRead = isRead;
 	}
 
-	boolean isArchived() {
+	int isArchived() {
 		return isArchived;
 	}
 
-	void setArchived(boolean isArchived) {
+	void setArchived(int isArchived) {
 		this.isArchived = isArchived;
 	}
 
@@ -98,12 +104,48 @@ public class Message extends SqlObject {
 		this.messageContentLT = messageContentLT;
 	}
 
-	public boolean isHasBeenViewed() {
+	public int isHasBeenViewed() {
 		return hasBeenViewed;
 	}
 
-	public void setHasBeenViewed(boolean hasBeenViewed) {
+	public void setHasBeenViewed(int hasBeenViewed) {
 		this.hasBeenViewed = hasBeenViewed;
+	}
+
+	@Override
+	public int getPrimaryKeyIndex() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getForeignKeyIndex() {
+		// TODO Auto-generated method stub
+		return 3;
+	}
+
+	@Override
+	public String getReferenceTableName() {
+		// TODO Auto-generated method stub
+		return "SystemUser";
+	}
+
+	@Override
+	public boolean hasForeignKey() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public String getReferenceTableForeignKeyName() {
+		// TODO Auto-generated method stub
+		return "userName";
+	}
+
+	@Override
+	public int fieldsLastIndex() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 	

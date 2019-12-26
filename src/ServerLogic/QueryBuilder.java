@@ -1,14 +1,20 @@
 package ServerLogic;
 
-
 public class QueryBuilder {
 
 	StringBuilder query;
-	
+
 	public QueryBuilder() {
 		query = new StringBuilder();
 	}
 
+	private void addStringWithCommaAndClosed(String... strs) {
+		for (String s : strs) {
+			query.append("`"+s + "`, ");
+		}
+		query.deleteCharAt(query.length() - 1);
+		query.deleteCharAt(query.length() - 1);
+	}
 	private void addStringsWithComma(String... strs) {
 		for (String s : strs) {
 			query.append(s + ", ");
@@ -31,7 +37,7 @@ public class QueryBuilder {
 
 		return this;
 	}
-	
+
 	public QueryBuilder from(String col1, String col2) {
 		query.append(" FROM " + col1 + ", " + col2);
 
@@ -55,61 +61,58 @@ public class QueryBuilder {
 
 		return this;
 	}
-	
+
 	public QueryBuilder and(String str) {
 		query.append(" AND " + str);
 
 		return this;
 	}
-	
+
 	public QueryBuilder less(String str) {
 		query.append(" < " + sqlStr(str));
 
 		return this;
 	}
-	
+
 	public QueryBuilder lessEq(String str) {
 		query.append(" <= " + sqlStr(str));
 
 		return this;
 	}
-	
+
 	public QueryBuilder greater(String str) {
-		query.append(" > " + sqlStr(str));;
+		query.append(" > " + sqlStr(str));
+		;
 		return this;
 	}
-	
+
 	public QueryBuilder greaterEq(String str) {
 		query.append(" >= " + sqlStr(str));
 		return this;
 	}
-	
-	
+
 	public QueryBuilder eq(String str) {
 		query.append(" = " + sqlStr(str));
 		return this;
 	}
 
-	
 	public QueryBuilder insertInto(String str) {
 		// clear the stringBuilder
 		query.setLength(0);
-		
+
 		query.append("INSERT INTO " + str);
 
 		return this;
 	}
-	
-	
 
 	public QueryBuilder forColumns(String... cols) {
 		query.append(" (");
-		addStringsWithComma(cols);
+		addStringWithCommaAndClosed(cols);
 		query.append(") ");
 
 		return this;
 	}
-	
+
 	public QueryBuilder theValues(String... vals) {
 		query.append("VALUES (");
 		addStringsWithComma(vals);
@@ -117,35 +120,33 @@ public class QueryBuilder {
 
 		return this;
 	}
-	
-	
-	
+
 	public QueryBuilder deleteFrom(String table) {
 		// clear the stringBuilder
 		query.setLength(0);
-		
+
 		query.append("DELETE FROM " + table);
 
 		return this;
 	}
-	
+
 	public QueryBuilder update(String tableName) {
 		// clear the stringBuilder
 		query.setLength(0);
-		
+
 		query.append("UPDATE " + tableName);
 
 		return this;
 	}
-	
-	public QueryBuilder set(String...colVal) {
+
+	public QueryBuilder set(String... colVal) {
 		query.append(" SET ");
-		
+
 		if (colVal.length % 2 != 0)
 			System.err.println("QuerySetError, for each column there should be a value!");
 		else {
-			for (int i = 0; i < colVal.length; i+=2) {
-				query.append(colVal[i] + " = " + sqlStr(colVal[i+1]) + ", ");
+			for (int i = 0; i < colVal.length; i += 2) {
+				query.append(colVal[i] + " = " + sqlStr(colVal[i + 1]) + ", ");
 
 			}
 			query.deleteCharAt(query.length() - 1);
@@ -155,18 +156,14 @@ public class QueryBuilder {
 
 		return this;
 	}
-	
-	
+
 	public QueryBuilder colWithVal(String col, String val) {
-		
+
 		query.append(col + " = " + sqlStr(val));
 
 		return this;
 	}
-	
-	
-	
-	
+
 	// TODO: reduce duplicate with 'theValues' function
 	public QueryBuilder in(String... vals) {
 		query.append("IN (");
@@ -175,25 +172,26 @@ public class QueryBuilder {
 
 		return this;
 	}
-	
+
 	public String avg(String col) {
-		return "AVG("+col+")";
+		return "AVG(" + col + ")";
 	}
+
 	public String count(String col) {
-		return "COUNT("+col+")";
+		return "COUNT(" + col + ")";
 	}
+
 	public String sum(String col) {
-		return "SUM("+col+")";
+		return "SUM(" + col + ")";
 	}
+
 	private String sqlStr(String str) {
 		return "'" + str + "'";
 	}
-	
-	
+
 	public String toString() {
 		return query.toString() + ";";
 	}
 
-
-
+	
 }

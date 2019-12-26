@@ -6,6 +6,11 @@ public class SystemUser extends SqlObject {
 	public String userName, password, email;
 	public String firstName, lastName, phoneNo;
 	
+	private static SystemUser emptyInstance = new SystemUser(null, null, null, null, null, null);
+	public static SystemUser getEmptyInstance() {
+		return emptyInstance;
+	}
+	
 	public SystemUser(String userName, String password, String email, String firstName, String lastName,
 			String phoneNo) {
 		super();
@@ -63,6 +68,43 @@ public class SystemUser extends SqlObject {
 
 	public void setPhoneNo(String phoneNo) {
 		this.phoneNo = phoneNo;
+	}
+
+	@Override
+	public int getPrimaryKeyIndex() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getForeignKeyIndex() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	@Override
+	public boolean hasForeignKey() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public String getReferenceTableForeignKeyName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getReferenceTableName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int fieldsLastIndex() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 	

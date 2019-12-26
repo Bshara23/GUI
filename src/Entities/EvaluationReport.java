@@ -4,6 +4,11 @@ import java.sql.Date;
 
 public class EvaluationReport extends Report {
 
+	private static EvaluationReport emptyInstance = new EvaluationReport(0, 0, null, null, null, null, null, null);
+	public static EvaluationReport getEmptyInstance() {
+		return emptyInstance;
+	}
+	
 	public String result, constraints, risks;
 	public Date estimatedExecutionTime;
 	
@@ -54,6 +59,48 @@ public class EvaluationReport extends Report {
 
 	public void setEstimatedExecutionTime(Date estimatedExecutionTime) {
 		this.estimatedExecutionTime = estimatedExecutionTime;
+	}
+
+
+	@Override
+	public int getPrimaryKeyIndex() {
+		// TODO Auto-generated method stub
+		return 4;
+	}
+
+
+	@Override
+	public int getForeignKeyIndex() {
+		// TODO Auto-generated method stub
+		return 5;
+	}
+
+
+	@Override
+	public String getReferenceTableName() {
+		// TODO Auto-generated method stub
+		return "ChangeRequest";
+	}
+
+
+	@Override
+	public boolean hasForeignKey() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+
+	@Override
+	public String getReferenceTableForeignKeyName() {
+		// TODO Auto-generated method stub
+		return "requestID";
+	}
+
+
+	@Override
+	public int fieldsLastIndex() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 	

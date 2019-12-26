@@ -1,32 +1,146 @@
 package Entities;
 
 import java.sql.Date;
+import java.util.ArrayList;
 
 public class ChangeRequest extends SqlObject {
 
+	
+	private static ChangeRequest emptyInstance = new ChangeRequest(0, null, null, null, null, null, null, null, null, null);
+	
+	
+	public static ChangeRequest getEmptyInstance() {
+		return emptyInstance;
+	}
+
+
+
 	public long requestID;
 	public String username;
-	public Date dateOfRequest, estimatedTimeForExecution, endDateOfRequest;
-	public String fileGroup, commentsLT, requestDescriptionLT;
+	public Date startDateOfRequest, estimatedTimeForExecution, endDateOfRequest;
+	public String commentsLT, requestDescriptionLT;
 	public String descriptionOfRequestedChangeLT;
 	public String descriptionOfCurrentStateLT;
 	public String relatedInformationSystem;
 	
+	private ArrayList<EvaluationReport> evaluationReports;
+	private ArrayList<ExecutionReport> executionReports;
+	private ArrayList<File> files;
+	private ArrayList<Phase> phases;
 	
-	public ChangeRequest(long requestID, String username, Date dateOfRequest, String fileGroup, String commentsLT,
-			String requestDescriptionLT, String descriptionOfRequestedChangeLT, String descriptionOfCurrentStateLT,
+	
+	
+
+
+	
+
+	public ChangeRequest(long requestID, String username, Date startDateOfRequest, Date estimatedTimeForExecution,
+			Date endDateOfRequest, String commentsLT, String requestDescriptionLT,
+			String descriptionOfRequestedChangeLT, String descriptionOfCurrentStateLT,
 			String relatedInformationSystem) {
 		super();
 		this.requestID = requestID;
 		this.username = username;
-		this.dateOfRequest = dateOfRequest;
-		this.fileGroup = fileGroup;
+		this.startDateOfRequest = startDateOfRequest;
+		this.estimatedTimeForExecution = estimatedTimeForExecution;
+		this.endDateOfRequest = endDateOfRequest;
 		this.commentsLT = commentsLT;
 		this.requestDescriptionLT = requestDescriptionLT;
 		this.descriptionOfRequestedChangeLT = descriptionOfRequestedChangeLT;
 		this.descriptionOfCurrentStateLT = descriptionOfCurrentStateLT;
 		this.relatedInformationSystem = relatedInformationSystem;
+		
+
+		this.evaluationReports = new ArrayList<EvaluationReport>();
+		this.executionReports = new ArrayList<ExecutionReport>();
+		this.files = new ArrayList<File>();
+		this.phases = new ArrayList<Phase>();
 	}
+
+
+
+	public Date getStartDateOfRequest() {
+		return startDateOfRequest;
+	}
+
+
+
+	public void setStartDateOfRequest(Date startDateOfRequest) {
+		this.startDateOfRequest = startDateOfRequest;
+	}
+
+
+
+	public Date getEstimatedTimeForExecution() {
+		return estimatedTimeForExecution;
+	}
+
+
+
+	public void setEstimatedTimeForExecution(Date estimatedTimeForExecution) {
+		this.estimatedTimeForExecution = estimatedTimeForExecution;
+	}
+
+
+
+	public Date getEndDateOfRequest() {
+		return endDateOfRequest;
+	}
+
+
+
+	public void setEndDateOfRequest(Date endDateOfRequest) {
+		this.endDateOfRequest = endDateOfRequest;
+	}
+
+
+
+	public ArrayList<EvaluationReport> getEvaluationReports() {
+		return evaluationReports;
+	}
+
+
+
+	public void setEvaluationReports(ArrayList<EvaluationReport> evaluationReports) {
+		this.evaluationReports = evaluationReports;
+	}
+
+
+
+	public ArrayList<ExecutionReport> getExecutionReports() {
+		return executionReports;
+	}
+
+
+
+	public void setExecutionReports(ArrayList<ExecutionReport> executionReports) {
+		this.executionReports = executionReports;
+	}
+
+
+
+	public ArrayList<File> getFiles() {
+		return files;
+	}
+
+
+
+	public void setFiles(ArrayList<File> files) {
+		this.files = files;
+	}
+
+
+
+	public ArrayList<Phase> getPhases() {
+		return phases;
+	}
+
+
+
+	public void setPhases(ArrayList<Phase> phases) {
+		this.phases = phases;
+	}
+
 
 
 	public long getRequestID() {
@@ -50,22 +164,12 @@ public class ChangeRequest extends SqlObject {
 
 
 	public Date getDateOfRequest() {
-		return dateOfRequest;
+		return startDateOfRequest;
 	}
 
 
 	public void setDateOfRequest(Date dateOfRequest) {
-		this.dateOfRequest = dateOfRequest;
-	}
-
-
-	public String getFileGroup() {
-		return fileGroup;
-	}
-
-
-	public void setFileGroup(String fileGroup) {
-		this.fileGroup = fileGroup;
+		this.startDateOfRequest = dateOfRequest;
 	}
 
 
@@ -116,6 +220,54 @@ public class ChangeRequest extends SqlObject {
 
 	public void setRelatedInformationSystem(String relatedInformationSystem) {
 		this.relatedInformationSystem = relatedInformationSystem;
+	}
+
+
+
+	@Override
+	public int getPrimaryKeyIndex() {
+		return 0;
+	}
+
+
+
+	@Override
+	public int getForeignKeyIndex() {
+		// TODO Auto-generated method stub
+		return -1;
+	}
+
+
+
+
+	@Override
+	public boolean hasForeignKey() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	public String getReferenceTableForeignKeyName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public String getReferenceTableName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public int fieldsLastIndex() {
+		// TODO Auto-generated method stub
+		return 10;
 	}
 	
 	

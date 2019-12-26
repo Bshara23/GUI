@@ -4,6 +4,11 @@ import java.sql.Blob;
 
 public class File extends SqlObject {
 
+	private static File emptyInstance = new File(0, 0, null, null, null);
+	public static File getEmptyInstance() {
+		return emptyInstance;
+	}
+	
 	public long ID, requestID;
 	public Blob data;
 	public String fileName, type;
@@ -57,6 +62,39 @@ public class File extends SqlObject {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	@Override
+	public int getPrimaryKeyIndex() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getForeignKeyIndex() {
+		return 1;
+	}
+
+	@Override
+	public String getReferenceTableName() {
+		return "ChangeRequest";
+	}
+
+	@Override
+	public boolean hasForeignKey() {
+		return true;
+	}
+
+	@Override
+	public String getReferenceTableForeignKeyName() {
+		// TODO Auto-generated method stub
+		return "requestID";
+	}
+
+	@Override
+	public int fieldsLastIndex() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 	
