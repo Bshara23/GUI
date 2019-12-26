@@ -16,11 +16,15 @@ import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Utility.AppManager;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
@@ -99,17 +103,13 @@ public class ListOfRequestsController implements Initializable {
 
 	@FXML
 	private Line lineBottomJobs;
-    @FXML
-    private Text txtPageHeader;
+	@FXML
+	private Text txtPageHeader;
 
 	private ArrayList<Node> tableButtons, jobs;
 
 	public static boolean disableAllJobs = false;
 	public static String pageHeader = "";
-	
-
-
-
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -161,6 +161,21 @@ public class ListOfRequestsController implements Initializable {
 
 		tblSupervisorRequests.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
+		final ObservableList<TablePosition> selectedCells = tblSupervisorRequests.getSelectionModel().getSelectedCells();
+		selectedCells.addListener(new ListChangeListener<TablePosition>() {
+		    @Override
+		    public void onChanged(Change change) {
+		        for (TablePosition pos : selectedCells) {
+		        	if(pos.getColumn() == 0) {
+			            System.out.println("row 0 is selected, call a function here");
+		        	}
+		        	if(pos.getColumn() == 1) {
+			            System.out.println("row 0 is selected, call a function here");
+		        	}
+		        }
+		    };
+		});
+		
 		addRandomDataToTable();
 
 		// TODO: bug. the line does not work unless the function has been called by the
@@ -185,8 +200,6 @@ public class ListOfRequestsController implements Initializable {
 
 	}
 
-
-
 	private void addRandomDataToTable() {
 		Random rnd = new Random();
 
@@ -198,35 +211,28 @@ public class ListOfRequestsController implements Initializable {
 			String s1 = rnd.nextInt(200) + 1 + "";
 
 			int day = rnd.nextInt(28);
-			
-			
+
 			Calendar calendar = new GregorianCalendar(2013, 1, day);
-			
 
 			int year = calendar.get(Calendar.YEAR);
 			int month = calendar.get(Calendar.MONTH);
 			int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-						
-			
-			String s2 = dayOfMonth + "/" + month + "/" + year;
 
+			String s2 = dayOfMonth + "/" + month + "/" + year;
 
 			String s4 = statuses[rnd.nextInt(statuses.length)];
 
 			int rand = rnd.nextInt(8);
 			calendar.add(Calendar.DAY_OF_MONTH, rand);
-			
-			
+
 			int year1 = calendar.get(Calendar.YEAR);
 			int month1 = calendar.get(Calendar.MONTH);
 			int dayOfMonth1 = calendar.get(Calendar.DAY_OF_MONTH);
-						
-			
+
 			String s5 = dayOfMonth1 + "/" + month1 + "/" + year1;
 
 			String s3 = rand + " Days";
 
-			
 			strs.add(new TableDataRequests(s1, s2, s3, s4, s5));
 		}
 
@@ -255,17 +261,17 @@ public class ListOfRequestsController implements Initializable {
 		case "Evaluate":
 			addRandomDataToTable();
 			NavigationBar.setCurrentPage("Request Details (Evaluator View)", FxmlNames.REQUEST_DETAILS_EVALUATE);
-			
+
 			break;
 		case "Decide":
 			addRandomDataToTable();
-			NavigationBar.setCurrentPage("Request Details (Committee Members View)", FxmlNames.REQUEST_DETAILS_DECISION);
+			NavigationBar.setCurrentPage("Request Details (Committee Members View)",
+					FxmlNames.REQUEST_DETAILS_DECISION);
 
 			break;
 		case "Execute":
 			addRandomDataToTable();
 			NavigationBar.setCurrentPage("Request Details (Executer View)", FxmlNames.REQUEST_DETAILS_EXECUTIONER);
-
 
 			break;
 		case "Examine":
@@ -338,11 +344,16 @@ public class ListOfRequestsController implements Initializable {
 		if (event.getClickCount() == 2) // Checking double click
 		{
 
-
-			NavigationBar.next(NavigationBar.getNextPage().getPageTitle(),
-					NavigationBar.getNextPage().getPageLocation());
+			//NavigationBar.next(NavigationBar.getNextPage().getPageTitle(),
+				//	NavigationBar.getNextPage().getPageLocation());
 
 		}
 	}
 
+	@FXML
+	void onMouseEntered(MouseEvent event) {
+
+	}
+
+	
 }

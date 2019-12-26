@@ -16,13 +16,13 @@
 
 <AnchorPane prefHeight="876.0" prefWidth="1348.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ListOfRequestsController">
    <children>
-      <TableView fx:id="tblSupervisorRequests" layoutX="30.0" layoutY="320.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" onMouseClicked="#clickItem" prefHeight="519.0" prefWidth="1295.0" scaleShape="false" style="-fx-background-color: #B2BCCE;">
+      <TableView fx:id="tblSupervisorRequests" layoutX="30.0" layoutY="320.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" onMouseClicked="#clickItem" onMouseEntered="#onMouseEntered" prefHeight="519.0" prefWidth="1295.0" scaleShape="false" style="-fx-background-color: #B2BCCE;">
          <columns>
             <TableColumn fx:id="tcRequestID" prefWidth="147.0" text="Request ID" />
-            <TableColumn fx:id="tcStatus" prefWidth="218.0" text="Status" />
-            <TableColumn fx:id="tcIssueDate" minWidth="1.0" prefWidth="238.0" text="Issue date" />
-            <TableColumn fx:id="tcDeadline" prefWidth="348.0" text="Deadline" />
-            <TableColumn fx:id="tcCurrentPhase" prefWidth="234.0" text="Time Left" />
+            <TableColumn fx:id="tcStatus" editable="false" prefWidth="218.0" sortable="false" text="Status" />
+            <TableColumn fx:id="tcIssueDate" editable="false" minWidth="1.0" prefWidth="238.0" sortable="false" text="Issue date" />
+            <TableColumn fx:id="tcDeadline" editable="false" prefWidth="348.0" sortable="false" text="Deadline" />
+            <TableColumn fx:id="tcCurrentPhase" editable="false" prefWidth="234.0" sortable="false" text="Time Left" />
          </columns>
          <padding>
             <Insets right="-1.0" />
