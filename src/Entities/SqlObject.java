@@ -17,27 +17,61 @@ public abstract class SqlObject implements Serializable {
 		public static final String sqlLongText = "LONGTEXT";
 		public static final String sqlDefault = "VARCHAR(45)";
 		public static String schemaName = "icm";
-		
-		// Use this suffix in the field name of a class where the field should be a long text
+
+		// Use this suffix in the field name of a class where the field should be a long
+		// text
 		public static String longTextSuffix = "LT";
 
 	}
 
 	private String tableName;
-	private int keyIndex;
-	private String keyName;
-	private Field[] fields;
-	private String[] fieldsNames;
-	public SqlObject() {
-		this(0);
+
+	String getForeignKeyName() {
+		return foreignKeyName;
 	}
 
-	public SqlObject(int keyIndex) {
-		this.keyIndex = keyIndex;
-		fields = this.getClass().getFields();
+	void setForeignKeyName(String foreignKeyName) {
+		this.foreignKeyName = foreignKeyName;
+	}
 
-		tableName = this.getClass().getName();
+	private int primaryKeyIndex, foreignKeyIndex;
+	private String primaryKeyName, foreignKeyName, referenceTable;
+	private Field[] fields;
+	private String[] fieldsNames;
+
+	public SqlObject() {
+		this(0, -1);
+	}
+
+	int getPrimaryKeyIndex() {
+		return primaryKeyIndex;
+	}
+
+	void setPrimaryKeyIndex(int primaryKeyIndex) {
+		this.primaryKeyIndex = primaryKeyIndex;
+	}
+
+	int getForeignKeyIndex() {
+		return foreignKeyIndex;
+	}
+
+	void setForeignKeyIndex(int foreignKeyIndex) {
+		this.foreignKeyIndex = foreignKeyIndex;
+	}
+
+	void setPrimaryKeyName(String primaryKeyName) {
+		this.primaryKeyName = primaryKeyName;
+	}
+
+	public SqlObject(int primaryKeyIndex, int foreignKeyIndex) {
 		
+		this.primaryKeyIndex = primaryKeyIndex;
+		this.foreignKeyIndex = primaryKeyIndex;
+
+		fields = this.getClass().getFields();
+		this.foreignKeyName = "";
+		tableName = this.getClass().getName();
+
 		// Table name should not contain dots.
 		if (tableName.contains(".")) {
 			// To remove the packages names and keep the class name only,
@@ -45,8 +79,11 @@ public abstract class SqlObject implements Serializable {
 			tableName = tableName.substring(tableName.lastIndexOf('.') + 1);
 
 		}
-		
-		keyName = this.getClass().getFields()[keyIndex].getName();
+
+		primaryKeyName = this.getClass().getFields()[primaryKeyIndex].getName();
+		if (foreignKeyIndex != -1)
+			foreignKeyName = this.getClass().getFields()[foreignKeyIndex].getName();
+
 		fieldsNames = calFieldsNames();
 	}
 
@@ -80,9 +117,9 @@ public abstract class SqlObject implements Serializable {
 			sb.append("`" + fieldName + "` ");
 
 			String fieldType = fields[i].getType().toString();
-			
+
 			switch (fieldType) {
-			
+
 			case "long":
 				sb.append(Config.sqlLong);
 
@@ -91,24 +128,24 @@ public abstract class SqlObject implements Serializable {
 				sb.append(Config.sqlInt);
 
 				break;
-				
+
 			case "boolean":
 				sb.append(Config.sqlBoolean);
 				break;
-				
+
 			case "class java.sql.Date":
 				sb.append(Config.sqlDate);
 
 				break;
 
 			case "class java.lang.String":
-				
+
 				// If the field name ends with this suffix then configure it as a long text
 				// in the database.
 				if (fieldName.endsWith(Config.longTextSuffix)) {
 					sb.append(Config.sqlLongText);
 
-				}else {
+				} else {
 					sb.append(Config.sqlString);
 
 				}
@@ -127,7 +164,13 @@ public abstract class SqlObject implements Serializable {
 
 		// Adding the primary key
 
-		sb.append("PRIMARY KEY (`" + getKeyName() + "`))");
+		sb.append("PRIMARY KEY (`" + getPrimaryKeyName() + "`))");
+
+		if (foreignKeyIndex != -1) {
+			sb.deleteCharAt(sb.length() - 1);
+			sb.append(",FOREIGN KEY ('" + getForeignKeyName() + "') REFERENCES " + getReferenceTable() + " ('"
+					+ getForeignKeyName() + "') ON DELETE CASCADE ON UPDATE CASCADE");
+		}
 
 		return sb.toString();
 	}
@@ -136,16 +179,25 @@ public abstract class SqlObject implements Serializable {
 	 * By default, the key is the first public field in the class. Override this
 	 * method to change the key.
 	 */
-	public String getKeyName() {
-		return keyName;
+	public String getPrimaryKeyName() {
+		return primaryKeyName;
 	}
+
+	public String getReferenceTable() {
+		return referenceTable;
+	}
+
+	void setReferenceTable(String referenceTable) {
+		this.referenceTable = referenceTable;
+	}
+
 
 	/**
 	 * returns the value of the primary key as an String object.
-	 * */
+	 */
 	public String getKeyValue() {
 		try {
-			return getClass().getFields()[keyIndex].get(this).toString();
+			return getClass().getFields()[primaryKeyIndex].get(this).toString();
 		} catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -181,11 +233,11 @@ public abstract class SqlObject implements Serializable {
 		}
 		return results;
 	}
-	
+
 	public String[] getFieldsNames() {
 		return fieldsNames;
 	}
-	
+
 	public String[] getFieldsValues() {
 
 		Field[] fields = getClass().getFields();

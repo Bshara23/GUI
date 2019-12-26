@@ -4,28 +4,16 @@ import java.sql.Date;
 
 public class EvaluationReport extends Report {
 
-	public String place, result, constraints, risks;
+	public String result, constraints, risks;
 	public Date estimatedExecutionTime;
-	
 	
 	public EvaluationReport(long reportID, long requestID, String contentLT, String place, String result,
 			String constraints, String risks, Date estimatedExecutionTime) {
-		super(reportID, requestID, contentLT);
-		this.place = place;
+		super(reportID, requestID, contentLT, place);
 		this.result = result;
 		this.constraints = constraints;
 		this.risks = risks;
 		this.estimatedExecutionTime = estimatedExecutionTime;
-	}
-
-
-	public String getPlace() {
-		return place;
-	}
-
-
-	public void setPlace(String place) {
-		this.place = place;
 	}
 
 

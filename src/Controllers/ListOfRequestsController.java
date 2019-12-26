@@ -16,11 +16,14 @@ import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Utility.AppManager;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
@@ -159,8 +162,25 @@ public class ListOfRequestsController implements Initializable {
 		ControllerManager.setEffect(jobs, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
 		ControllerManager.setEffect(tableButtons, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
 
+		
+		
+		
 		tblSupervisorRequests.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
+		final ObservableList<TablePosition> selectedCells = tblSupervisorRequests.getSelectionModel().getSelectedCells();
+		selectedCells.addListener(new ListChangeListener<TablePosition>() {
+		    
+			@Override
+		    public void onChanged(Change change) {
+		        for (TablePosition pos : selectedCells) {
+		        	if(pos.getColumn() == 0) {
+			            System.out.println("row 0 is selected, call a function here");
+		        	}
+		        }
+		    };
+		});
+		
+		
+		
 		addRandomDataToTable();
 
 		// TODO: bug. the line does not work unless the function has been called by the
@@ -281,15 +301,17 @@ public class ListOfRequestsController implements Initializable {
 	}
 
 	private void initTable() {
+		
 		tcRequestID.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S1"));
 		tcIssueDate.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S2"));
 		tcCurrentPhase.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S3"));
 		tcStatus.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S4"));
 		tcDeadline.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S5"));
-
+		
 	}
 
 	private void addContentToTable(ArrayList<TableDataRequests> strs) {
+		tblSupervisorRequests.getSelectionModel().setCellSelectionEnabled(true);
 
 		tblSupervisorRequests.setItems(FXCollections.observableArrayList(strs));
 

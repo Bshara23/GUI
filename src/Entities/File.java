@@ -2,18 +2,30 @@ package Entities;
 
 import java.sql.Blob;
 
-public class File extends SqlObject{
+public class File extends SqlObject {
 
 	public long ID, requestID;
 	public Blob data;
-	public String type;
+	public String fileName, type;
 	
-	public File(long iD, long requestID, Blob data, String type) {
+
+	public File(long iD, long requestID, Blob data, String fileName, String type) {
+		super();
 		ID = iD;
 		this.requestID = requestID;
 		this.data = data;
+		this.fileName = fileName;
 		this.type = type;
 	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
 
 	public long getID() {
 		return ID;

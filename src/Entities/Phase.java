@@ -1,6 +1,7 @@
 package Entities;
 
 import java.sql.Date;
+import java.util.ArrayList;
 
 public class Phase extends SqlObject {
 
@@ -11,12 +12,17 @@ public class Phase extends SqlObject {
 	public Date deadline, estimatedTimeOfCompletion, timeOfCompletion;
 	public boolean hasBeenTimeExtended;
 
-	private TimeException timeException;
 	private PhaseTimeExtensionRequest phaseTimeExtensionRequest;
+	
+	private ArrayList<File> files;
+	private ArrayList<Phase> phases;
+	private EvaluationReport evaluationReport;
+	
+
 
 	public Phase(long phaseID, String phaseName, String status, long empNumber, Date deadline,
 			Date estimatedTimeOfCompletion, Date timeOfCompletion, boolean hasBeenTimeExtended) {
-
+		super();
 		this.phaseID = phaseID;
 		this.phaseName = phaseName;
 		this.status = status;
@@ -25,15 +31,35 @@ public class Phase extends SqlObject {
 		this.estimatedTimeOfCompletion = estimatedTimeOfCompletion;
 		this.timeOfCompletion = timeOfCompletion;
 		this.hasBeenTimeExtended = hasBeenTimeExtended;
+		
+		files = new ArrayList<File>();
+		phases = new ArrayList<Phase>(5);
 	}
 
-	public TimeException getTimeException() {
-		return timeException;
+	EvaluationReport getEvaluationReport() {
+		return evaluationReport;
 	}
 
-	public void setTimeException(TimeException timeException) {
-		this.timeException = timeException;
+	void setEvaluationReport(EvaluationReport evaluationReport) {
+		this.evaluationReport = evaluationReport;
 	}
+
+	ArrayList<File> getFiles() {
+		return files;
+	}
+
+	void setFiles(ArrayList<File> files) {
+		this.files = files;
+	}
+
+	ArrayList<Phase> getPhases() {
+		return phases;
+	}
+
+	void setPhases(ArrayList<Phase> phases) {
+		this.phases = phases;
+	}
+	
 
 	public PhaseTimeExtensionRequest getPhaseTimeExtensionRequest() {
 		return phaseTimeExtensionRequest;
