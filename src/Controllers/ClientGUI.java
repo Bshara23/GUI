@@ -156,6 +156,31 @@ public class ClientGUI extends Application implements Initializable {
 		commondMenuBehavior(apBtnLogoMain, "Home", FxmlNames.HOME);
 		ControllerManager.setEffect(apBtnLogoMain, CommonEffects.LOGO_SELECT);
 
+		
+		
+		apHeader.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                xOffset = getStage().getX() - event.getScreenX();
+                yOffset = getStage().getY() - event.getScreenY();
+            	apHeader.setCursor(Cursor.CLOSED_HAND);
+
+            }
+        });
+		apHeader.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+            	getStage().setX(event.getScreenX() + xOffset);
+            	getStage().setY(event.getScreenY() + yOffset);
+            }
+        });
+		apHeader.setOnMouseReleased(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+            	apHeader.setCursor(Cursor.OPEN_HAND);
+
+            }
+        });
 	}
 
 	private int index = 0;
