@@ -52,5 +52,10 @@ public class ExecutionReport extends Report {
 		return 0;
 	}
 	
+	@Override
+	public boolean isPrimaryKeyIncremental() {
+		return true;
+	}
+	
 
 }

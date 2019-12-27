@@ -5,6 +5,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import Entities.File;
+import Protocol.Command;
+import Protocol.SRMessage;
 import ServerLogic.UtilityInterfaces.ClientFunc;
 import ServerLogic.UtilityInterfaces.ClientThrowableFunc;
 import ServerLogic.UtilityInterfaces.ObjectClientFunc;
@@ -104,10 +107,47 @@ public class Server extends AbstractServer {
 	
 	@Override
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
+		SRMessage srMsg = (SRMessage)msg; 
+		switch (srMsg.getCommand()) {
+		
+		case insertFile:
+			
+			File fileToInsert = (File)srMsg.getAttachedData();
+			db.insertFile(fileToInsert);
+			
+			
+			break;
 
+		case getFile:
+			
+			int fileID = (int)srMsg.getAttachedData();
+			
+			// TODO: this has to run in a different thread since it might get the server
+			// stuck, other clients wont be able to receive messages
+			// Make multiple threads or a thread queue?
+			File downloadedFile = db.getFile(fileID);
+
+			sendMessageToClient(client, Command.getFile, downloadedFile);
+			
+			break;
+			
+		default:
+			System.err.println("Error, undefine command [" + srMsg.getCommand() + "]");
+			break;
+		}
+		
 		for (ObjectClientFunc f : objectRecievedFromClientsEvents) {
 			if (f != null)
 				f.call(msg, client);
+		}
+	}
+	
+	private void sendMessageToClient(ConnectionToClient client, Command cmd, Object obj) {
+		try {
+			client.sendToClient(new SRMessage(Command.getFile, obj));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

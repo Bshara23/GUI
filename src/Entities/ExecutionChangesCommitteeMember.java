@@ -3,11 +3,11 @@ package Entities;
 public class ExecutionChangesCommitteeMember extends Employee {
 	
 	
-	private static ExecutionChangesCommitteeMember emptyInstance = new ExecutionChangesCommitteeMember(null, null, null, null, null, null, 0, null, null, 0);
+	private static ExecutionChangesCommitteeMember emptyInstance = new ExecutionChangesCommitteeMember(null, null, null, null, null, null, 0, null, null, false);
 	public static Employee getEmptyInstance() {
 		return emptyInstance;
 	}
-	public int isManager;
+	public boolean isManager;
 
 
 
@@ -15,20 +15,20 @@ public class ExecutionChangesCommitteeMember extends Employee {
 
 	public ExecutionChangesCommitteeMember(String userName, String password, String email, String firstName,
 			String lastName, String phoneNo, long empNumber, String empDepartment, String organizationalRole,
-			int isManager) {
+			boolean isManager) {
 		super(userName, password, email, firstName, lastName, phoneNo, empNumber, empDepartment, organizationalRole);
 		this.isManager = isManager;
 	}
 	
 	
 
-	public int getIsManager() {
+	public boolean getIsManager() {
 		return isManager;
 	}
 
 
 
-	public void setIsManager(int isManager) {
+	public void setIsManager(boolean isManager) {
 		this.isManager = isManager;
 	}
 
@@ -70,6 +70,9 @@ public class ExecutionChangesCommitteeMember extends Employee {
 		return 1;
 	}
 	
-	
+	@Override
+	public boolean isPrimaryKeyIncremental() {
+		return false;
+	}
 	
 }

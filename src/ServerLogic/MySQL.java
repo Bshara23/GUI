@@ -1,10 +1,12 @@
 package ServerLogic;
 
 import java.lang.reflect.Field;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import Entities.File;
 import Entities.SqlObject;
 import ServerLogic.UtilityInterfaces.IStatement;
 import ServerLogic.UtilityInterfaces.UpdateFunc;
@@ -348,11 +350,11 @@ public class MySQL extends MySqlConnBase {
 	// TODO *********************************************
 	public void insertObject(SqlObject obj) {
 
-		String query = qb.insertInto(obj.getTableName()).forColumns(obj.getFieldsNames())
-				.theValues(obj.getFieldsValues()).toString();
+		String query = qb.insertInto(obj.getTableName()).forColumns(obj.getFieldsNamesForInsertion())
+				.theValues(obj.getFieldsValuesForInsertion()).toString();
 
 		System.out.println(query);
-		executePreparedStatement(query, null);
+		//executePreparedStatement(query, null);
 
 	}
 
@@ -375,6 +377,58 @@ public class MySQL extends MySqlConnBase {
 		executePreparedStatement(query.toString(), null);
 
 	}
+	
+	
+
+	public void insertFile(File file) {
+
+		String query = "INSERT INTO `icm`.`file` (`requestID`, `data`, `fileName`, `type`) VALUES (?, ?, ?, ?);";
+		try {
+			
+			
+			PreparedStatement ps = conn.prepareStatement(query);
+			
+			ps.setLong(1, file.getRequestID());
+			ps.setBlob(2, file.getBinaryStream());
+			ps.setString(3, file.getFileName());
+			ps.setString(4, file.getType());
+
+			
+			ps.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public File getFile(long ID) {
+		String query = "SELECT * FROM `icm`.`file` WHERE `icm`.`file`.ID = ?;";
+		try {
+			PreparedStatement ps = conn.prepareStatement(query);
+			
+			ps.setLong(1, ID);
+			ps.execute();
+
+			ResultSet rs = ps.getResultSet();
+			if (rs.next()) {
+				
+				File file = new File(ID, rs.getLong(2),rs.getString(4), rs.getString(5));
+
+				file.setBytes(rs.getBlob(3).getBinaryStream(), (int) rs.getBlob(3).length());
+				
+				
+				return file;
+			}
+
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
 	/* Setters and getters */
 
 }

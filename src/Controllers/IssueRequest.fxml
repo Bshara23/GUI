@@ -29,7 +29,7 @@
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Issue date: " />
                      </children>
                   </HBox>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="5/5/2020" />
+                  <Text fx:id="txtCurrentDate" strokeType="OUTSIDE" strokeWidth="0.0" text="5/5/2020" />
                </children>
             </HBox>
             <HBox spacing="15.0">
@@ -39,7 +39,7 @@
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Relate information system:" />
                      </children>
                   </HBox>
-                  <ComboBox prefWidth="150.0" promptText="Moodle" />
+                  <ComboBox fx:id="cbInformationSystem" prefWidth="150.0" promptText="Moodle" />
                </children>
             </HBox>
             <HBox spacing="15.0">
@@ -49,7 +49,7 @@
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Request Description:" />
                      </children>
                   </HBox>
-                  <TextArea minHeight="-Infinity" prefHeight="85.0" prefWidth="526.0" promptText="Enter request description" />
+                  <TextArea fx:id="taRequestDescription" minHeight="-Infinity" prefHeight="85.0" prefWidth="526.0" promptText="Enter request description" />
                </children>
             </HBox>
             <HBox spacing="15.0">
@@ -59,7 +59,7 @@
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description of current state:" />
                      </children>
                   </HBox>
-                  <TextArea minHeight="-Infinity" minWidth="-Infinity" prefHeight="85.0" prefWidth="526.0" promptText="Enter description of the request current state" />
+                  <TextArea fx:id="taDescriptionOfCurrentState" minHeight="-Infinity" minWidth="-Infinity" prefHeight="85.0" prefWidth="526.0" promptText="Enter description of the request current state" />
                </children>
             </HBox>
             <HBox spacing="15.0">
@@ -69,7 +69,7 @@
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description of requested change:" />
                      </children>
                   </HBox>
-                  <TextArea minHeight="-Infinity" minWidth="-Infinity" prefHeight="85.0" prefWidth="526.0" promptText="Enter description of the requested change" />
+                  <TextArea fx:id="taDescriptionOfRequestedChange" minHeight="-Infinity" minWidth="-Infinity" prefHeight="85.0" prefWidth="526.0" promptText="Enter description of the requested change" />
                </children>
             </HBox>
             <HBox spacing="15.0">
@@ -79,7 +79,7 @@
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Comments: " />
                      </children>
                   </HBox>
-                  <TextArea minHeight="-Infinity" prefHeight="85.0" prefWidth="526.0" promptText="Enter comments about the request" />
+                  <TextArea fx:id="taComments" minHeight="-Infinity" prefHeight="85.0" prefWidth="526.0" promptText="Enter comments about the request" />
                </children>
             </HBox>
             <HBox spacing="15.0">
@@ -89,7 +89,7 @@
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Attach files:" />
                      </children>
                   </HBox>
-                  <HBox fx:id="hbAttachFiles" alignment="CENTER_RIGHT" minWidth="125.0" prefHeight="26.0" prefWidth="125.0" spacing="10.0">
+                  <HBox fx:id="hbBrowseFiles" alignment="CENTER_RIGHT" minWidth="125.0" prefHeight="26.0" prefWidth="125.0" spacing="10.0">
                      <children>
                         <ImageView fitHeight="33.0" fitWidth="39.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -106,7 +106,7 @@
             </HBox>
             <HBox alignment="CENTER_RIGHT" spacing="15.0">
                <children>
-                  <HBox fx:id="hbIssueRequest1" alignment="CENTER_RIGHT" minWidth="125.0" prefHeight="26.0" prefWidth="125.0" spacing="10.0">
+                  <HBox fx:id="hbIssueRequest" alignment="CENTER_RIGHT" minWidth="125.0" prefHeight="26.0" prefWidth="125.0" spacing="10.0">
                      <children>
                         <ImageView fitHeight="33.0" fitWidth="39.0" pickOnBounds="true" preserveRatio="true">
                            <image>

@@ -2,8 +2,10 @@ package Entities;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-public abstract class SqlObject implements Serializable {
+public abstract class SqlObject {
 
 	/**
 	 * Configure the data base fields types
@@ -73,7 +75,6 @@ public abstract class SqlObject implements Serializable {
 
 		Field[] fields = getClass().getFields();
 
-
 		for (int i = 0; i < fieldsCount; i++) {
 
 			String fieldName = fields[i].getName();
@@ -100,12 +101,12 @@ public abstract class SqlObject implements Serializable {
 				sb.append(Config.sqlDate);
 
 				break;
-				
+
 			case "interface java.sql.Blob":
 				sb.append(Config.sqlBlob);
 
 				break;
-				
+
 			case "class java.lang.String":
 
 				// If the field name ends with this suffix then configure it as a long text
@@ -122,7 +123,8 @@ public abstract class SqlObject implements Serializable {
 
 			default:
 				sb.append(Config.sqlDefault);
-				System.err.println("Error: type [" + fieldType + "] not recognized! in class " + this.getClass().getName());
+				System.err.println(
+						"Error: type [" + fieldType + "] not recognized! in class " + this.getClass().getName());
 
 				break;
 			}
@@ -154,9 +156,9 @@ public abstract class SqlObject implements Serializable {
 	 * method to change the key.
 	 */
 
-	
-	
 	public abstract int getPrimaryKeyIndex();
+
+	public abstract boolean isPrimaryKeyIncremental();
 
 	public abstract int getForeignKeyIndex();
 
@@ -188,7 +190,6 @@ public abstract class SqlObject implements Serializable {
 	public String getPrimaryKeyValue() {
 		return getFieldValue(getPrimaryKeyIndex());
 	}
-
 
 	private String getFieldValue(int index) {
 		try {
@@ -243,22 +244,59 @@ public abstract class SqlObject implements Serializable {
 		return fieldsNames;
 	}
 
+	public String[] getFieldsNamesForInsertion() {
+		if (isPrimaryKeyIncremental()) {
+			return removeByPosition(getFieldsNames(), getPrimaryKeyIndex());
+
+		} else {
+			return fieldsNames;
+		}
+	}
+
+	public String[] getFieldsValuesForInsertion() {
+		if (isPrimaryKeyIncremental()) {
+			return removeByPosition(getFieldsValues(), getPrimaryKeyIndex());
+		} else {
+			return fieldsNames;
+		}
+	}
+
+	private String[] removeByPosition(String[] src, int pos) {
+		ArrayList<String> res = new ArrayList<String>(Arrays.asList(src));
+		res.remove(pos);
+		String[] finalResult = new String[res.size()];
+		return res.toArray(finalResult);
+	}
+	
 	public String[] getFieldsValues() {
 
 		Field[] fields = getClass().getFields();
 		String[] results = new String[fieldsCount];
 
 		for (int i = 0; i < fieldsCount; i++) {
-			try {
-				results[i] = "'" + fields[i].get(this).toString() + "'";
-
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
+			results[i] = "'" + fieldValueDecoder(fields[i]) + "'";
 		}
 		return results;
 	}
 
+	private String fieldValueDecoder(Field f) {
+
+		if (f.getType().toString().compareTo("boolean") == 0) {
+			try {
+				return f.getBoolean(this) ? "1" : "0";
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		try {
+			return f.get(this).toString();
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.err.println("Error at field decoder");
+		return "";
+
+	}
 }

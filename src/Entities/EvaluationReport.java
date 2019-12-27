@@ -104,6 +104,9 @@ public class EvaluationReport extends Report {
 	}
 	
 	
-	
+	@Override
+	public boolean isPrimaryKeyIncremental() {
+		return true;
+	}
 	
 }

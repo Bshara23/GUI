@@ -30,12 +30,30 @@ public class SRMessage implements Serializable {
 		this.command = command;
 	}
 
-	public Object getData() {
+	public Object getAttachedData() {
 		return data;
 	}
 
-	public void setData(Object data) {
-		this.data = data;
+	public void setAttachedData(Object attachedData) {
+		this.data = attachedData;
 	}
+
+
+	public MsgReturnType getReturnType() {
+		return returnType;
+	}
+
+
+	public void setReturnType(MsgReturnType returnType) {
+		this.returnType = returnType;
+	}
+
+
+	@Override
+	public String toString() {
+		return "SRMessage [command=" + command.toString() + ", data=" + data.toString() + "]";
+	}
+	
+	
 
 }

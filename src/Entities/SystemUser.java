@@ -1,7 +1,8 @@
 package Entities;
 
+import java.io.Serializable;
 
-public class SystemUser extends SqlObject {
+public class SystemUser extends SqlObject implements Serializable {
 
 	public String userName, password, email;
 	public String firstName, lastName, phoneNo;
@@ -106,6 +107,19 @@ public class SystemUser extends SqlObject {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	
+	@Override
+	public boolean isPrimaryKeyIncremental() {
+		return true;
+	}
+	
+	@Override
+	public String toString() {
+		return "SystemUser [userName=" + userName + ", password=" + password + ", email=" + email + ", firstName="
+				+ firstName + ", lastName=" + lastName + ", phoneNo=" + phoneNo + "]";
+	}
+	
 	
 	
 	

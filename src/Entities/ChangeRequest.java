@@ -269,6 +269,13 @@ public class ChangeRequest extends SqlObject {
 		// TODO Auto-generated method stub
 		return 10;
 	}
+
+
+
+	@Override
+	public boolean isPrimaryKeyIncremental() {
+		return true;
+	}
 	
 	
 	

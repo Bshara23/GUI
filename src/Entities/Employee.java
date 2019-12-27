@@ -104,4 +104,9 @@ public class Employee extends SystemUser {
 		// TODO Auto-generated method stub
 		return 3;
 	}
+	
+	@Override
+	public boolean isPrimaryKeyIncremental() {
+		return true;
+	}
 }

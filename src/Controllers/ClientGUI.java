@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
 import Controllers.Logic.FxmlNames;
@@ -83,13 +84,19 @@ public class ClientGUI extends Application implements Initializable {
 
 	private ArrayList<Node> apList;
 
-	private Stage stage;
+	private static Stage stage;
+	
+	public static Stage getStage() {
+		return stage;
+	}
+	
 	private static double xOffset = 0;
 	private static double yOffset = 0;
 
 	@Override
 	public void start(Stage stage) {
 		stage.initStyle(StageStyle.UNDECORATED);
+		Client.getInstance().initialize("10.0.0.6", 5555);
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(FxmlNames.GLOBAL_MENUS));
 		Parent root = null;
@@ -102,7 +109,8 @@ public class ClientGUI extends Application implements Initializable {
 		stage.setScene(new Scene(root));
 		stage.setTitle("ICM System");
 		stage.show();
-		this.stage = stage;
+		
+		ClientGUI.stage = stage;
 
 		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 

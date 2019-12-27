@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Phase extends SqlObject {
 
 	
-	private static Phase emptyInstance = new Phase(0, 0, null, null, 0, null, null, null, 0);
+	private static Phase emptyInstance = new Phase(0, 0, null, null, 0, null, null, null, false);
 	public static Phase getEmptyInstance() {
 		return emptyInstance;
 	}
@@ -17,7 +17,7 @@ public class Phase extends SqlObject {
 	public long empNumber;
 
 	public Date deadline, estimatedTimeOfCompletion, timeOfCompletion;
-	public int hasBeenTimeExtended;
+	public boolean hasBeenTimeExtended;
 
 	private PhaseTimeExtensionRequest phaseTimeExtensionRequest;
 	
@@ -26,13 +26,16 @@ public class Phase extends SqlObject {
 	private EvaluationReport evaluationReport;
 	
 
-
+	@Override
+	public boolean isPrimaryKeyIncremental() {
+		return true;
+	}
 
 
 
 	
 	public Phase(long phaseID, long requestID, String phaseName, String status, long empNumber, Date deadline,
-			Date estimatedTimeOfCompletion, Date timeOfCompletion, int hasBeenTimeExtended) {
+			Date estimatedTimeOfCompletion, Date timeOfCompletion, boolean hasBeenTimeExtended) {
 		super();
 		this.phaseID = phaseID;
 		this.requestID = requestID;
@@ -148,11 +151,11 @@ public class Phase extends SqlObject {
 		this.timeOfCompletion = timeOfCompletion;
 	}
 
-	public int isHasBeenTimeExtended() {
+	public boolean isHasBeenTimeExtended() {
 		return hasBeenTimeExtended;
 	}
 
-	public void setHasBeenTimeExtended(int hasBeenTimeExtended) {
+	public void setHasBeenTimeExtended(boolean hasBeenTimeExtended) {
 		this.hasBeenTimeExtended = hasBeenTimeExtended;
 	}
 

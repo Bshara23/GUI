@@ -15,7 +15,10 @@ public class PhaseTimeExtensionRequest extends SqlObject {
 	public String description;
 	
 
-
+	@Override
+	public boolean isPrimaryKeyIncremental() {
+		return true;
+	}
 
 	public PhaseTimeExtensionRequest(long phaseID, Date requestedTime, String description) {
 		super();

@@ -18,7 +18,7 @@ public enum Command {
 	GetMyRequestsExaminer, GetMyRequestsExecuter, GetMyRequestsDecide,
 	
 	updateRequest, updatePhase, 
-	
+	insertFile, getFile,
 	
 	insertComitteeMember, insertSupervisor,
 	updateCommitteeMember, updateSupervisor, 

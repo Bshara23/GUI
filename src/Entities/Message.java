@@ -5,20 +5,20 @@ import java.sql.Date;
 public class Message extends SqlObject {
 
 	
-	private static Message emptyInstance = new Message(0, null, null, null, null, 0, null, 0, 0, 0);
+	private static Message emptyInstance = new Message(0, null, null, null, null, false, null, false, false, false);
 	public static Message getEmptyInstance() {
 		return emptyInstance;
 	}
 	
 	public long messageID;
 	public String subject, from, to, messageContentLT;
-	public int hasBeenViewed;
+	public boolean hasBeenViewed;
 	public Date sentAt;
-	public int isStarred, isRead, isArchived;
+	public boolean isStarred, isRead, isArchived;
 	
 
 	public Message(long messageID, String subject, String from, String to, String messageContentLT,
-			int hasBeenViewed, Date sentAt, int isStarred, int isRead, int isArchived) {
+			boolean hasBeenViewed, Date sentAt, boolean isStarred, boolean isRead, boolean isArchived) {
 		super();
 		this.messageID = messageID;
 		this.subject = subject;
@@ -32,29 +32,52 @@ public class Message extends SqlObject {
 		this.isArchived = isArchived;
 	}
 
-	int isStarred() {
+	@Override
+	public boolean isPrimaryKeyIncremental() {
+		return true;
+	}
+
+	public boolean isStarred() {
 		return isStarred;
 	}
 
-	void setStarred(int isStarred) {
+
+
+	public void setStarred(boolean isStarred) {
 		this.isStarred = isStarred;
 	}
 
-	int isRead() {
+
+
+	public boolean isRead() {
 		return isRead;
 	}
 
-	void setRead(int isRead) {
+
+
+	public void setRead(boolean isRead) {
 		this.isRead = isRead;
 	}
 
-	int isArchived() {
+
+
+	public boolean isArchived() {
 		return isArchived;
 	}
 
-	void setArchived(int isArchived) {
+
+
+	public void setArchived(boolean isArchived) {
 		this.isArchived = isArchived;
 	}
+
+
+
+	public void setHasBeenViewed(boolean hasBeenViewed) {
+		this.hasBeenViewed = hasBeenViewed;
+	}
+
+
 
 	public String getSubject() {
 		return subject;
@@ -104,13 +127,13 @@ public class Message extends SqlObject {
 		this.messageContentLT = messageContentLT;
 	}
 
-	public int isHasBeenViewed() {
+	
+
+	public boolean isHasBeenViewed() {
 		return hasBeenViewed;
 	}
 
-	public void setHasBeenViewed(int hasBeenViewed) {
-		this.hasBeenViewed = hasBeenViewed;
-	}
+
 
 	@Override
 	public int getPrimaryKeyIndex() {

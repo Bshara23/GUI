@@ -79,7 +79,10 @@ public class SupervisorUpdateCR extends SqlObject {
 		this.updateDescription = updateDescription;
 	}
 
-
+	@Override
+	public boolean isPrimaryKeyIncremental() {
+		return true;
+	}
 
 
 	@Override

@@ -1,5 +1,9 @@
 package CreationAndBasicTesting;
 
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
@@ -20,11 +24,23 @@ public class MySqlCreationTester {
 
 		// db.insertObject(SystemUser.emptyInstance);
 		// printTableInfo();
-		insertObjects();
+		// insertObjects();
 		// db.createTable(File.getEmptyInstance());
 
 		// printFields(File.class);
+
+		//File file = new File(4, 4, "dd.jpg", "jpg");
+		//file.loadBytesFromLocal();
+		
+		//db.insertFile(file);
+		
+		
+		insertObjects();
+
+
 	}
+
+	
 
 	private static void createDatabase() {
 
@@ -89,7 +105,7 @@ public class MySqlCreationTester {
 //			db.insertObject(emp);
 //		}
 
-//		ExecutionChangesCommitteeMember ecc1 = new ExecutionChangesCommitteeMember("", "", "", "", "", "", 20, "", "", 0);
+//		ExecutionChangesCommitteeMember ecc1 = new ExecutionChangesCommitteeMember("", "", "", "", "", "", 20, "", "", false);
 //		ExecutionChangesCommitteeMember ecc2 = new ExecutionChangesCommitteeMember("", "", "", "", "", "", 21, "", "", 0);
 //		ExecutionChangesCommitteeMember eccManager = new ExecutionChangesCommitteeMember("", "", "", "", "", "", 22, "", "", 1);
 //		
@@ -121,12 +137,7 @@ public class MySqlCreationTester {
 //			db.insertObject(cr);
 //		}
 
-		// TODO: learn how to add a Blob to the database
-//		for (int i = 0; i < 10; i++) {
-//			File file = new File(i, 3, new Blob, fileName, type)
-//						
-//			db.insertObject(cr);
-//		}
+
 
 		// TODO: the phase has 2 FK, need to add the empNumber as a FK too!
 //		for (int i = 0; i < 10; i++) {
@@ -189,11 +200,8 @@ public class MySqlCreationTester {
 //			EvaluationReport evalReport = new EvaluationReport(i, i, "content" + i, "place" + i, "result" + i, "constrainets" + i, "risks" + i, new Date(120, 3, 5));
 //			db.insertObject(evalReport);
 //
-//		}
+//		}	
 
-		
-		
-		
 	}
 
 	private static void printFields(Class<?> cls) {

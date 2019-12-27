@@ -1,10 +1,13 @@
 package ClientLogic;
 
+import java.io.IOException;
 import java.util.HashMap;
 
+import Protocol.Command;
+import Protocol.SRMessage;
 import Utility.VoidFunc;
 import Utility.StringFunc;
-import Utility.ObjectFunc;
+import Utility.SRMessageFunc;
 import javafx.application.Platform;
 import ocsf.client.*;
 
@@ -15,32 +18,50 @@ public class Client extends AbstractClient {
 	private static HashMap<String, VoidFunc> serverConnectionClosedEvents;
 	private static HashMap<String, VoidFunc> serverConnectionEstablishedEvents;
 
-	private static HashMap<String, ObjectFunc> objectRecievedFromServerEvents;
+	private static HashMap<String, SRMessageFunc> messageRecievedFromServerEvents;
 	private static HashMap<String, StringFunc> stringRecievedFromServerEvents;
 
 	static {
-		instance = new Client("10.0.0.127", 5555);
+		instance = new Client("10.0.0.6", 5555);
 		serverExceptionEvents = new HashMap<String, VoidFunc>();
 		serverConnectionClosedEvents = new HashMap<String, VoidFunc>();
 		serverConnectionEstablishedEvents = new HashMap<String, VoidFunc>();
-		objectRecievedFromServerEvents = new HashMap<String, ObjectFunc>();
+		messageRecievedFromServerEvents = new HashMap<String, SRMessageFunc>();
 		stringRecievedFromServerEvents = new HashMap<String, StringFunc>();
 	}
 
 	public static Client getInstance() {
-
+		
 		return instance;
 	}
 
+	
 	// Initialize the client
 	public void initialize(String host, int port) {
 		instance.setHost(host);
 		instance.setPort(port);
+		try {
+			instance.openConnection();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	private Client(String host, int port) {
+	public Client(String host, int port) {
 		super(host, port);
 	}
+	
+
+	public void request(Command cmd, Object obj) {
+		try {
+			instance.sendToServer(new SRMessage(cmd, obj));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 
 	@Override
 	protected void handleMessageFromServer(Object msg) {
@@ -49,9 +70,10 @@ public class Client extends AbstractClient {
 
 			@Override
 			public void run() {
-				for (ObjectFunc f : objectRecievedFromServerEvents.values()) {
+				SRMessage srMsg = (SRMessage)msg;
+				for (SRMessageFunc f : messageRecievedFromServerEvents.values()) {
 					if (f != null)
-						f.call(msg);
+						f.call(srMsg);
 				}
 
 				if (msg instanceof String) {
@@ -125,11 +147,11 @@ public class Client extends AbstractClient {
 		serverExceptionEvents.put(key, voidFunc);
 	}
 
-	public void addStringRecievedFromServer(String key, StringFunc stringFunc) {
+	public static void addStringRecievedFromServer(String key, StringFunc stringFunc) {
 		stringRecievedFromServerEvents.put(key, stringFunc);
 	}
 
-	public void addObjectRecievedFromServer(String key, ObjectFunc objectFunc) {
-		objectRecievedFromServerEvents.put(key, objectFunc);
+	public static void addMessageRecievedFromServer(String key, SRMessageFunc sRMessageFunc) {
+		messageRecievedFromServerEvents.put(key, sRMessageFunc);
 	}
 }
