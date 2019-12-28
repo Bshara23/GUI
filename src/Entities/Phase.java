@@ -1,41 +1,35 @@
 package Entities;
 
+import java.io.Serializable;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
-public class Phase extends SqlObject {
+public class Phase extends SqlObject implements Serializable {
 
-	
 	private static Phase emptyInstance = new Phase(0, 0, null, null, 0, null, null, null, false);
+
 	public static Phase getEmptyInstance() {
 		return emptyInstance;
 	}
-	
+
 	public long phaseID;
 	public long requestID;
 	public String phaseName, status;
 	public long empNumber;
 
-	public Date deadline, estimatedTimeOfCompletion, timeOfCompletion;
+	public LocalDate deadline, estimatedTimeOfCompletion, timeOfCompletion;
 	public boolean hasBeenTimeExtended;
 
 	private PhaseTimeExtensionRequest phaseTimeExtensionRequest;
-	
+
 	private ArrayList<File> files;
-	private ArrayList<Phase> phases;
 	private EvaluationReport evaluationReport;
-	
-
-	@Override
-	public boolean isPrimaryKeyIncremental() {
-		return true;
-	}
-
-
 
 	
-	public Phase(long phaseID, long requestID, String phaseName, String status, long empNumber, Date deadline,
-			Date estimatedTimeOfCompletion, Date timeOfCompletion, boolean hasBeenTimeExtended) {
+
+	public Phase(long phaseID, long requestID, String phaseName, String status, long empNumber, LocalDate deadline,
+			LocalDate estimatedTimeOfCompletion, LocalDate timeOfCompletion, boolean hasBeenTimeExtended) {
 		super();
 		this.phaseID = phaseID;
 		this.requestID = requestID;
@@ -46,21 +40,17 @@ public class Phase extends SqlObject {
 		this.estimatedTimeOfCompletion = estimatedTimeOfCompletion;
 		this.timeOfCompletion = timeOfCompletion;
 		this.hasBeenTimeExtended = hasBeenTimeExtended;
-		
-		files = new ArrayList<File>();
-		phases = new ArrayList<Phase>(5);
-	}
 
+		files = new ArrayList<File>();
+	}
 
 	public long getRequestID() {
 		return requestID;
 	}
 
-
 	public void setRequestID(long requestID) {
 		this.requestID = requestID;
 	}
-
 
 	EvaluationReport getEvaluationReport() {
 		return evaluationReport;
@@ -77,15 +67,6 @@ public class Phase extends SqlObject {
 	void setFiles(ArrayList<File> files) {
 		this.files = files;
 	}
-
-	ArrayList<Phase> getPhases() {
-		return phases;
-	}
-
-	void setPhases(ArrayList<Phase> phases) {
-		this.phases = phases;
-	}
-	
 
 	public PhaseTimeExtensionRequest getPhaseTimeExtensionRequest() {
 		return phaseTimeExtensionRequest;
@@ -127,27 +108,27 @@ public class Phase extends SqlObject {
 		this.empNumber = empNumber;
 	}
 
-	public Date getDeadline() {
+	public LocalDate getDeadline() {
 		return deadline;
 	}
 
-	public void setDeadline(Date deadline) {
+	public void setDeadline(LocalDate deadline) {
 		this.deadline = deadline;
 	}
 
-	public Date getEstimatedTimeOfCompletion() {
+	public LocalDate getEstimatedTimeOfCompletion() {
 		return estimatedTimeOfCompletion;
 	}
 
-	public void setEstimatedTimeOfCompletion(Date estimatedTimeOfCompletion) {
+	public void setEstimatedTimeOfCompletion(LocalDate estimatedTimeOfCompletion) {
 		this.estimatedTimeOfCompletion = estimatedTimeOfCompletion;
 	}
 
-	public Date getTimeOfCompletion() {
+	public LocalDate getTimeOfCompletion() {
 		return timeOfCompletion;
 	}
 
-	public void setTimeOfCompletion(Date timeOfCompletion) {
+	public void setTimeOfCompletion(LocalDate timeOfCompletion) {
 		this.timeOfCompletion = timeOfCompletion;
 	}
 
@@ -194,7 +175,13 @@ public class Phase extends SqlObject {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "Phase [phaseID=" + phaseID + ", requestID=" + requestID + ", phaseName=" + phaseName + ", status="
+				+ status + ", empNumber=" + empNumber + ", deadline=" + deadline + ", estimatedTimeOfCompletion="
+				+ estimatedTimeOfCompletion + ", timeOfCompletion=" + timeOfCompletion + ", hasBeenTimeExtended="
+				+ hasBeenTimeExtended + "]";
+	}
 
 }

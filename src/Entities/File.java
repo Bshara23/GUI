@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class File extends SqlObject implements Serializable {
 
@@ -96,10 +97,7 @@ public class File extends SqlObject implements Serializable {
 		return 0;
 	}
 
-	@Override
-	public boolean isPrimaryKeyIncremental() {
-		return true;
-	}
+	
 
 	private byte[] storedBytes;
 	
@@ -163,6 +161,14 @@ public class File extends SqlObject implements Serializable {
 		}
 
 	}
+
+	@Override
+	public String toString() {
+		return "File [ID=" + ID + ", requestID=" + requestID + ", fileName=" + fileName + ", type=" + type
+				+ ", storedBytes=" + storedBytes.length + "]";
+	}
+	
+	
 	
 	
 }

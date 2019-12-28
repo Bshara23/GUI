@@ -1,22 +1,24 @@
 package Entities;
 
-public class ExecutionReport extends Report {
+import java.io.Serializable;
+
+public class ExecutionReport extends Report implements Serializable {
 
 	private static ExecutionReport emptyInstance = new ExecutionReport(0, 0, null, null);
+
 	public static ExecutionReport getEmptyInstance() {
 		return emptyInstance;
 	}
-	
+
 	public ExecutionReport(long reportID, long requestID, String contentLT, String place) {
 		super(reportID, requestID, contentLT, place);
 	}
-	
+
 	@Override
 	public int getPrimaryKeyIndex() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
 
 	@Override
 	public int getForeignKeyIndex() {
@@ -24,13 +26,11 @@ public class ExecutionReport extends Report {
 		return 1;
 	}
 
-
 	@Override
 	public String getReferenceTableName() {
 		// TODO Auto-generated method stub
 		return "ChangeRequest";
 	}
-
 
 	@Override
 	public boolean hasForeignKey() {
@@ -38,24 +38,16 @@ public class ExecutionReport extends Report {
 		return true;
 	}
 
-
 	@Override
 	public String getReferenceTableForeignKeyName() {
 		// TODO Auto-generated method stub
 		return "requestID";
 	}
 
-
 	@Override
 	public int fieldsLastIndex() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	
-	@Override
-	public boolean isPrimaryKeyIncremental() {
-		return true;
-	}
-	
 
 }

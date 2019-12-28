@@ -10,10 +10,14 @@ import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
 
+import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
+import Controllers.Logic.RequestsType;
+import Entities.ChangeRequest;
+import Protocol.Command;
 import Utility.AppManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -36,6 +40,8 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
 public class ListOfRequestsController implements Initializable {
+
+	private static final String GET_REQS_LIST_CTRL = "dwad2414r2rr";
 
 	@FXML
 	private ResourceBundle resources;
@@ -111,6 +117,7 @@ public class ListOfRequestsController implements Initializable {
 
 	public static boolean disableAllJobs = false;
 	public static String pageHeader = "";
+	public static RequestsType requestsType;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -160,9 +167,6 @@ public class ListOfRequestsController implements Initializable {
 		ControllerManager.setEffect(jobs, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
 		ControllerManager.setEffect(tableButtons, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
 
-		
-		
-		
 //		tblSupervisorRequests.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 //		final ObservableList<TablePosition> selectedCells = tblSupervisorRequests.getSelectionModel().getSelectedCells();
 //		selectedCells.addListener(new ListChangeListener<TablePosition>() {
@@ -178,17 +182,49 @@ public class ListOfRequestsController implements Initializable {
 //		        }
 //		    };
 //		});
-		
-		
-		addRandomDataToTable();
+
+		// Set a listener for the requests list from the server.
+
+		// addRandomDataToTable(); TODO
+
+		Client.addMessageRecievedFromServer(GET_REQS_LIST_CTRL, srMsg -> {
+			
+			System.out.println("Server: " + srMsg.getCommand());
+
+			
+			if (srMsg.getCommand() == Command.GetMyRequests) {
+				System.out.println("Loading data");
+
+				Object[] objs = (Object[]) srMsg.getAttachedData();
+				ArrayList<ChangeRequest> myRequests = (ArrayList<ChangeRequest>) objs[0];
+				RequestsType requestType = (RequestsType) objs[1];
+
+				switch (requestType) {
+				case myRequests:
+
+					loadRequestToTable(myRequests);
+
+					break;
+
+				default:
+					break;
+				}
+			}
+		});
+
+		Client.getInstance().request(Command.GetMyRequests,
+				new Object[] { ClientGUI.userName, RequestsType.myRequests });
+
+		// RequestsType rType = firstRelatedRequests(ClientGUI.myID);
+		// requestDataForTable(ClientGUI.myID, rType);
 
 		// TODO: bug. the line does not work unless the function has been called by the
 		// mouse pressed event!!
 		// Select the first job at the initialization
-		if (jobs.size() != 0) {
-			Node node = jobs.get(0);
-			selectNode(node);
-		}
+//		if (jobs.size() != 0) {
+//			Node node = jobs.get(0);
+//			selectNode(node);
+//		}
 
 		ArrayList<Node> nodes = ControllerManager.getAllNodes(hbRequestsType);
 		nodes.add(lineTableJob);
@@ -204,7 +240,48 @@ public class ListOfRequestsController implements Initializable {
 
 	}
 
+	@Override
+	protected void finalize() throws Throwable {
+		Client.removeMessageRecievedFromServer(GET_REQS_LIST_CTRL);
+		super.finalize();
+	}
+
+	// TODO: implement
+	private RequestsType firstRelatedRequests(long myID) {
+		return RequestsType.supervision;
+	}
+
+	private void requestDataForTable(long myID, RequestsType rType) {
+
+		switch (rType) {
+		case myRequests:
+
+			Client.getInstance().request(Command.GetMyRequests, new Object[] { ClientGUI.userName, rType });
+			break;
+
+		default:
+			break;
+		}
+
+	}
+
+	private void loadRequestToTable(ArrayList<ChangeRequest> changeRequests) {
+
+		ArrayList<TableDataRequests> strs = new ArrayList<TableDataRequests>();
+
+		for (ChangeRequest changeRequest : changeRequests) {
+
+			strs.add(new TableDataRequests(changeRequest.getRequestID() + "",
+					changeRequest.getDateOfRequest().toString(),
+					(changeRequest.getEndDateOfRequest().toEpochDay() - changeRequest.getDateOfRequest().toEpochDay()) + "" , "Active",
+					changeRequest.getEndDateOfRequest().toString()));
+		}
+
+		addContentToTable(strs);
+	}
+
 	private void addRandomDataToTable() {
+
 		Random rnd = new Random();
 
 		String[] statuses = new String[] { "Frozen", "Active" };
@@ -291,17 +368,17 @@ public class ListOfRequestsController implements Initializable {
 	}
 
 	private void initTable() {
-		
+
 		tcRequestID.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S1"));
 		tcIssueDate.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S2"));
 		tcCurrentPhase.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S3"));
 		tcStatus.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S4"));
 		tcDeadline.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S5"));
-		
+
 	}
 
 	private void addContentToTable(ArrayList<TableDataRequests> strs) {
-		//tblSupervisorRequests.getSelectionModel().setCellSelectionEnabled(true);
+		// tblSupervisorRequests.getSelectionModel().setCellSelectionEnabled(true);
 
 		tblSupervisorRequests.setItems(FXCollections.observableArrayList(strs));
 
@@ -361,5 +438,4 @@ public class ListOfRequestsController implements Initializable {
 
 	}
 
-	
 }

@@ -97,7 +97,7 @@ public abstract class SqlObject {
 				sb.append(Config.sqlBoolean);
 				break;
 
-			case "class java.sql.Date":
+			case "class java.time.LocalDate":
 				sb.append(Config.sqlDate);
 
 				break;
@@ -157,8 +157,6 @@ public abstract class SqlObject {
 	 */
 
 	public abstract int getPrimaryKeyIndex();
-
-	public abstract boolean isPrimaryKeyIncremental();
 
 	public abstract int getForeignKeyIndex();
 
@@ -244,29 +242,6 @@ public abstract class SqlObject {
 		return fieldsNames;
 	}
 
-	public String[] getFieldsNamesForInsertion() {
-		if (isPrimaryKeyIncremental()) {
-			return removeByPosition(getFieldsNames(), getPrimaryKeyIndex());
-
-		} else {
-			return fieldsNames;
-		}
-	}
-
-	public String[] getFieldsValuesForInsertion() {
-		if (isPrimaryKeyIncremental()) {
-			return removeByPosition(getFieldsValues(), getPrimaryKeyIndex());
-		} else {
-			return fieldsNames;
-		}
-	}
-
-	private String[] removeByPosition(String[] src, int pos) {
-		ArrayList<String> res = new ArrayList<String>(Arrays.asList(src));
-		res.remove(pos);
-		String[] finalResult = new String[res.size()];
-		return res.toArray(finalResult);
-	}
 	
 	public String[] getFieldsValues() {
 

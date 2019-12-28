@@ -8,6 +8,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import Controllers.Logic.RequestsType;
+import Entities.ChangeRequest;
 import Entities.File;
 import Protocol.Command;
 import Protocol.SRMessage;
@@ -49,8 +51,7 @@ public class Server extends AbstractServer {
 		serverStoppedEvents = new ArrayList<VoidFunc>();
 
 		ServerConfigurations.InjectEvents();
-		
-		
+
 	}
 
 	public static Server getInstance() {
@@ -76,7 +77,7 @@ public class Server extends AbstractServer {
 
 	@Override
 	protected void finalize() throws Throwable {
-		
+
 		executorService.shutdown();
 		try {
 			executorService.awaitTermination(10, TimeUnit.SECONDS);
@@ -88,13 +89,12 @@ public class Server extends AbstractServer {
 			System.out.println("Tired of waiting.");
 		super.finalize();
 	}
-	
+
 	// Initialize the client
 	public void initialize(int port, String username, String password, String schemaName, int poolSize) {
-		
+
 		executorService = Executors.newFixedThreadPool(poolSize);
 
-		
 		sqlException = false;
 		instance.setPort(port);
 
@@ -126,10 +126,10 @@ public class Server extends AbstractServer {
 	@Override
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
 		SRMessage srMsg = (SRMessage) msg;
-		
+
 		// Execute in a separate thread
 		executorService.execute(() -> {
-			
+
 			switch (srMsg.getCommand()) {
 
 			case insertFile:
@@ -161,6 +161,49 @@ public class Server extends AbstractServer {
 
 				break;
 
+			case GetMyRequests:
+				
+				Object[] objs = (Object[]) srMsg.getAttachedData();
+				String username = (String)objs[0];
+				RequestsType requestType = (RequestsType) objs[1];
+				
+
+				switch (requestType) {
+
+				case myRequests:
+					
+					ArrayList<ChangeRequest> crs = db.getChangeRequests(username);
+
+					Object[] sendBack = new Object[] { crs, requestType };
+					
+					sendMessageToClient(client, Command.GetMyRequests, sendBack);
+
+					break;
+
+				case decision:
+
+					break;
+
+				case evaluation:
+
+					break;
+				case examination:
+
+					break;
+				case execution:
+
+					break;
+
+				case supervision:
+
+					break;
+
+				default:
+					System.err.println("Error, the RequestsType " + requestType.toString() + " is not defined!");
+					break;
+				}
+
+				break;
 			default:
 				System.err.println("Error, undefine command [" + srMsg.getCommand() + "]");
 				break;
@@ -171,12 +214,12 @@ public class Server extends AbstractServer {
 					f.call(msg, client);
 			}
 		});
-		
+
 	}
 
 	private void sendMessageToClient(ConnectionToClient client, Command cmd, Object obj) {
 		try {
-			client.sendToClient(new SRMessage(Command.getFile, obj));
+			client.sendToClient(new SRMessage(cmd, obj));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

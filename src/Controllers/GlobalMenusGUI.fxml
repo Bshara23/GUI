@@ -153,7 +153,7 @@
             <Insets />
          </opaqueInsets>
       </VBox>
-      <AnchorPane fx:id="apHeader" layoutX="155.0" onMouseDragged="#HeaderSetOnMouseDragged" onMousePressed="#headerSetOnMousePressed" prefHeight="86.0" prefWidth="1348.0" style="-fx-background-color: #ffffff;">
+      <AnchorPane fx:id="apHeader" layoutX="155.0" prefHeight="86.0" prefWidth="1348.0" style="-fx-background-color: #ffffff;">
          <children>
             <ImageView fitHeight="34.0" fitWidth="28.0" layoutX="1287.0" layoutY="37.0" pickOnBounds="true" preserveRatio="true">
                <image>

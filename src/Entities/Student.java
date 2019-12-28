@@ -1,15 +1,18 @@
 package Entities;
 
-public class Student extends SystemUser {
+import java.io.Serializable;
+
+public class Student extends SystemUser implements Serializable {
 
 	private static Student emptyInstance = new Student(null, null, null, null, null, null, 0, null);
+
 	public static Student getEmptyInstance() {
 		return emptyInstance;
 	}
-	
+
 	public long stuNumber;
 	public String stuDepartment;
-	
+
 	public Student(String userName, String password, String email, String firstName, String lastName, String phoneNo,
 			long stuNumber, String stuDepartment) {
 		super(userName, password, email, firstName, lastName, phoneNo);
@@ -32,9 +35,7 @@ public class Student extends SystemUser {
 	public void setStuDepartment(String stuDepartment) {
 		this.stuDepartment = stuDepartment;
 	}
-	
-	
-	
+
 	@Override
 	public int getPrimaryKeyIndex() {
 		// TODO Auto-generated method stub
@@ -44,9 +45,8 @@ public class Student extends SystemUser {
 	@Override
 	public int getForeignKeyIndex() {
 		// TODO Auto-generated method stub
-		return 3;
+		return 2;
 	}
-
 
 	@Override
 	public String getReferenceTableName() {
@@ -64,7 +64,7 @@ public class Student extends SystemUser {
 		// TODO Auto-generated method stub
 		return "userName";
 	}
-	
+
 	@Override
 	public int fieldsLastIndex() {
 		// TODO Auto-generated method stub

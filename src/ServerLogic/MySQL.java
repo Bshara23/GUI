@@ -1,15 +1,13 @@
 package ServerLogic;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import Entities.File;
-import Entities.SqlObject;
-import Entities.SqlObject.Config;
+import Entities.*;
+import ServerLogic.UtilityInterfaces.IPreparedStatement;
 import ServerLogic.UtilityInterfaces.IStatement;
 import ServerLogic.UtilityInterfaces.UpdateFunc;
 import Utility.VoidFunc;
@@ -30,7 +28,6 @@ public class MySQL extends MySqlConnBase {
 		qb = new QueryBuilder();
 	}
 
-	
 	/* print Table columns */
 
 	/**
@@ -124,39 +121,15 @@ public class MySQL extends MySqlConnBase {
 		return result;
 	}
 
-	private <E> Object getFieldValue(Class<E> ctype, Object obj, String fieldName) {
-		Field[] fields = ctype.getFields();
-
-		for (int i = 0; i < fields.length; i++) {
-			try {
-				if (fields[i].getName().compareTo(fieldName) == 0) {
-					return fields[i].get(obj);
-				}
-
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-
-				e.printStackTrace();
-			}
-		}
-		try {
-			throw new Exception("Error, Field [" + fieldName + "] not found in class " + ctype.getName());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-
-	}
-
 	/* insert using object */
 
 	// TODO *********************************************
 	public void insertObject(SqlObject obj) {
 
-		String query = qb.insertInto(obj.getTableName()).forColumns(obj.getFieldsNamesForInsertion())
-				.theValues(obj.getFieldsValuesForInsertion()).toString();
+		String query = qb.insertInto(obj.getTableName()).forColumns(obj.getFieldsNames())
+				.theValues(obj.getFieldsValues()).toString();
 
-		// System.out.println(query);
+		//System.out.println(query);
 		executePreparedStatement(query, null);
 
 	}
@@ -202,18 +175,18 @@ public class MySQL extends MySqlConnBase {
 		return false;
 	}
 
-	public File getFile(long ID) {
+	public File getFile(long fileID) {
 		String query = "SELECT * FROM `icm`.`file` WHERE `icm`.`file`.ID = ?;";
 		try {
 			PreparedStatement ps = conn.prepareStatement(query);
 
-			ps.setLong(1, ID);
+			ps.setLong(1, fileID);
 			ps.execute();
 
 			ResultSet rs = ps.getResultSet();
 			if (rs.next()) {
 
-				File file = new File(ID, rs.getLong(2), rs.getString(4), rs.getString(5));
+				File file = new File(fileID, rs.getLong(2), rs.getString(4), rs.getString(5));
 
 				file.setBytes(rs.getBlob(3).getBinaryStream(), (int) rs.getBlob(3).length());
 
@@ -226,6 +199,209 @@ public class MySQL extends MySqlConnBase {
 		return null;
 	}
 
-	/* Setters and getters */
+	public ArrayList<ChangeRequest> getChangeRequests(int options) {
+
+		return getChangeRequests(null);
+	}
+
+	public ArrayList<Phase> getPhases() {
+		return getPhases(0);
+	}
+
+	public ArrayList<Phase> getPhases(long forRequestID) {
+		String query = "SELECT icm.phase.* FROM icm.changerequest "
+				+ "INNER JOIN icm.phase ON icm.phase.requestID=icm.changerequest.requestID ";
+
+		if (forRequestID != 0) {
+			query += "WHERE icm.changerequest.requestID = " + forRequestID;
+		}
+		
+		query += " ORDER BY icm.changerequest.requestID ASC ,icm.phase.requestID ASC ";
+
+
+		ArrayList<Phase> results = new ArrayList<Phase>();
+
+		IStatement prepS = rs -> {
+			try {
+				while (rs.next()) {
+
+					Phase phase = new Phase(rs.getLong(1), rs.getLong(2), rs.getString(3), rs.getString(4),
+							rs.getLong(5), rs.getDate(6).toLocalDate(), rs.getDate(7).toLocalDate(), rs.getDate(8).toLocalDate(), rs.getBoolean(9));
+
+					// add at the last change request
+					results.add(phase);
+
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		executeStatement(query, prepS);
+
+		return results;
+
+	}
+
+	public ArrayList<ExecutionReport> getExecutionReports(){
+		return getExecutionReports(0);
+	}
+	
+	public ArrayList<ExecutionReport> getExecutionReports(long forRequestID) {
+		String query = "SELECT icm.executionreport.* FROM icm.changerequest "
+				+ "INNER JOIN icm.executionreport ON icm.executionreport.requestID=icm.changerequest.requestID ";
+
+		if (forRequestID != 0) {
+			query += "WHERE icm.changerequest.username = " + forRequestID;
+		}
+
+		query += " ORDER BY icm.changerequest.requestID ASC ,icm.executionreport.requestID ASC ";
+
+		ArrayList<ExecutionReport> results = new ArrayList<ExecutionReport>();
+
+		IStatement prepS = rs -> {
+			try {
+				while (rs.next()) {
+
+					ExecutionReport exeRep = new ExecutionReport(rs.getLong(1), rs.getLong(2), rs.getString(3),
+							rs.getString(4));
+
+					results.add(exeRep);
+
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		executeStatement(query, prepS);
+
+		return results;
+
+	}
+
+	public ArrayList<EvaluationReport> getEvaluationReports() {
+		return getEvaluationReports(0);
+	}
+	
+	public ArrayList<EvaluationReport> getEvaluationReports(long forRequestID) {
+		String query = "SELECT icm.evaluationreport.* FROM icm.changerequest "
+				+ "INNER JOIN icm.evaluationreport ON icm.evaluationreport.requestID=icm.changerequest.requestID ";
+
+		if (forRequestID != 0) {
+			query += "WHERE icm.changerequest.username = " + forRequestID;
+		}
+		query += " ORDER BY icm.changerequest.requestID ASC ,icm.evaluationreport.requestID ASC ";
+
+
+		ArrayList<EvaluationReport> results = new ArrayList<EvaluationReport>();
+
+		IStatement prepS = rs -> {
+			try {
+				while (rs.next()) {
+
+					EvaluationReport evalRep = new EvaluationReport(rs.getLong(5), rs.getLong(6), rs.getString(7),
+							rs.getString(8), rs.getString(1), rs.getString(2), rs.getString(3), rs.getDate(4).toLocalDate());
+
+					results.add(evalRep);
+
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		executeStatement(query, prepS);
+
+		return results;
+
+	}
+
+	public ArrayList<File> getFiles() {
+		return getFiles(0);
+	}
+	
+	public ArrayList<File> getFiles(long forRequestID) {
+		String query = "SELECT icm.file.* FROM icm.changerequest "
+				+ "INNER JOIN icm.file ON icm.file.requestID=icm.changerequest.requestID ";
+				
+
+		if (forRequestID != 0) {
+			query += "WHERE icm.changerequest.username = " + forRequestID;
+		}
+
+		query += " ORDER BY icm.changerequest.requestID ASC ,icm.file.requestID ASC ";
+		ArrayList<File> results = new ArrayList<File>();
+
+		IStatement prepS = rs -> {
+			try {
+				while (rs.next()) {
+
+					File file = new File(rs.getLong(1), rs.getLong(2), rs.getString(4), rs.getString(5));
+
+					file.setBytes(rs.getBlob(3).getBinaryStream(), (int) rs.getBlob(3).length());
+
+					results.add(file);
+
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		executeStatement(query, prepS);
+
+		return results;
+
+	}
+	
+	public ArrayList<ChangeRequest> getChangeRequests() {
+		return getChangeRequests(0);
+	}
+
+	public ArrayList<ChangeRequest> getChangeRequests(String forUsername) {
+
+		String query = "SELECT * FROM icm.changerequest ";
+
+		// This is added so we get the requests for all of the users, used for the
+		// overridden function.
+		if (forUsername != null) {
+			query += "WHERE icm.changerequest.username = 'username2' ";
+		}
+
+		query += "ORDER BY icm.changerequest.requestID ASC;";
+
+		ArrayList<ChangeRequest> results = new ArrayList<ChangeRequest>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				while (rs.next()) {
+
+					ChangeRequest cr = new ChangeRequest(rs.getLong(1), rs.getString(2), rs.getDate(3).toLocalDate(), rs.getDate(4).toLocalDate(),
+							rs.getDate(5).toLocalDate(), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9),
+							rs.getString(10));
+
+					results.add(cr);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		executeStatement(query, prepS);
+
+		return results;
+	}
 
 }

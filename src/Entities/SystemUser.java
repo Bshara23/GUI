@@ -109,10 +109,6 @@ public class SystemUser extends SqlObject implements Serializable {
 	}
 
 	
-	@Override
-	public boolean isPrimaryKeyIncremental() {
-		return true;
-	}
 	
 	@Override
 	public String toString() {

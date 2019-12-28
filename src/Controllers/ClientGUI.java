@@ -10,23 +10,19 @@ import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
-import Utility.AppManager;
+import Controllers.Logic.RequestsType;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.effect.BlendMode;
-import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -92,6 +88,11 @@ public class ClientGUI extends Application implements Initializable {
 	
 	private static double xOffset = 0;
 	private static double yOffset = 0;
+	
+	// TODO: make this dynamic
+	public static long myID = 5;
+
+	public static String userName = "username2";
 
 	@Override
 	public void start(Stage stage) {
@@ -164,6 +165,8 @@ public class ClientGUI extends Application implements Initializable {
                 xOffset = getStage().getX() - event.getScreenX();
                 yOffset = getStage().getY() - event.getScreenY();
             	apHeader.setCursor(Cursor.CLOSED_HAND);
+            	// TODO: add the opacity to the settings
+            	getStage().setOpacity(0.8);
 
             }
         });
@@ -178,9 +181,15 @@ public class ClientGUI extends Application implements Initializable {
             @Override
             public void handle(MouseEvent event) {
             	apHeader.setCursor(Cursor.OPEN_HAND);
-
+            	getStage().setOpacity(1);
             }
         });
+		
+		apHeader.setOnMouseClicked(event -> {
+			if(event.getClickCount() == 2) {
+		        getStage().setIconified(true);
+			}
+		});
 	}
 
 	private int index = 0;
@@ -189,18 +198,7 @@ public class ClientGUI extends Application implements Initializable {
 	
 	
 
-	// TODO: not working
-	@FXML
-	void HeaderSetOnMouseDragged(MouseEvent event) {
-		// stage.setX(event.getScreenX() + xOffset);
-		// stage.setY(event.getScreenY() + yOffset);
-	}
 
-	@FXML
-	void headerSetOnMousePressed(MouseEvent event) {
-		// xOffset = stage.getX() - event.getScreenX();
-		// yOffset = stage.getY() - event.getScreenY();
-	}
 
 	@FXML
 	void onIssueRequestPress(MouseEvent event) {
@@ -220,7 +218,7 @@ public class ClientGUI extends Application implements Initializable {
 
 		ListOfRequestsController.disableAllJobs = true;
 		ListOfRequestsController.pageHeader = "List of My Requests";
-
+		ListOfRequestsController.requestsType = RequestsType.myRequests;
 		commondMenuBehavior(apBtnMyRequests, "My Requests", FxmlNames.REQUESTS_LIST);
 	}
 
@@ -253,6 +251,7 @@ public class ClientGUI extends Application implements Initializable {
 
 		ListOfRequestsController.disableAllJobs = false;
 		ListOfRequestsController.pageHeader = "List of Requests for Treatment";
+		ListOfRequestsController.requestsType = RequestsType.supervision;
 		commondMenuBehavior(apBtnMyRequests, "Requests Treatment", FxmlNames.REQUESTS_LIST);
 
 	}

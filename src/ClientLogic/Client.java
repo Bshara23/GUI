@@ -2,6 +2,9 @@ package ClientLogic;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import Protocol.Command;
 import Protocol.SRMessage;
@@ -20,6 +23,8 @@ public class Client extends AbstractClient {
 
 	private static HashMap<String, SRMessageFunc> messageRecievedFromServerEvents;
 	private static HashMap<String, StringFunc> stringRecievedFromServerEvents;
+	private static ExecutorService executorService;
+	private int poolSize = 5;
 
 	static {
 		instance = new Client("10.0.0.6", 5555);
@@ -31,13 +36,30 @@ public class Client extends AbstractClient {
 	}
 
 	public static Client getInstance() {
-		
+
 		return instance;
 	}
 
-	
+	@Override
+	protected void finalize() throws Throwable {
+
+		executorService.shutdown();
+		try {
+			executorService.awaitTermination(10, TimeUnit.SECONDS);
+		} catch (InterruptedException e1) {
+		}
+		if (executorService.isTerminated())
+			System.out.println("All threads are done.");
+		else
+			System.out.println("Tired of waiting.");
+		super.finalize();
+	}
+
 	// Initialize the client
 	public void initialize(String host, int port) {
+
+		executorService = Executors.newFixedThreadPool(poolSize);
+
 		instance.setHost(host);
 		instance.setPort(port);
 		try {
@@ -51,17 +73,18 @@ public class Client extends AbstractClient {
 	public Client(String host, int port) {
 		super(host, port);
 	}
-	
 
 	public void request(Command cmd, Object obj) {
-		try {
-			instance.sendToServer(new SRMessage(cmd, obj));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		executorService.execute(() -> {
+			try {
+				instance.sendToServer(new SRMessage(cmd, obj));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
 	}
-	
 
 	@Override
 	protected void handleMessageFromServer(Object msg) {
@@ -70,7 +93,7 @@ public class Client extends AbstractClient {
 
 			@Override
 			public void run() {
-				SRMessage srMsg = (SRMessage)msg;
+				SRMessage srMsg = (SRMessage) msg;
 				for (SRMessageFunc f : messageRecievedFromServerEvents.values()) {
 					if (f != null)
 						f.call(srMsg);
@@ -153,5 +176,28 @@ public class Client extends AbstractClient {
 
 	public static void addMessageRecievedFromServer(String key, SRMessageFunc sRMessageFunc) {
 		messageRecievedFromServerEvents.put(key, sRMessageFunc);
+	}
+	
+	
+
+
+	public static void removeServerConnectionEstablishedEvent(String key) {
+		serverConnectionEstablishedEvents.remove(key);
+	}
+
+	public static void removeServerConnectionClosedEvent(String key) {
+		serverConnectionClosedEvents.remove(key);
+	}
+
+	public static void removeServerExceptionEvent(String key) {
+		serverExceptionEvents.remove(key);
+	}
+
+	public static void removeStringRecievedFromServer(String key) {
+		stringRecievedFromServerEvents.remove(key);
+	}
+
+	public static void removeMessageRecievedFromServer(String key) {
+		messageRecievedFromServerEvents.remove(key);
 	}
 }

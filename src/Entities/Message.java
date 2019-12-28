@@ -1,24 +1,25 @@
 package Entities;
 
+import java.io.Serializable;
 import java.sql.Date;
+import java.time.LocalDate;
 
-public class Message extends SqlObject {
+public class Message extends SqlObject implements Serializable {
 
-	
 	private static Message emptyInstance = new Message(0, null, null, null, null, false, null, false, false, false);
+
 	public static Message getEmptyInstance() {
 		return emptyInstance;
 	}
-	
+
 	public long messageID;
 	public String subject, from, to, messageContentLT;
 	public boolean hasBeenViewed;
-	public Date sentAt;
+	public LocalDate sentAt;
 	public boolean isStarred, isRead, isArchived;
-	
 
 	public Message(long messageID, String subject, String from, String to, String messageContentLT,
-			boolean hasBeenViewed, Date sentAt, boolean isStarred, boolean isRead, boolean isArchived) {
+			boolean hasBeenViewed, LocalDate sentAt, boolean isStarred, boolean isRead, boolean isArchived) {
 		super();
 		this.messageID = messageID;
 		this.subject = subject;
@@ -32,52 +33,35 @@ public class Message extends SqlObject {
 		this.isArchived = isArchived;
 	}
 
-	@Override
-	public boolean isPrimaryKeyIncremental() {
-		return true;
-	}
+	
 
 	public boolean isStarred() {
 		return isStarred;
 	}
 
-
-
 	public void setStarred(boolean isStarred) {
 		this.isStarred = isStarred;
 	}
-
-
 
 	public boolean isRead() {
 		return isRead;
 	}
 
-
-
 	public void setRead(boolean isRead) {
 		this.isRead = isRead;
 	}
-
-
 
 	public boolean isArchived() {
 		return isArchived;
 	}
 
-
-
 	public void setArchived(boolean isArchived) {
 		this.isArchived = isArchived;
 	}
 
-
-
 	public void setHasBeenViewed(boolean hasBeenViewed) {
 		this.hasBeenViewed = hasBeenViewed;
 	}
-
-
 
 	public String getSubject() {
 		return subject;
@@ -87,11 +71,11 @@ public class Message extends SqlObject {
 		this.subject = subject;
 	}
 
-	public Date getSentAt() {
+	public LocalDate getSentAt() {
 		return sentAt;
 	}
 
-	public void setSentAt(Date sentAt) {
+	public void setSentAt(LocalDate sentAt) {
 		this.sentAt = sentAt;
 	}
 
@@ -127,13 +111,9 @@ public class Message extends SqlObject {
 		this.messageContentLT = messageContentLT;
 	}
 
-	
-
 	public boolean isHasBeenViewed() {
 		return hasBeenViewed;
 	}
-
-
 
 	@Override
 	public int getPrimaryKeyIndex() {
@@ -170,7 +150,5 @@ public class Message extends SqlObject {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	
-	
-	
+
 }

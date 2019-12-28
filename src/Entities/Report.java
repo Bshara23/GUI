@@ -1,6 +1,8 @@
 package Entities;
 
-public abstract class Report extends SqlObject {
+import java.io.Serializable;
+
+public abstract class Report extends SqlObject implements Serializable {
 
 	public long reportID;
 	public long requestID;
@@ -45,7 +47,11 @@ public abstract class Report extends SqlObject {
 	public void setContentLT(String contentLT) {
 		this.contentLT = contentLT;
 	}
-	
-	
-	
+
+	@Override
+	public String toString() {
+		return "Report [reportID=" + reportID + ", requestID=" + requestID + ", contentLT=" + contentLT + ", place="
+				+ place + "]";
+	}
+
 }

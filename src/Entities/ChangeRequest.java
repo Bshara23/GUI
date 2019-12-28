@@ -1,9 +1,11 @@
 package Entities;
 
+import java.io.Serializable;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
-public class ChangeRequest extends SqlObject {
+public class ChangeRequest extends SqlObject implements Serializable {
 
 	
 	private static ChangeRequest emptyInstance = new ChangeRequest(0, null, null, null, null, null, null, null, null, null);
@@ -18,7 +20,7 @@ public class ChangeRequest extends SqlObject {
 
 	public long requestID;
 	public String username;
-	public Date startDateOfRequest, estimatedTimeForExecution, endDateOfRequest;
+	public LocalDate startDateOfRequest, estimatedTimeForExecution, endDateOfRequest;
 	public String commentsLT, requestDescriptionLT;
 	public String descriptionOfRequestedChangeLT;
 	public String descriptionOfCurrentStateLT;
@@ -38,8 +40,8 @@ public class ChangeRequest extends SqlObject {
 	}
 	
 
-	public ChangeRequest(long requestID, String username, Date startDateOfRequest, Date estimatedTimeForExecution,
-			Date endDateOfRequest, String commentsLT, String requestDescriptionLT,
+	public ChangeRequest(long requestID, String username, LocalDate startDateOfRequest, LocalDate estimatedTimeForExecution,
+			LocalDate endDateOfRequest, String commentsLT, String requestDescriptionLT,
 			String descriptionOfRequestedChangeLT, String descriptionOfCurrentStateLT,
 			String relatedInformationSystem) {
 		super();
@@ -63,37 +65,37 @@ public class ChangeRequest extends SqlObject {
 
 
 
-	public Date getStartDateOfRequest() {
+	public LocalDate getStartDateOfRequest() {
 		return startDateOfRequest;
 	}
 
 
 
-	public void setStartDateOfRequest(Date startDateOfRequest) {
+	public void setStartDateOfRequest(LocalDate startDateOfRequest) {
 		this.startDateOfRequest = startDateOfRequest;
 	}
 
 
 
-	public Date getEstimatedTimeForExecution() {
+	public LocalDate getEstimatedTimeForExecution() {
 		return estimatedTimeForExecution;
 	}
 
 
 
-	public void setEstimatedTimeForExecution(Date estimatedTimeForExecution) {
+	public void setEstimatedTimeForExecution(LocalDate estimatedTimeForExecution) {
 		this.estimatedTimeForExecution = estimatedTimeForExecution;
 	}
 
 
 
-	public Date getEndDateOfRequest() {
+	public LocalDate getEndDateOfRequest() {
 		return endDateOfRequest;
 	}
 
 
 
-	public void setEndDateOfRequest(Date endDateOfRequest) {
+	public void setEndDateOfRequest(LocalDate endDateOfRequest) {
 		this.endDateOfRequest = endDateOfRequest;
 	}
 
@@ -167,12 +169,12 @@ public class ChangeRequest extends SqlObject {
 	}
 
 
-	public Date getDateOfRequest() {
+	public LocalDate getDateOfRequest() {
 		return startDateOfRequest;
 	}
 
 
-	public void setDateOfRequest(Date dateOfRequest) {
+	public void setDateOfRequest(LocalDate dateOfRequest) {
 		this.startDateOfRequest = dateOfRequest;
 	}
 
@@ -275,11 +277,6 @@ public class ChangeRequest extends SqlObject {
 	}
 
 
-
-	@Override
-	public boolean isPrimaryKeyIncremental() {
-		return true;
-	}
 
 
 	@Override

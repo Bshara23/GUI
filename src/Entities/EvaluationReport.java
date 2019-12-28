@@ -1,8 +1,10 @@
 package Entities;
 
+import java.io.Serializable;
 import java.sql.Date;
+import java.time.LocalDate;
 
-public class EvaluationReport extends Report {
+public class EvaluationReport extends Report implements Serializable{
 
 	private static EvaluationReport emptyInstance = new EvaluationReport(0, 0, null, null, null, null, null, null);
 	public static EvaluationReport getEmptyInstance() {
@@ -10,10 +12,10 @@ public class EvaluationReport extends Report {
 	}
 	
 	public String result, constraints, risks;
-	public Date estimatedExecutionTime;
+	public LocalDate estimatedExecutionTime;
 	
 	public EvaluationReport(long reportID, long requestID, String contentLT, String place, String result,
-			String constraints, String risks, Date estimatedExecutionTime) {
+			String constraints, String risks, LocalDate estimatedExecutionTime) {
 		super(reportID, requestID, contentLT, place);
 		this.result = result;
 		this.constraints = constraints;
@@ -52,12 +54,12 @@ public class EvaluationReport extends Report {
 	}
 
 
-	public Date getEstimatedExecutionTime() {
+	public LocalDate getEstimatedExecutionTime() {
 		return estimatedExecutionTime;
 	}
 
 
-	public void setEstimatedExecutionTime(Date estimatedExecutionTime) {
+	public void setEstimatedExecutionTime(LocalDate estimatedExecutionTime) {
 		this.estimatedExecutionTime = estimatedExecutionTime;
 	}
 
@@ -104,9 +106,15 @@ public class EvaluationReport extends Report {
 	}
 	
 	
+
+
+
 	@Override
-	public boolean isPrimaryKeyIncremental() {
-		return true;
+	public String toString() {
+		return "EvaluationReport [result=" + result + ", constraints=" + constraints + ", risks=" + risks
+				+ ", estimatedExecutionTime=" + estimatedExecutionTime + ", reportID=" + reportID + ", requestID="
+				+ requestID + ", contentLT=" + contentLT + ", place=" + place + "]";
 	}
+	
 	
 }

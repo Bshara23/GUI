@@ -1,6 +1,8 @@
 package Entities;
 
-public class Employee extends SystemUser {
+import java.io.Serializable;
+
+public class Employee extends SystemUser  implements Serializable {
 
 	
 	public long empNumber;
@@ -105,8 +107,5 @@ public class Employee extends SystemUser {
 		return 3;
 	}
 	
-	@Override
-	public boolean isPrimaryKeyIncremental() {
-		return true;
-	}
+	
 }

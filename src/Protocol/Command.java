@@ -14,8 +14,7 @@ public enum Command {
 	insertEvaluationReport, getEvaluationReport, 
 	insertExecutionReport, getExecutionReport, 
 	
-	GetMyRequests, GetMyRequestsSupervisor, GetMyRequestsEvaluator, 
-	GetMyRequestsExaminer, GetMyRequestsExecuter, GetMyRequestsDecide,
+	GetMyRequests, 
 	
 	updateRequest, updatePhase, 
 	insertFile, getFile,
