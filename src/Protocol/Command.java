@@ -49,5 +49,8 @@ public enum Command {
 	getExtraTimeRelateToEvaluatedTime,
 	
 	
+	debug_simulateBigCalculations,
+	
+	
 	
 }

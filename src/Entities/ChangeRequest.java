@@ -13,6 +13,7 @@ public class ChangeRequest extends SqlObject {
 		return emptyInstance;
 	}
 
+	
 
 
 	public long requestID;
@@ -32,6 +33,9 @@ public class ChangeRequest extends SqlObject {
 	
 
 
+	public ChangeRequest() {
+		this(0, null, null, null, null, null, null, null, null, null);
+	}
 	
 
 	public ChangeRequest(long requestID, String username, Date startDateOfRequest, Date estimatedTimeForExecution,
@@ -276,6 +280,18 @@ public class ChangeRequest extends SqlObject {
 	public boolean isPrimaryKeyIncremental() {
 		return true;
 	}
+
+
+	@Override
+	public String toString() {
+		return "ChangeRequest [requestID=" + requestID + ", username=" + username + ", startDateOfRequest="
+				+ startDateOfRequest + ", estimatedTimeForExecution=" + estimatedTimeForExecution
+				+ ", endDateOfRequest=" + endDateOfRequest + ", commentsLT=" + commentsLT + ", requestDescriptionLT="
+				+ requestDescriptionLT + ", descriptionOfRequestedChangeLT=" + descriptionOfRequestedChangeLT
+				+ ", descriptionOfCurrentStateLT=" + descriptionOfCurrentStateLT + ", relatedInformationSystem="
+				+ relatedInformationSystem + "]";
+	}
+	
 	
 	
 	

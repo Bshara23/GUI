@@ -9,6 +9,7 @@ import Controllers.Logic.ControllerManager;
 import ServerLogic.Server;
 import Utility.AppManager;
 import Utility.Curve;
+import Utility.FXUtility;
 import Utility.Func;
 import Utility.MathUtil;
 import Utility.Util;
@@ -36,10 +37,10 @@ public class ServerGUIController extends Application implements Initializable {
 	private static final int HEIGHT = (int) (WIDTH / MathUtil.goldenRatio);
 
 	@FXML
-	private Label lbAddressIP;
+	private Canvas canvas;
 
 	@FXML
-	private Label lblHostName;
+	private Label lbAddressIP;
 
 	@FXML
 	private TextField ifPort;
@@ -54,7 +55,7 @@ public class ServerGUIController extends Application implements Initializable {
 	private Circle cStatus;
 
 	@FXML
-	private Canvas canvas;
+	private Label lblHostName;
 
 	@FXML
 	private TextField ifDbUsername;
@@ -64,6 +65,9 @@ public class ServerGUIController extends Application implements Initializable {
 
 	@FXML
 	private TextField ifDbSchemaName;
+
+	@FXML
+	private TextField tfThreadPoolSize;
 
 	private GraphicsContext gc;
 	private ArrayList<Utility.Particle> particles;
@@ -153,6 +157,10 @@ public class ServerGUIController extends Application implements Initializable {
 
 		Server.addServerStoppedEvent(onServerStop);
 
+		
+		FXUtility.addNumbersOnlyListner(tfThreadPoolSize);
+		
+		
 	}
 
 	@FXML
@@ -167,14 +175,27 @@ public class ServerGUIController extends Application implements Initializable {
 			String schemaName = ifDbSchemaName.getText();
 
 			if (username == "" || password == "" || schemaName == "") {
-				ControllerManager.ShowAlertMessage("Input error", "Missing fields", "Please fill the missing fields", null);
+				ControllerManager.ShowAlertMessage("Input error", "Missing fields", "Please fill the missing fields",
+						null);
 			} else {
-				
+
 				lblStatus.setText("Starting server...");
 				cStatus.setFill(Color.YELLOW);
-				Server.getInstance().initialize(port, username, password, schemaName);
+				
+				
+				int poolSize = Integer.parseInt(tfThreadPoolSize.getText());
+				
+				
+				
+				Server.getInstance().initialize(port, username, password, schemaName, poolSize);
 
 				System.out.println("Server started!");
+
+				System.out.println("max thread pool size = " + poolSize);
+
+				
+				
+
 			}
 
 		} else if (btnStartServer.getText().compareTo("Stop Server") == 0) {

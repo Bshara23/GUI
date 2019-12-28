@@ -1,6 +1,7 @@
 package ServerLogic;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 
 import Entities.File;
 import Entities.SqlObject;
+import Entities.SqlObject.Config;
 import ServerLogic.UtilityInterfaces.IStatement;
 import ServerLogic.UtilityInterfaces.UpdateFunc;
 import Utility.VoidFunc;
@@ -29,191 +31,6 @@ public class MySQL extends MySqlConnBase {
 	}
 
 	
-	/**
-	 * Fetches the data from the table into an object with the specified class type.
-	 * Note1: This only fetches to Classes with public fields. Note2: The fields has
-	 * to be in the same order as the columns in the table. Supported fields for
-	 * now: int, long, java.sql.Date, java.lang.String.
-	 * 
-	 * @param ctype     type of the class to fetch to.
-	 * @param tableName name of the table in the database
-	 * @param Where     the WHERE statement in the "SELECT * FROM tableName WHERE
-	 *                  where" query
-	 */
-	public <E> ArrayList<E> fetchTableData(Class<E> ctype, String tableName, String Where) {
-
-		ArrayList<E> result = new ArrayList<E>();
-		Field[] fields = ctype.getFields();
-
-		IStatement statment = f -> {
-			try {
-				// Get columns count
-				int colCnt = f.getMetaData().getColumnCount();
-				if (colCnt != fields.length)
-					throw new Exception("Error, the number of fields in class " + ctype.getName()
-							+ " don't match the number of columns in the table!");
-				// iterate over all rows
-				while (f.next()) {
-					E row = null;
-					try {
-						row = ctype.newInstance();
-					} catch (InstantiationException | IllegalAccessException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-
-					// Set the fields by their type
-					setFields(fields, row, f);
-
-					// add the row to the result list
-					result.add(row);
-
-				}
-
-			} catch (SQLException e) {
-			} catch (Exception e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-		};
-
-		executeStatement("SELECT * FROM " + tableName + " WHERE " + Where, statment);
-
-		return result;
-	}
-
-	private <E> void setFields(Field[] fields, E row, ResultSet rs) {
-		for (int i = 0; i < fields.length; i++) {
-			try {
-				// Set field by the field name of the class E.
-				if (fields[i].getType().toString().compareTo("class java.lang.String") == 0)
-					fields[i].set(row, rs.getString(i + 1));
-				else if (fields[i].getType().toString().compareTo("class java.sql.Date") == 0)
-					fields[i].set(row, rs.getDate(i + 1));
-				else if (fields[i].getType().toString().compareTo("int") == 0)
-					fields[i].set(row, rs.getInt(i + 1));
-				else if (fields[i].getType().toString().compareTo("long") == 0)
-					fields[i].set(row, rs.getLong(i + 1));
-
-			} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
-	/**
-	 * Fetches the data from the table into an object with the specified class type.
-	 * Note: This only fetches to Classes with public String fields.
-	 * 
-	 * @param ctype     type of the class to fetch to.
-	 * @param tableName name of the table in the database
-	 */
-	public <E> ArrayList<E> fetchTableData(Class<E> ctype, String Where) {
-		return fetchTableData(ctype, Where);
-	}
-
-	/**
-	 * 
-	 * Returns a 2D ArrayList of strings that contains all of the table data.
-	 * 
-	 * @param tableName name of that table for the query: SELECT * FROM tableName
-	 *                  WHERE where.
-	 * @param Where     the Where statement.
-	 */
-	public ArrayList<ArrayList<String>> getTableData(String tableName, String Where) {
-
-		ArrayList<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
-
-		IStatement statment = f -> {
-			try {
-				// Get columns count
-				int colCnt = f.getMetaData().getColumnCount();
-				// iterate over all rows
-				while (f.next()) {
-					// create a new row
-					ArrayList<String> row = new ArrayList<String>();
-
-					// add rows values
-					for (int i = 0; i < colCnt; i++) {
-
-						row.add(f.getString(i + 1));
-					}
-					// add the row to the result list
-					result.add(row);
-				}
-
-			} catch (SQLException e) {
-			}
-		};
-
-		executeStatement("SELECT * FROM " + tableName + " WHERE " + Where, statment);
-
-		return result;
-	}
-
-	/**
-	 * 
-	 * Returns a 2D ArrayList of strings that contains all of the table data.
-	 * 
-	 * @param tableName name of that table for the query: SELECT * FROM tableName.
-	 */
-	public ArrayList<ArrayList<String>> getTableData(String tableName) {
-
-		return getTableData(tableName, "true");
-	}
-
-	/**
-	 * 
-	 * 
-	 * /** Prints the table data
-	 * 
-	 * @param separator separates each column.
-	 * @param tableName name of that table for the query: SELECT * FROM tableName.
-	 * @param Where     the WHERE statement.
-	 */
-	public void printTableData(String tableName, String separator, String Where) {
-		String query = "SELECT * FROM " + tableName + " WHERE " + Where;
-		IStatement statment = f -> {
-			try {
-				// Get columns count
-				int colCnt = f.getMetaData().getColumnCount();
-
-				for (int i = 0; i < colCnt; i++) {
-					System.out.print("[" + f.getMetaData().getColumnLabel(i + 1) + "]" + separator);
-				}
-				// new line
-				System.out.println("\n");
-				// iterate over all rows
-				while (f.next()) {
-
-					// print rows values
-					for (int i = 0; i < colCnt; i++) {
-
-						System.out.print(f.getString(i + 1) + separator);
-					}
-					// new line
-					System.out.println("");
-
-				}
-
-			} catch (SQLException e) {
-			}
-		};
-
-		executeStatement(query, statment);
-	}
-
-	/**
-	 * Prints the table data
-	 * 
-	 * @param separator separates each column.
-	 * @param tableName name of that table for the query: SELECT * FROM tableName.
-	 */
-	public void printTableData(String tableName, String separator) {
-		printTableData(tableName, separator, "true");
-	}
-
 	/* print Table columns */
 
 	/**
@@ -267,20 +84,6 @@ public class MySQL extends MySqlConnBase {
 	public void updateTableData(String tableName, String Set, String Where) {
 		String updateQuery = "UPDATE " + tableName + " SET " + Set + " WHERE " + Where;
 		executePreparedStatement(updateQuery, null);
-	}
-
-	// TODO: need to check if the key can always be a string, probably yes!
-	// Note: Class has to match the column names.
-	public <E> String updateByObject(Class<E> ctype, Object obj, String tableName, String key) {
-
-		// TODO: check if ' ' different for 'int' and int
-		String objArgs = getEveryFieldWithValue(ctype, obj);
-		String Where = key + " = '" + getFieldValue(ctype, obj, key) + "'"; // TODO
-		String updateQuery = "UPDATE " + tableName + " SET " + objArgs + " WHERE " + Where;
-
-		return updateQuery;
-		// executePreparedStatement(updateQuery, null);
-
 	}
 
 	public void updateByObject(SqlObject obj, UpdateFunc uFunc) {
@@ -353,14 +156,15 @@ public class MySQL extends MySqlConnBase {
 		String query = qb.insertInto(obj.getTableName()).forColumns(obj.getFieldsNamesForInsertion())
 				.theValues(obj.getFieldsValuesForInsertion()).toString();
 
-		System.out.println(query);
-		//executePreparedStatement(query, null);
+		// System.out.println(query);
+		executePreparedStatement(query, null);
 
 	}
 
 	public void deleteObject(SqlObject obj) {
 
-		String query = qb.deleteFrom(obj.getTableName()).where(obj.getPrimaryKeyName()).eq(obj.getPrimaryKeyValue()).toString();
+		String query = qb.deleteFrom(obj.getTableName()).where(obj.getPrimaryKeyName()).eq(obj.getPrimaryKeyValue())
+				.toString();
 
 		executePreparedStatement(query, null);
 
@@ -370,65 +174,58 @@ public class MySQL extends MySqlConnBase {
 
 		StringBuilder query = new StringBuilder();
 		query.append("CREATE TABLE ");
-		query.append(obj.tableInfo());		  
-		
+		query.append(obj.tableInfo());
+
 		query.append(";");
 
 		executePreparedStatement(query.toString(), null);
 
 	}
-	
-	
 
-	public void insertFile(File file) {
+	public boolean insertFile(File file) {
 
 		String query = "INSERT INTO `icm`.`file` (`requestID`, `data`, `fileName`, `type`) VALUES (?, ?, ?, ?);";
 		try {
-			
-			
+
 			PreparedStatement ps = conn.prepareStatement(query);
-			
+
 			ps.setLong(1, file.getRequestID());
 			ps.setBlob(2, file.getBinaryStream());
 			ps.setString(3, file.getFileName());
 			ps.setString(4, file.getType());
 
-			
-			ps.executeUpdate();
+			return ps.executeUpdate() == 1;
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return false;
 	}
-	
-	
+
 	public File getFile(long ID) {
 		String query = "SELECT * FROM `icm`.`file` WHERE `icm`.`file`.ID = ?;";
 		try {
 			PreparedStatement ps = conn.prepareStatement(query);
-			
+
 			ps.setLong(1, ID);
 			ps.execute();
 
 			ResultSet rs = ps.getResultSet();
 			if (rs.next()) {
-				
-				File file = new File(ID, rs.getLong(2),rs.getString(4), rs.getString(5));
+
+				File file = new File(ID, rs.getLong(2), rs.getString(4), rs.getString(5));
 
 				file.setBytes(rs.getBlob(3).getBinaryStream(), (int) rs.getBlob(3).length());
-				
-				
+
 				return file;
 			}
-
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
-	
+
 	/* Setters and getters */
 
 }

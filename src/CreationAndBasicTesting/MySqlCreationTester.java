@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.sql.Blob;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import ClientLogic.Client;
 import Entities.*;
@@ -35,12 +36,12 @@ public class MySqlCreationTester {
 		//db.insertFile(file);
 		
 		
-		insertObjects();
+		//insertObjects();
 
 
 	}
 
-	
+
 
 	private static void createDatabase() {
 

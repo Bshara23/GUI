@@ -163,21 +163,21 @@ public class ListOfRequestsController implements Initializable {
 		
 		
 		
-		tblSupervisorRequests.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-		final ObservableList<TablePosition> selectedCells = tblSupervisorRequests.getSelectionModel().getSelectedCells();
-		selectedCells.addListener(new ListChangeListener<TablePosition>() {
-		    @Override
-		    public void onChanged(Change change) {
-		        for (TablePosition pos : selectedCells) {
-		        	if(pos.getColumn() == 0) {
-			            System.out.println("row 0 is selected, call a function here");
-		        	}
-		        	if(pos.getColumn() == 1) {
-			            System.out.println("row 0 is selected, call a function here");
-		        	}
-		        }
-		    };
-		});
+//		tblSupervisorRequests.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+//		final ObservableList<TablePosition> selectedCells = tblSupervisorRequests.getSelectionModel().getSelectedCells();
+//		selectedCells.addListener(new ListChangeListener<TablePosition>() {
+//		    @Override
+//		    public void onChanged(Change change) {
+//		        for (TablePosition pos : selectedCells) {
+//		        	if(pos.getColumn() == 0) {
+//			            System.out.println("row 0 is selected, call a function here");
+//		        	}
+//		        	if(pos.getColumn() == 1) {
+//			            System.out.println("row 0 is selected, call a function here");
+//		        	}
+//		        }
+//		    };
+//		});
 		
 		
 		addRandomDataToTable();
@@ -301,7 +301,7 @@ public class ListOfRequestsController implements Initializable {
 	}
 
 	private void addContentToTable(ArrayList<TableDataRequests> strs) {
-		tblSupervisorRequests.getSelectionModel().setCellSelectionEnabled(true);
+		//tblSupervisorRequests.getSelectionModel().setCellSelectionEnabled(true);
 
 		tblSupervisorRequests.setItems(FXCollections.observableArrayList(strs));
 
@@ -350,8 +350,8 @@ public class ListOfRequestsController implements Initializable {
 		if (event.getClickCount() == 2) // Checking double click
 		{
 
-			//NavigationBar.next(NavigationBar.getNextPage().getPageTitle(),
-				//	NavigationBar.getNextPage().getPageLocation());
+			NavigationBar.next(NavigationBar.getNextPage().getPageTitle(),
+					NavigationBar.getNextPage().getPageLocation());
 
 		}
 	}

@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import Entities.File;
 import Protocol.Command;
@@ -12,14 +15,13 @@ import ServerLogic.UtilityInterfaces.ClientFunc;
 import ServerLogic.UtilityInterfaces.ClientThrowableFunc;
 import ServerLogic.UtilityInterfaces.ObjectClientFunc;
 import ServerLogic.UtilityInterfaces.ThrowableFunc;
-import Utility.Func;
 import Utility.VoidFunc;
 import javafx.application.Platform;
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
 
 public class Server extends AbstractServer {
-	
+
 	private boolean sqlException;
 	public static final int DEFAULT_PORT = 5555;
 	private static Server instance;
@@ -33,11 +35,9 @@ public class Server extends AbstractServer {
 	private static ArrayList<VoidFunc> serverStartedEvents;
 	private static ArrayList<VoidFunc> serverStoppedEvents;
 	private static MySQL db;
-
-	
-	
+	private static ExecutorService executorService;
 	static {
-		
+
 		instance = new Server(5555);
 		objectRecievedFromClientsEvents = new ArrayList<ObjectClientFunc>();
 		clientConnectedEvents = new ArrayList<ClientFunc>();
@@ -50,98 +50,130 @@ public class Server extends AbstractServer {
 
 		ServerConfigurations.InjectEvents();
 		
+		
 	}
 
 	public static Server getInstance() {
 		return instance;
 	}
 
-	
 	// TODO: is this valid or should just throw an exception?
-	public MySQL getDB(){
-		if(db == null)
+	public MySQL getDB() {
+		if (db == null)
 			System.err.println("Database has not been initialized, please initialize!");
 		return db;
 	}
-	
+
 	private Server(int port) {
 		super(port);
 		try {
 			inetAddress = InetAddress.getLocalHost();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 	}
 
+	@Override
+	protected void finalize() throws Throwable {
+		
+		executorService.shutdown();
+		try {
+			executorService.awaitTermination(10, TimeUnit.SECONDS);
+		} catch (InterruptedException e1) {
+		}
+		if (executorService.isTerminated())
+			System.out.println("All threads are done.");
+		else
+			System.out.println("Tired of waiting.");
+		super.finalize();
+	}
+	
 	// Initialize the client
-	public void initialize(int port, String username, String password, String schemaName) {
+	public void initialize(int port, String username, String password, String schemaName, int poolSize) {
+		
+		executorService = Executors.newFixedThreadPool(poolSize);
+
+		
 		sqlException = false;
 		instance.setPort(port);
-		
+
 		try {
 			instance.listen();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
-		
-		
+
 		VoidFunc f = () -> {
 
 			try {
 				Server.getInstance().close();
 				sqlException = true;
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+
 				e.printStackTrace();
 			}
 		};
 		db = new MySQL(username, password, schemaName, f);
-		
+
 	}
-	
+
 	public boolean isSqlException() {
 		return sqlException;
 	}
-	
+
 	@Override
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
-		SRMessage srMsg = (SRMessage)msg; 
-		switch (srMsg.getCommand()) {
+		SRMessage srMsg = (SRMessage) msg;
 		
-		case insertFile:
+		// Execute in a separate thread
+		executorService.execute(() -> {
 			
-			File fileToInsert = (File)srMsg.getAttachedData();
-			db.insertFile(fileToInsert);
-			
-			
-			break;
+			switch (srMsg.getCommand()) {
 
-		case getFile:
-			
-			int fileID = (int)srMsg.getAttachedData();
-			
-			// TODO: this has to run in a different thread since it might get the server
-			// stuck, other clients wont be able to receive messages
-			// Make multiple threads or a thread queue?
-			File downloadedFile = db.getFile(fileID);
+			case insertFile:
 
-			sendMessageToClient(client, Command.getFile, downloadedFile);
-			
-			break;
-			
-		default:
-			System.err.println("Error, undefine command [" + srMsg.getCommand() + "]");
-			break;
-		}
+				File fileToInsert = (File) srMsg.getAttachedData();
+				db.insertFile(fileToInsert);
+
+				break;
+
+			case getFile:
+
+				int fileID = (int) srMsg.getAttachedData();
+
+				// TODO: this has to run in a different thread since it might get the server
+				// stuck, other clients wont be able to receive messages
+				// Make multiple threads or a thread queue?
+				File downloadedFile = db.getFile(fileID);
+
+				sendMessageToClient(client, Command.getFile, downloadedFile);
+
+				break;
+
+			case debug_simulateBigCalculations:
+				ArrayList<String> stra = (ArrayList<String>) srMsg.getAttachedData();
+
+				for (int i = 0; i < 500000; i++) {
+					System.out.println(stra.toString());
+				}
+
+				break;
+
+			default:
+				System.err.println("Error, undefine command [" + srMsg.getCommand() + "]");
+				break;
+			}
+
+			for (ObjectClientFunc f : objectRecievedFromClientsEvents) {
+				if (f != null)
+					f.call(msg, client);
+			}
+		});
 		
-		for (ObjectClientFunc f : objectRecievedFromClientsEvents) {
-			if (f != null)
-				f.call(msg, client);
-		}
 	}
-	
+
 	private void sendMessageToClient(ConnectionToClient client, Command cmd, Object obj) {
 		try {
 			client.sendToClient(new SRMessage(Command.getFile, obj));
@@ -164,12 +196,12 @@ public class Server extends AbstractServer {
 
 			}
 		});
-		
+
 	}
 
 	@Override
 	protected synchronized void clientException(ConnectionToClient client, Throwable exception) {
-	
+
 		Platform.runLater(new Runnable() {
 
 			@Override
@@ -178,7 +210,7 @@ public class Server extends AbstractServer {
 					if (f != null)
 						f.call(client, exception);
 				}
-				
+
 			}
 		});
 	}
@@ -195,14 +227,14 @@ public class Server extends AbstractServer {
 					if (f != null)
 						f.call(client);
 				}
-				
+
 			}
 		});
 	}
 
 	@Override
 	protected void listeningException(Throwable exception) {
-		
+
 		Platform.runLater(new Runnable() {
 
 			@Override
@@ -211,14 +243,14 @@ public class Server extends AbstractServer {
 					if (f != null)
 						f.call(exception);
 				}
-				
+
 			}
 		});
 	}
 
 	@Override
 	protected void serverClosed() {
-		
+
 		Platform.runLater(new Runnable() {
 
 			@Override
@@ -227,15 +259,14 @@ public class Server extends AbstractServer {
 					if (f != null)
 						f.call();
 				}
-				
+
 			}
 		});
 	}
 
 	@Override
 	protected void serverStarted() {
-		
-		
+
 		Platform.runLater(new Runnable() {
 
 			@Override
@@ -244,15 +275,14 @@ public class Server extends AbstractServer {
 					if (f != null)
 						f.call();
 				}
-				
+
 			}
 		});
 	}
 
 	@Override
 	protected void serverStopped() {
-		
-		
+
 		Platform.runLater(new Runnable() {
 
 			@Override
@@ -261,7 +291,7 @@ public class Server extends AbstractServer {
 					if (f != null)
 						f.call();
 				}
-				
+
 			}
 		});
 	}
@@ -271,40 +301,39 @@ public class Server extends AbstractServer {
 		// TODO Auto-generated method stub
 		super.sendToAllClients(msg);
 	}
-	
-	
+
 	public static void addObjectRecievedFromClientsEvent(ObjectClientFunc ocf) {
 		objectRecievedFromClientsEvents.add(ocf);
 	}
-	
+
 	public static void addClientConnectedEvent(ClientFunc cf) {
 		clientConnectedEvents.add(cf);
 	}
-	
+
 	public static void addClientExceptionEvent(ClientThrowableFunc ctf) {
 		clientExceptionEvents.add(ctf);
 	}
-	
+
 	public static void addClientDisconnectedEvent(ClientFunc cf) {
 		clientDisconnectedEvents.add(cf);
 	}
-	
+
 	public static void addServerExceptionEvent(ThrowableFunc tf) {
 		serverExceptionEvents.add(tf);
 	}
-	
+
 	public static void addServerClosedEvent(VoidFunc tf) {
 		serverClosedEvents.add(tf);
 	}
-	
+
 	public static void addServerStartedEvent(VoidFunc tf) {
 		serverStartedEvents.add(tf);
 	}
-	
+
 	public static void addServerStoppedEvent(VoidFunc tf) {
 		serverStoppedEvents.add(tf);
 	}
-	
+
 	public String getHostAddress() {
 		return inetAddress.getHostAddress();
 	}
@@ -312,6 +341,5 @@ public class Server extends AbstractServer {
 	public String getHostName() {
 		return inetAddress.getHostName();
 	}
-
 
 }
