@@ -39,7 +39,7 @@
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Relate information system:" />
                      </children>
                   </HBox>
-                  <ComboBox fx:id="cbInformationSystem" prefWidth="150.0" promptText="Moodle" />
+                  <ComboBox fx:id="cbInformationSystem" prefHeight="25.0" prefWidth="224.0" promptText="Moodle" />
                </children>
             </HBox>
             <HBox spacing="15.0">

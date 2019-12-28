@@ -161,21 +161,29 @@ public class Server extends AbstractServer {
 
 				break;
 
+			case insertRequest:
+
+				ChangeRequest changeRequest = (ChangeRequest)srMsg.getAttachedData();
+				db.insertObject(changeRequest); // TODO: make it return a boolean
+				// TODO return a message of fail or success
+				
+				
+				break;
+
 			case GetMyRequests:
-				
+
 				Object[] objs = (Object[]) srMsg.getAttachedData();
-				String username = (String)objs[0];
+				String username = (String) objs[0];
 				RequestsType requestType = (RequestsType) objs[1];
-				
 
 				switch (requestType) {
 
 				case myRequests:
-					
+
 					ArrayList<ChangeRequest> crs = db.getChangeRequests(username);
 
 					Object[] sendBack = new Object[] { crs, requestType };
-					
+
 					sendMessageToClient(client, Command.GetMyRequests, sendBack);
 
 					break;

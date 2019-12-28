@@ -244,6 +244,14 @@ public class AppManager {
 
 	}
 
+	
+	public static void safeUpdate(String key, Func f) {
+		AppManager.removeUnique("drawCallbackLoop");
+		AppManager.addTimeTrigger(() -> {
+			AppManager.updateUnique("drawCallbackLoop", f);	
+		}, 0.1, key + "dd");
+	}
+	
 	/**
 	 * Removes the function that has been added using {@link updateUnique}.
 	 * 
