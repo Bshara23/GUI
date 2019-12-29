@@ -40,10 +40,14 @@ public class MySqlCreationTester {
 		// insertObjects();
 		// changeRequestTest();
 
-		populateChangeRequest();
+		//populateChangeRequest();
 		// createDatabase();
 
 		// insertObjects();
+		
+		
+		boolean res = db.doesObjectExist(new ChangeRequest(9996, null, null, null, null, null, null, null, null, null));
+		System.out.println(res);
 	}
 
 	private static void changeRequestTest() {

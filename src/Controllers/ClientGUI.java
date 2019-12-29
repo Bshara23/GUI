@@ -240,7 +240,7 @@ public class ClientGUI extends Application implements Initializable {
 
 		commondMenuBehavior(apBtnEmployees, "Employees", FxmlNames.EMPLOYEES);
 	}
-
+	
 	@FXML
 	void onLogoMainPress(MouseEvent event) {
 		commondMenuBehavior(apBtnLogoMain, "Home", FxmlNames.HOME);

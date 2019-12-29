@@ -9,7 +9,7 @@ public enum Command {
 	
 	updateProfile,
 	
-	insertRequest, insertPhase,
+	insertRequest, insertRequestWithFiles, insertPhase,
 	
 	insertEvaluationReport, getEvaluationReport, 
 	insertExecutionReport, getExecutionReport, 

@@ -8,6 +8,8 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.Effect;
 import javafx.scene.image.ImageView;
@@ -132,5 +134,15 @@ public class ControllerManager {
 			ControllerManager.setEffect(node, onPressed);
 		});
 	}
+	
+	public static boolean areAllStringsNotEmpty(String... strings) {
+		for (String str : strings) {
+			if(str.compareTo("") == 0)
+				return false;
+		}
+		return true;
+	}
+	
+	
 
 }

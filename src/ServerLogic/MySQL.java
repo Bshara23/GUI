@@ -123,23 +123,49 @@ public class MySQL extends MySqlConnBase {
 
 	/* insert using object */
 
-	// TODO *********************************************
-	public void insertObject(SqlObject obj) {
+	/**
+	 * Check if an object exist by return true if it does exist, otherwise false.
+	 * */
+	public boolean doesObjectExist(SqlObject obj) {
+		
+		String query = qb.select(qb.count(obj.getPrimaryKeyName()))
+				.from(obj.getTableName())
+				.where(obj.getPrimaryKeyName()).eq(obj.getPrimaryKeyValue())
+				.toString();
+
+		System.out.println(query);
+		ArrayList<Integer> res = new ArrayList<Integer>();
+		executeStatement(query, rs -> {
+			try {
+				rs.next();
+				res.add(rs.getInt(1));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+		
+		// if result was not added or the result is 0 then return false
+		// otherwise return true.
+		return res.size() == 0 ? false : res.get(0) > 0 ? true : false;
+	}
+
+	public int insertObject(SqlObject obj) {
 
 		String query = qb.insertInto(obj.getTableName()).forColumns(obj.getFieldsNames())
 				.theValues(obj.getFieldsValues()).toString();
 
 		//System.out.println(query);
-		executePreparedStatement(query, null);
+		return executePreparedStatement(query, null) > 0 ? 1 : 0;
 
 	}
 
-	public void deleteObject(SqlObject obj) {
+	public int deleteObject(SqlObject obj) {
 
 		String query = qb.deleteFrom(obj.getTableName()).where(obj.getPrimaryKeyName()).eq(obj.getPrimaryKeyValue())
 				.toString();
 
-		executePreparedStatement(query, null);
+		return executePreparedStatement(query, null) > 0 ? 1 : 0;
 
 	}
 
@@ -155,7 +181,7 @@ public class MySQL extends MySqlConnBase {
 
 	}
 
-	public boolean insertFile(File file) {
+	public int insertFile(File file) {
 
 		String query = "INSERT INTO `icm`.`file` (`requestID`, `data`, `fileName`, `type`) VALUES (?, ?, ?, ?);";
 		try {
@@ -167,12 +193,12 @@ public class MySQL extends MySqlConnBase {
 			ps.setString(3, file.getFileName());
 			ps.setString(4, file.getType());
 
-			return ps.executeUpdate() == 1;
+			return ps.executeUpdate();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return false;
+		return 0;
 	}
 
 	public File getFile(long fileID) {

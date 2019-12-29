@@ -12,6 +12,7 @@ import Controllers.Logic.RequestsType;
 import Entities.ChangeRequest;
 import Entities.File;
 import Protocol.Command;
+import Protocol.MsgReturnType;
 import Protocol.SRMessage;
 import ServerLogic.UtilityInterfaces.ClientFunc;
 import ServerLogic.UtilityInterfaces.ClientThrowableFunc;
@@ -123,10 +124,13 @@ public class Server extends AbstractServer {
 		return sqlException;
 	}
 
+	private int result;
+
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void handleMessageFromClient(Object msg, ConnectionToClient client) {
 		SRMessage srMsg = (SRMessage) msg;
-
+		System.out.println("Message Received from client: " + srMsg.getCommand().toString());
 		// Execute in a separate thread
 		executorService.execute(() -> {
 
@@ -163,11 +167,42 @@ public class Server extends AbstractServer {
 
 			case insertRequest:
 
-				ChangeRequest changeRequest = (ChangeRequest)srMsg.getAttachedData();
-				db.insertObject(changeRequest); // TODO: make it return a boolean
-				// TODO return a message of fail or success
+				ChangeRequest changeRequest = (ChangeRequest) srMsg.getAttachedData();
+				
+				if (!db.doesObjectExist(changeRequest)) {
+					result = 1;
+					result = db.insertObject(changeRequest); // TODO: make it return a boolean
+					
+					sendBooleanResultMessage(client, Command.insertRequest, result);
+					
+				} else {
+					sendResultMessageToClient(client, Command.insertRequest, MsgReturnType.Failure,
+							"A change request with the ID [" + changeRequest.getRequestID()
+									+ "] already exists!");
+				}
 				
 				
+				break;
+
+			case insertRequestWithFiles:
+
+				ChangeRequest changeRequestWithFiles = (ChangeRequest) srMsg.getAttachedData();
+				ArrayList<File> files = (ArrayList<File>) srMsg.getSecondaryAttachedData();
+
+				if (!db.doesObjectExist(changeRequestWithFiles)) {
+					result = 1;
+					result *= db.insertObject(changeRequestWithFiles); // TODO: make it return a boolean
+					for (File file : files) {
+						result *= db.insertFile(file);
+					}
+
+					sendBooleanResultMessage(client, Command.insertRequestWithFiles, result);
+				} else {
+					sendResultMessageToClient(client, Command.insertRequestWithFiles, MsgReturnType.Failure,
+							"A change request with the ID [" + changeRequestWithFiles.getRequestID()
+									+ "] already exists!");
+				}
+
 				break;
 
 			case GetMyRequests:
@@ -228,6 +263,32 @@ public class Server extends AbstractServer {
 	private void sendMessageToClient(ConnectionToClient client, Command cmd, Object obj) {
 		try {
 			client.sendToClient(new SRMessage(cmd, obj));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void sendBooleanResultMessage(ConnectionToClient client, Command cmd, int result) {
+
+		if (result == 1) {
+			sendResultMessageToClient(client, Command.insertRequestWithFiles, MsgReturnType.Success);
+		} else {
+			sendResultMessageToClient(client, Command.insertRequestWithFiles, MsgReturnType.Failure);
+		}
+	}
+
+	private void sendResultMessageToClient(ConnectionToClient client, Command cmd, MsgReturnType returnType) {
+		sendResultMessageToClient(client, cmd, returnType, null);
+	}
+
+	private void sendResultMessageToClient(ConnectionToClient client, Command cmd, MsgReturnType returnType,
+			Object obj) {
+		try {
+			SRMessage msg = new SRMessage(cmd, obj);
+			msg.setReturnType(returnType);
+			client.sendToClient(msg);
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

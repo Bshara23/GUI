@@ -115,7 +115,7 @@ public class File extends SqlObject implements Serializable {
 		}
 	}
 
-	public void autoSetTypeAndNameFromLocation() {
+	public void autoSetTypeAndNameFromPath() {
 		
 		setType(getFileName().substring(getFileName().lastIndexOf('.') + 1));
 		setFileName(getFileName().substring(getFileName().lastIndexOf('/') + 1));

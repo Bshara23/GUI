@@ -23,6 +23,7 @@ public class QueryBuilder {
 		query.deleteCharAt(query.length() - 1);
 	}
 
+	
 	public QueryBuilder select(String... cols) {
 		// clear the stringBuilder
 		query.setLength(0);

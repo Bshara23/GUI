@@ -74,11 +74,27 @@ public class Client extends AbstractClient {
 		super(host, port);
 	}
 
+	public void request(Command cmd, Object obj, Object secondaryData) {
+
+		executorService.execute(() -> {
+			try {
+				SRMessage srMsg = new SRMessage(cmd, obj);
+				srMsg.setSecondaryAttachedData(secondaryData);
+				instance.sendToServer(srMsg);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+	}
+	
 	public void request(Command cmd, Object obj) {
 
 		executorService.execute(() -> {
 			try {
-				instance.sendToServer(new SRMessage(cmd, obj));
+				SRMessage srMsg = new SRMessage(cmd, obj);
+				srMsg.setSecondaryAttachedData(null);
+				instance.sendToServer(srMsg);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -94,6 +110,10 @@ public class Client extends AbstractClient {
 			@Override
 			public void run() {
 				SRMessage srMsg = (SRMessage) msg;
+				
+				System.out.println("Message Received from server: " + srMsg.getCommand().toString());
+
+				
 				for (SRMessageFunc f : messageRecievedFromServerEvents.values()) {
 					if (f != null)
 						f.call(srMsg);

@@ -7,7 +7,19 @@ public class SRMessage implements Serializable {
 	private Command command;
 	private MsgReturnType returnType; 
 	private Object data;
+	private Object secondaryData;
+
 	
+	public Object getSecondaryAttachedData() {
+		return secondaryData;
+	}
+
+
+	public void setSecondaryAttachedData(Object secondaryData) {
+		this.secondaryData = secondaryData;
+	}
+
+
 	public SRMessage(Command command, Object data) {
 		this.command = command;
 		this.data = data;

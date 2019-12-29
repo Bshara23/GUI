@@ -16,6 +16,7 @@ import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
 import Controllers.Logic.FxmlNames;
 import Protocol.Command;
+import Protocol.MsgReturnType;
 import Utility.AppManager;
 import Utility.ControllerSwapper;
 import javafx.collections.FXCollections;
@@ -68,7 +69,10 @@ public class IssueRequestController implements Initializable {
 	@FXML
 	private Canvas canvasLeft;
 
-	private ArrayList<String> files;
+	private static ArrayList<String> filesPaths;
+	static {
+		filesPaths = new ArrayList<String>();
+	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -96,33 +100,100 @@ public class IssueRequestController implements Initializable {
 
 		hbBrowseFiles.setOnMousePressed(event -> {
 			List<java.io.File> list = fileChooser.showOpenMultipleDialog(ClientGUI.getStage());
-			files = new ArrayList<String>();
+			filesPaths.clear();
 			if (list != null) {
 				for (java.io.File file : list) {
 					String path = file.getPath();
 					path = path.replace("\\", "/");
-					files.add(path);
+					filesPaths.add(path);
 				}
 			}
 		});
 
+		// Set the behavior of the issue request button.
 		hbIssueRequest.setOnMousePressed(event -> {
 
 			String comments = taComments.getText();
 			String reqDesc = taRequestDescription.getText();
 			String descReqChange = taDescriptionOfRequestedChange.getText();
 			String descCurrState = taDescriptionOfCurrentState.getText();
-			String relateInfoSys = cbInformationSystem.getValue();
-			long reqestID = 9996;			// TODO: if id = -1, the server should know that he has to find a fitting id
+			String relateInfoSys = cbInformationSystem.getValue().toString();
 
-			ChangeRequest changeRequest = new ChangeRequest(reqestID, ClientGUI.userName, LocalDate.now(), LocalDate.now(), LocalDate.now(), comments, reqDesc, descReqChange, descCurrState, relateInfoSys);
-			
-			Client.getInstance().request(Command.insertRequest, changeRequest);
-			if(files != null)
-				sendFilesToServer(files, reqestID);
+			boolean areAllFieldsFilled = ControllerManager.areAllStringsNotEmpty(comments, reqDesc, descReqChange,
+					descCurrState);
+
+			if (areAllFieldsFilled) {
+				long reqestID = 9996; // TODO: if id = -1, the server should know that he has to find a fitting id
+
+				ChangeRequest changeRequest = new ChangeRequest(reqestID, ClientGUI.userName, LocalDate.now(),
+						LocalDate.now(), LocalDate.now(), comments, reqDesc, descReqChange, descCurrState,
+						relateInfoSys);
+
+				if (filesPaths.size() == 0) {
+					Client.getInstance().request(Command.insertRequest, changeRequest);
+
+				} else {
+					ArrayList<File> files = new ArrayList<File>();
+					for (String path : filesPaths) {
+
+						File file = new File(0, reqestID, path, "");
+						file.loadBytesFromLocal();
+						file.autoSetTypeAndNameFromPath();
+						files.add(file);
+					}
+					Client.getInstance().request(Command.insertRequestWithFiles, changeRequest, files);
+
+				}
+			} else {
+				ControllerManager.ShowAlertMessage("Error", "Required Fields Are Missing",
+						"Please fill the missing fields", null);
+			}
+
 		});
 
-		cbInformationSystem.setItems(FXCollections.observableArrayList("Moodle", "Information System", "Library System", "Classroom Computers", "Braude Website", "Labs and Computers Farms"));
+		// Set the behavior of the controller after receiving a message back from the
+		// server for
+		// issuing a request.
+		Client.addMessageRecievedFromServer("IssueRequestMessageReceieved", srMsg -> {
+			if (srMsg.getCommand() == Command.insertRequest) {
+
+				if (srMsg.getReturnType() == MsgReturnType.Success) {
+					ControllerManager.ShowAlertMessage("Issue Request", "Success",
+							"The request has been successfully issued!", null);
+				} else if (srMsg.getReturnType() == MsgReturnType.Failure) {
+					System.out.println("insertRequest");
+
+					if ((String) srMsg.getAttachedData() == null) {
+						ControllerManager.ShowAlertMessage("Issue Request", "Failure", "Something went wrong!", null);
+
+					} else {
+						ControllerManager.ShowAlertMessage("Issue Request", "Failure", (String) srMsg.getAttachedData(),
+								null);
+					}
+				}
+
+			} else if (srMsg.getCommand() == Command.insertRequestWithFiles) {
+				if (srMsg.getReturnType() == MsgReturnType.Success) {
+					ControllerManager.ShowAlertMessage("Issue Request", "Success",
+							"The request has been successfully issued!", null);
+
+				} else if (srMsg.getReturnType() == MsgReturnType.Failure) {
+					System.out.println("insertRequestWithFiles");
+					if ((String) srMsg.getAttachedData() == null) {
+						ControllerManager.ShowAlertMessage("Issue Request", "Failure", "Something went wrong!", null);
+
+					} else {
+						ControllerManager.ShowAlertMessage("Issue Request", "Failure", (String) srMsg.getAttachedData(),
+								null);
+					}
+				}
+			}
+
+		});
+
+		cbInformationSystem.setItems(FXCollections.observableArrayList("Moodle", "Information System", "Library System",
+				"Classroom Computers", "Braude Website", "Labs and Computers Farms"));
+		cbInformationSystem.setValue("Information System");
 
 	}
 
@@ -137,7 +208,7 @@ public class IssueRequestController implements Initializable {
 
 		File file = new File(0, reqID, filePath, "");
 		file.loadBytesFromLocal();
-		file.autoSetTypeAndNameFromLocation();
+		file.autoSetTypeAndNameFromPath();
 
 		Client.getInstance().request(Command.insertFile, file);
 
