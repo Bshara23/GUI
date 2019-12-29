@@ -167,19 +167,16 @@ public class Server extends AbstractServer {
 
 			case insertRequest:
 
-				ChangeRequest changeRequest = (ChangeRequest) srMsg.getAttachedData();
 				
-				if (!db.doesObjectExist(changeRequest)) {
-					result = 1;
-					result = db.insertObject(changeRequest); // TODO: make it return a boolean
-					
-					sendBooleanResultMessage(client, Command.insertRequest, result);
-					
-				} else {
-					sendResultMessageToClient(client, Command.insertRequest, MsgReturnType.Failure,
-							"A change request with the ID [" + changeRequest.getRequestID()
-									+ "] already exists!");
-				}
+				
+				ChangeRequest changeRequest = (ChangeRequest) srMsg.getAttachedData();
+				// Set a new max id
+				changeRequest.setRequestID(db.getNewMaxID(changeRequest));
+				
+				result = 1;
+				result = db.insertObject(changeRequest); // TODO: make it return a boolean
+				
+				sendBooleanResultMessage(client, Command.insertRequest, result);
 				
 				
 				break;
@@ -187,21 +184,20 @@ public class Server extends AbstractServer {
 			case insertRequestWithFiles:
 
 				ChangeRequest changeRequestWithFiles = (ChangeRequest) srMsg.getAttachedData();
+				// Set a new max id
+				changeRequestWithFiles.setRequestID(db.getNewMaxID(changeRequestWithFiles));
+
 				ArrayList<File> files = (ArrayList<File>) srMsg.getSecondaryAttachedData();
 
-				if (!db.doesObjectExist(changeRequestWithFiles)) {
-					result = 1;
-					result *= db.insertObject(changeRequestWithFiles); // TODO: make it return a boolean
-					for (File file : files) {
-						result *= db.insertFile(file);
-					}
-
-					sendBooleanResultMessage(client, Command.insertRequestWithFiles, result);
-				} else {
-					sendResultMessageToClient(client, Command.insertRequestWithFiles, MsgReturnType.Failure,
-							"A change request with the ID [" + changeRequestWithFiles.getRequestID()
-									+ "] already exists!");
+				result = 1;
+				result *= db.insertObject(changeRequestWithFiles); // TODO: make it return a boolean
+				for (File file : files) {
+					// Set the request id for the file
+					file.setRequestID(changeRequestWithFiles.getRequestID());
+					result *= db.insertFile(file);
 				}
+
+				sendBooleanResultMessage(client, Command.insertRequestWithFiles, result);
 
 				break;
 

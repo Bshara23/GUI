@@ -37,6 +37,8 @@ import Entities.*;
 
 public class IssueRequestController implements Initializable {
 
+	public static final int MB_4 = 4194303;
+
 	private static final String TIME_OF_ISSUE_REQUEST = "timeOfIssueRequest";
 
 	@FXML
@@ -140,6 +142,11 @@ public class IssueRequestController implements Initializable {
 						file.loadBytesFromLocal();
 						file.autoSetTypeAndNameFromPath();
 						files.add(file);
+						if(file.getStoredBytesSize() > MB_4) {
+							ControllerManager.ShowAlertMessage("Error", "The attached file is too large",
+									"Please attach files that are 4MB and below", null);
+							return;
+						}
 					}
 					Client.getInstance().request(Command.insertRequestWithFiles, changeRequest, files);
 

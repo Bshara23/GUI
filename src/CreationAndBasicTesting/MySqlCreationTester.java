@@ -46,8 +46,11 @@ public class MySqlCreationTester {
 		// insertObjects();
 		
 		
-		boolean res = db.doesObjectExist(new ChangeRequest(9996, null, null, null, null, null, null, null, null, null));
-		System.out.println(res);
+//		boolean res = db.doesObjectExist(new ChangeRequest(9996, null, null, null, null, null, null, null, null, null));
+//		System.out.println(res);
+		
+		
+		System.out.println(db.getNewMaxID(ChangeRequest.getEmptyInstance()));
 	}
 
 	private static void changeRequestTest() {

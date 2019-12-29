@@ -133,7 +133,7 @@ public class MySQL extends MySqlConnBase {
 				.where(obj.getPrimaryKeyName()).eq(obj.getPrimaryKeyValue())
 				.toString();
 
-		System.out.println(query);
+
 		ArrayList<Integer> res = new ArrayList<Integer>();
 		executeStatement(query, rs -> {
 			try {
@@ -148,6 +148,31 @@ public class MySQL extends MySqlConnBase {
 		// if result was not added or the result is 0 then return false
 		// otherwise return true.
 		return res.size() == 0 ? false : res.get(0) > 0 ? true : false;
+	}
+	
+	/**
+	 * Returns a new max id by the parameter object table.
+	 * */
+	public long getNewMaxID(SqlObject obj) {
+		
+		String query = qb.select(qb.max(obj.getPrimaryKeyName()))
+				.from(obj.getTableName())
+				.toString();
+
+
+		ArrayList<Long> res = new ArrayList<Long>();
+		executeStatement(query, rs -> {
+			try {
+				rs.next();
+				res.add(rs.getLong(1));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+		
+		// Return the max id + 1 to get a new max id.
+		return res.get(0) + 1;
 	}
 
 	public int insertObject(SqlObject obj) {

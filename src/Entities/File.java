@@ -125,6 +125,12 @@ public class File extends SqlObject implements Serializable {
 		return new ByteArrayInputStream(storedBytes);
 	}
 	
+	public long getStoredBytesSize() {
+		if(storedBytes == null)
+			return 0;
+		return storedBytes.length;
+	}
+	
 	public void setBytes(InputStream is, int lenght) {
 		try {
 			storedBytes = new byte[lenght];

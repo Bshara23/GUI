@@ -186,6 +186,10 @@ public class QueryBuilder {
 		return "SUM(" + col + ")";
 	}
 
+	public String max(String col) {
+		return "MAX(" + col + ")";
+	}
+	
 	private String sqlStr(String str) {
 		return "'" + str + "'";
 	}
