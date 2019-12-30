@@ -15,7 +15,9 @@ import Controllers.Logic.ControllerManager;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Utility.AppManager;
+import Utility.ControllerSwapper;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
@@ -27,58 +29,61 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
 public class ListOfMessagesController implements Initializable {
 
 	@FXML
-    private ImageView imgSearch;
+	private ImageView imgSearch;
 
-    @FXML
-    private Text txtPageHeader;
+	@FXML
+	private Text txtPageHeader;
 
-    @FXML
-    private ImageView imgBack;
+	@FXML
+	private ImageView imgBack;
 
-    @FXML
-    private ImageView imgForward;
+	@FXML
+	private ImageView imgForward;
 
-    @FXML
-    private ImageView imgSettings;
+	@FXML
+	private ImageView imgSettings;
 
-    @FXML
-    private ImageView imgRefresh;
+	@FXML
+	private ImageView imgRefresh;
 
-    @FXML
-    private ImageView imgArchive;
+	@FXML
+	private ImageView imgArchive;
 
-    @FXML
-    private ImageView imgTrashBin;
+	@FXML
+	private ImageView imgTrashBin;
 
-    @FXML
-    private ImageView imgMarkAsRead;
+	@FXML
+	private ImageView imgMarkAsRead;
 
-    @FXML
-    private ImageView imgThreeDots;
+	@FXML
+	private ImageView imgThreeDots;
 
-    @FXML
-    private HBox hbPrimary;
+	@FXML
+	private HBox hbPrimary;
 
-    @FXML
-    private HBox hbUpdates;
+	@FXML
+	private HBox hbUpdates;
 
-    @FXML
-    private HBox hbStaff;
+	@FXML
+	private HBox hbStaff;
 
-    @FXML
-    private HBox hbWork;
+	@FXML
+	private HBox hbWork;
 
-    @FXML
-    private Line lineTableJob;
+	@FXML
+	private Line lineTableJob;
+
+	@FXML
+	private VBox hbMessagesContainer;
+
 	private ArrayList<Node> buttons, messageTypes;
-
-
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -96,8 +101,6 @@ public class ListOfMessagesController implements Initializable {
 		buttons.add(imgThreeDots);
 		buttons.add(imgTrashBin);
 
-		
-	
 		messageTypes.add(hbStaff);
 		messageTypes.add(hbPrimary);
 
@@ -106,22 +109,28 @@ public class ListOfMessagesController implements Initializable {
 
 		for (Node node : buttons) {
 			ControllerManager.setMouseHoverPressEffects(node, CommonEffects.REQUEST_DETAILS_BUTTON_BLACK,
-					CommonEffects.REQUEST_DETAILS_BUTTON_GRAY, CommonEffects.REQUEST_DETAILS_BUTTON_BLUE,
-					Cursor.HAND);
+					CommonEffects.REQUEST_DETAILS_BUTTON_GRAY, CommonEffects.REQUEST_DETAILS_BUTTON_BLUE, Cursor.HAND);
 		}
-		
+
 		for (Node node : messageTypes) {
 			ControllerManager.setMouseHoverPressEffects(node, CommonEffects.REQUEST_DETAILS_BUTTON_BLACK,
 					CommonEffects.REQUEST_DETAILS_BUTTON_GRAY, CommonEffects.REQUEST_DETAILS_BUTTON_BLUE, messageTypes,
 					Cursor.HAND);
-			
+
 		}
 
-		
-		
 		ControllerManager.setEffect(lineTableJob, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE);
 		ControllerManager.setEffect(hbPrimary, CommonEffects.REQUEST_DETAILS_BUTTON_BLUE);
-		
+
+		hbMessagesContainer.getChildren();
+
+
+		//TODO
+		ObservableList<Node> nodes = FXCollections.observableArrayList();
+		for (int i = 0; i < 5; i++) {
+			nodes.addAll(ControllerSwapper.getChildrenOf("MessageEntry.fxml"));
+		}
+		hbMessagesContainer.getChildren().setAll(nodes);
 
 	}
 

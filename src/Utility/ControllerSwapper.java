@@ -8,6 +8,7 @@ import Controllers.ClientGUI;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -54,7 +55,20 @@ public class ControllerSwapper {
 	}
 
 
-	
+	public static ObservableList<Node> getChildrenOf(String fxmlFileName) {
+		
+		// Reference a class that exist in the same folder as the FXML files
+		URL url = ClientGUI.class.getResource(fxmlFileName);
+
+		AnchorPane loader = null;
+		try {
+			loader = FXMLLoader.load(url);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+		return loader.getChildren();
+	}
 
 	public static void loadAnchorContent(Pane destination, String fxmlFileName) {
 		
