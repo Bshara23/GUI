@@ -246,9 +246,9 @@ public class AppManager {
 
 	
 	public static void safeUpdate(String key, Func f) {
-		AppManager.removeUnique("key");
+		AppManager.removeUnique(key);
 		AppManager.addTimeTrigger(() -> {
-			AppManager.updateUnique("key", f);	
+			AppManager.updateUnique(key, f);	
 		}, 0.1, key + "dd");
 	}
 	

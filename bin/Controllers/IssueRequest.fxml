@@ -84,9 +84,10 @@
             </HBox>
             <HBox spacing="15.0">
                <children>
-                  <HBox minWidth="180.0">
+                  <HBox minWidth="180.0" spacing="5.0">
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Attach files:" />
+                        <Text fx:id="txtNumberOfAttachedFiles" strokeType="OUTSIDE" strokeWidth="0.0" text="(5 files)" />
                      </children>
                   </HBox>
                   <HBox fx:id="hbBrowseFiles" alignment="CENTER_RIGHT" minWidth="125.0" prefHeight="26.0" prefWidth="125.0" spacing="10.0">
