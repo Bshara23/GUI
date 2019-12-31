@@ -6,27 +6,16 @@ public class SRMessage implements Serializable {
 
 	private Command command;
 	private MsgReturnType returnType; 
-	private Object data;
-	private Object secondaryData;
-
-	
-	public Object getSecondaryAttachedData() {
-		return secondaryData;
-	}
+	private Object[] data;
 
 
-	public void setSecondaryAttachedData(Object secondaryData) {
-		this.secondaryData = secondaryData;
-	}
-
-
-	public SRMessage(Command command, Object data) {
+	public SRMessage(Command command, Object[] data) {
 		this.command = command;
 		this.data = data;
 	}
 
 	
-	public SRMessage(Command command, MsgReturnType returnType, Object data) {
+	public SRMessage(Command command, MsgReturnType returnType, Object[] data) {
 		super();
 		this.command = command;
 		this.returnType = returnType;
@@ -42,11 +31,11 @@ public class SRMessage implements Serializable {
 		this.command = command;
 	}
 
-	public Object getAttachedData() {
+	public Object[] getAttachedData() {
 		return data;
 	}
 
-	public void setAttachedData(Object attachedData) {
+	public void setAttachedData(Object[] attachedData) {
 		this.data = attachedData;
 	}
 

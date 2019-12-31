@@ -153,6 +153,7 @@ public class ClientGUI extends Application implements Initializable {
 		ControllerManager.setMouseHoverPressEffects(apBtnLogoMain, CommonEffects.MENU_ELEMENT_ON_HOVER,
 				CommonEffects.MENU_ELEMENT_IDLE, CommonEffects.LOGO_SELECT, apList, Cursor.HAND);
 		selectedMenuElement = null;
+		
 		commondMenuBehavior(apBtnLogoMain, "Home", FxmlNames.HOME);
 		ControllerManager.setEffect(apBtnLogoMain, CommonEffects.LOGO_SELECT);
 

@@ -41,6 +41,8 @@ import javafx.scene.text.Text;
 
 public class ListOfRequestsController implements Initializable {
 
+	private static final String GET_COUNT_OF_REQUESTS = "GET_COUINT_RESQUEST234256354";
+
 	private static final String GET_REQS_LIST_CTRL = "dwad2414r2rr";
 
 	@FXML
@@ -113,12 +115,20 @@ public class ListOfRequestsController implements Initializable {
 	@FXML
 	private Text txtPageHeader;
 
+	@FXML
+	private Text txtRequestsCount;
+
 	private ArrayList<Node> tableButtons, jobs;
 
 	public static boolean disableAllJobs = false;
 	public static String pageHeader = "";
 	public static RequestsType requestsType;
 
+	private int currentRowIndex = 0;
+	private int countOfRequests;
+	private int rowCountLimit = 7;
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		initTable();
@@ -186,18 +196,25 @@ public class ListOfRequestsController implements Initializable {
 		// Set a listener for the requests list from the server.
 
 		// addRandomDataToTable(); TODO
+		Client.addMessageRecievedFromServer(GET_COUNT_OF_REQUESTS, srMsg -> {
+
+			if (srMsg.getCommand() == Command.countOfObjects) {
+
+				countOfRequests = ((ArrayList<Integer>) srMsg.getAttachedData()[0]).get(0);
+
+				Client.getInstance().request(Command.GetMyRequests, ClientGUI.userName, RequestsType.myRequests,
+						currentRowIndex, rowCountLimit);
+				txtRequestsCount.setText(
+						(currentRowIndex + 1) + "-" + (currentRowIndex + rowCountLimit) + " of " + countOfRequests);
+			}
+		});
 
 		Client.addMessageRecievedFromServer(GET_REQS_LIST_CTRL, srMsg -> {
-			
-			System.out.println("Server: " + srMsg.getCommand());
 
-			
 			if (srMsg.getCommand() == Command.GetMyRequests) {
-				System.out.println("Loading data");
 
-				Object[] objs = (Object[]) srMsg.getAttachedData();
-				ArrayList<ChangeRequest> myRequests = (ArrayList<ChangeRequest>) objs[0];
-				RequestsType requestType = (RequestsType) objs[1];
+				ArrayList<ChangeRequest> myRequests = (ArrayList<ChangeRequest>) srMsg.getAttachedData()[0];
+				RequestsType requestType = (RequestsType) srMsg.getAttachedData()[1];
 
 				switch (requestType) {
 				case myRequests:
@@ -212,8 +229,9 @@ public class ListOfRequestsController implements Initializable {
 			}
 		});
 
-		Client.getInstance().request(Command.GetMyRequests,
-				new Object[] { ClientGUI.userName, RequestsType.myRequests });
+		ArrayList<String> dd = new ArrayList<String>();
+		dd.add("`username`='username2'");
+		Client.getInstance().request(Command.countOfObjects, dd);
 
 		// RequestsType rType = firstRelatedRequests(ClientGUI.myID);
 		// requestDataForTable(ClientGUI.myID, rType);
@@ -238,6 +256,30 @@ public class ListOfRequestsController implements Initializable {
 		}
 		txtPageHeader.setText(pageHeader);
 
+		imgForward.setOnMousePressed(event -> {
+
+			if (currentRowIndex + rowCountLimit <= countOfRequests) {
+				currentRowIndex += rowCountLimit;
+				Client.getInstance().request(Command.GetMyRequests, ClientGUI.userName, RequestsType.myRequests,
+						currentRowIndex, rowCountLimit);
+				txtRequestsCount.setText(
+						(currentRowIndex + 1) + "-" + (currentRowIndex + rowCountLimit) + " of " + countOfRequests);
+
+			}
+		});
+
+		imgBack.setOnMousePressed(event -> {
+
+			if (currentRowIndex - rowCountLimit >= 0) {
+				currentRowIndex -= rowCountLimit;
+				Client.getInstance().request(Command.GetMyRequests, ClientGUI.userName, RequestsType.myRequests,
+						currentRowIndex, rowCountLimit);
+
+				txtRequestsCount.setText(
+						(currentRowIndex + 1) + "-" + (currentRowIndex + rowCountLimit) + " of " + countOfRequests);
+			}
+
+		});
 	}
 
 	@Override
@@ -273,8 +315,9 @@ public class ListOfRequestsController implements Initializable {
 
 			strs.add(new TableDataRequests(changeRequest.getRequestID() + "",
 					changeRequest.getDateOfRequest().toString(),
-					(changeRequest.getEndDateOfRequest().toEpochDay() - changeRequest.getDateOfRequest().toEpochDay()) + "" , "Active",
-					changeRequest.getEndDateOfRequest().toString()));
+					(changeRequest.getEndDateOfRequest().toEpochDay() - changeRequest.getDateOfRequest().toEpochDay())
+							+ "",
+					"Active", changeRequest.getEndDateOfRequest().toString()));
 		}
 
 		addContentToTable(strs);

@@ -136,16 +136,29 @@ public class Server extends AbstractServer {
 
 			switch (srMsg.getCommand()) {
 
+			case countOfObjects:
+
+				ArrayList<String> cooCondition = (ArrayList<String>)srMsg.getAttachedData()[0];
+				System.out.println("Sent condition = " + cooCondition);
+				int countOfObject = db.getCountOf(ChangeRequest.getEmptyInstance(), cooCondition.get(0));
+				ArrayList<Integer> count =  new ArrayList<Integer>();
+				count.add(countOfObject);
+				
+				
+				//System.out.println(count.get(0));
+				sendMessageToClient(client, Command.countOfObjects, count);
+
+				break;
 			case insertFile:
 
-				File fileToInsert = (File) srMsg.getAttachedData();
+				File fileToInsert = (File) srMsg.getAttachedData()[0];
 				db.insertFile(fileToInsert);
 
 				break;
 
 			case getFile:
 
-				int fileID = (int) srMsg.getAttachedData();
+				int fileID = (int) srMsg.getAttachedData()[0];
 
 				// TODO: this has to run in a different thread since it might get the server
 				// stuck, other clients wont be able to receive messages
@@ -157,7 +170,7 @@ public class Server extends AbstractServer {
 				break;
 
 			case debug_simulateBigCalculations:
-				ArrayList<String> stra = (ArrayList<String>) srMsg.getAttachedData();
+				ArrayList<String> stra = (ArrayList<String>) srMsg.getAttachedData()[0];
 
 				for (int i = 0; i < 500000; i++) {
 					System.out.println(stra.toString());
@@ -169,7 +182,7 @@ public class Server extends AbstractServer {
 
 				
 				
-				ChangeRequest changeRequest = (ChangeRequest) srMsg.getAttachedData();
+				ChangeRequest changeRequest = (ChangeRequest) srMsg.getAttachedData()[0];
 				// Set a new max id
 				changeRequest.setRequestID(db.getNewMaxID(changeRequest));
 				
@@ -183,11 +196,11 @@ public class Server extends AbstractServer {
 
 			case insertRequestWithFiles:
 
-				ChangeRequest changeRequestWithFiles = (ChangeRequest) srMsg.getAttachedData();
+				ChangeRequest changeRequestWithFiles = (ChangeRequest) srMsg.getAttachedData()[0];
 				// Set a new max id
 				changeRequestWithFiles.setRequestID(db.getNewMaxID(changeRequestWithFiles));
 
-				ArrayList<File> files = (ArrayList<File>) srMsg.getSecondaryAttachedData();
+				ArrayList<File> files = (ArrayList<File>) srMsg.getAttachedData()[1];
 
 				result = 1;
 				result *= db.insertObject(changeRequestWithFiles); // TODO: make it return a boolean
@@ -203,19 +216,19 @@ public class Server extends AbstractServer {
 
 			case GetMyRequests:
 
-				Object[] objs = (Object[]) srMsg.getAttachedData();
-				String username = (String) objs[0];
-				RequestsType requestType = (RequestsType) objs[1];
+				String forUsername = (String) srMsg.getAttachedData()[0];
+				RequestsType requestType = (RequestsType) srMsg.getAttachedData()[1];
 
 				switch (requestType) {
 
 				case myRequests:
+					
+					int startingRow = (int) srMsg.getAttachedData()[2];
+					int size = (int) srMsg.getAttachedData()[3];
 
-					ArrayList<ChangeRequest> crs = db.getChangeRequests(username);
+					ArrayList<ChangeRequest> crs = db.getChangeRequests(forUsername, startingRow, size);
 
-					Object[] sendBack = new Object[] { crs, requestType };
-
-					sendMessageToClient(client, Command.GetMyRequests, sendBack);
+					sendMessageToClient(client, Command.GetMyRequests, crs, requestType);
 
 					break;
 
@@ -256,9 +269,9 @@ public class Server extends AbstractServer {
 
 	}
 
-	private void sendMessageToClient(ConnectionToClient client, Command cmd, Object obj) {
+	private void sendMessageToClient(ConnectionToClient client, Command cmd, Object... objs) {
 		try {
-			client.sendToClient(new SRMessage(cmd, obj));
+			client.sendToClient(new SRMessage(cmd, objs));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -275,13 +288,13 @@ public class Server extends AbstractServer {
 	}
 
 	private void sendResultMessageToClient(ConnectionToClient client, Command cmd, MsgReturnType returnType) {
-		sendResultMessageToClient(client, cmd, returnType, null);
+		sendResultMessageToClient(client, cmd, returnType, new Object());
 	}
 
 	private void sendResultMessageToClient(ConnectionToClient client, Command cmd, MsgReturnType returnType,
-			Object obj) {
+			Object... objs) {
 		try {
-			SRMessage msg = new SRMessage(cmd, obj);
+			SRMessage msg = new SRMessage(cmd, objs);
 			msg.setReturnType(returnType);
 			client.sendToClient(msg);
 

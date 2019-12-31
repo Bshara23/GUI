@@ -43,10 +43,10 @@ public class IssueRequestController implements Initializable {
 
 	@FXML
 	private Text txtCurrentDate;
-	
-    @FXML
-    private Text txtNumberOfAttachedFiles;
-    
+
+	@FXML
+	private Text txtNumberOfAttachedFiles;
+
 	@FXML
 	private ComboBox<String> cbInformationSystem;
 
@@ -115,9 +115,9 @@ public class IssueRequestController implements Initializable {
 					path = path.replace("\\", "/");
 					filesPaths.add(path);
 				}
-				txtNumberOfAttachedFiles.setText("("+filesPaths.size()+" files)");
+				txtNumberOfAttachedFiles.setText("(" + filesPaths.size() + " files)");
 
-			}else {
+			} else {
 				txtNumberOfAttachedFiles.setText("(0 files)");
 			}
 		});
@@ -152,7 +152,7 @@ public class IssueRequestController implements Initializable {
 						file.loadBytesFromLocal();
 						file.autoSetTypeAndNameFromPath();
 						files.add(file);
-						if(file.getStoredBytesSize() > MB_4) {
+						if (file.getStoredBytesSize() > MB_4) {
 							ControllerManager.ShowAlertMessage("Error", "The attached file is too large",
 									"Please attach files that are 4MB and below", null);
 							return;
@@ -180,12 +180,12 @@ public class IssueRequestController implements Initializable {
 				} else if (srMsg.getReturnType() == MsgReturnType.Failure) {
 					System.out.println("insertRequest");
 
-					if ((String) srMsg.getAttachedData() == null) {
+					if ((String) srMsg.getAttachedData()[0] == null) {
 						ControllerManager.ShowAlertMessage("Issue Request", "Failure", "Something went wrong!", null);
 
 					} else {
-						ControllerManager.ShowAlertMessage("Issue Request", "Failure", (String) srMsg.getAttachedData(),
-								null);
+						ControllerManager.ShowAlertMessage("Issue Request", "Failure",
+								(String) srMsg.getAttachedData()[0], null);
 					}
 				}
 
@@ -196,11 +196,11 @@ public class IssueRequestController implements Initializable {
 
 				} else if (srMsg.getReturnType() == MsgReturnType.Failure) {
 					System.out.println("insertRequestWithFiles");
-					if ((String) srMsg.getAttachedData() == null) {
+					if ((String) srMsg.getAttachedData()[0] == null) {
 						ControllerManager.ShowAlertMessage("Issue Request", "Failure", "Something went wrong!", null);
 
 					} else {
-						ControllerManager.ShowAlertMessage("Issue Request", "Failure", (String) srMsg.getAttachedData(),
+						ControllerManager.ShowAlertMessage("Issue Request", "Failure", (String) srMsg.getAttachedData()[0],
 								null);
 					}
 				}

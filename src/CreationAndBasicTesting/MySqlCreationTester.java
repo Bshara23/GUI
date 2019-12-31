@@ -41,16 +41,16 @@ public class MySqlCreationTester {
 		// changeRequestTest();
 
 		//populateChangeRequest();
-		createDatabase();
+		//createDatabase();
 
 		// insertObjects();
-		
-		
+		int count = db.getCountOf(ChangeRequest.getEmptyInstance(), "`username`='username2'");
+		System.out.println(count);
 //		boolean res = db.doesObjectExist(new ChangeRequest(9996, null, null, null, null, null, null, null, null, null));
 //		System.out.println(res);
 		
 		
-		System.out.println(db.getNewMaxID(ChangeRequest.getEmptyInstance()));
+		//System.out.println(db.getNewMaxID(ChangeRequest.getEmptyInstance()));
 	}
 
 	private static void changeRequestTest() {

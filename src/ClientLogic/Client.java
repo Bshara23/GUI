@@ -76,12 +76,11 @@ public class Client extends AbstractClient {
 		super(host, port);
 	}
 
-	public void request(Command cmd, Object obj, Object secondaryData) {
+	public void request(Command cmd, Object... objs) {
 
 		executorService.execute(() -> {
 			try {
-				SRMessage srMsg = new SRMessage(cmd, obj);
-				srMsg.setSecondaryAttachedData(secondaryData);
+				SRMessage srMsg = new SRMessage(cmd, objs);
 				instance.sendToServer(srMsg);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -90,19 +89,7 @@ public class Client extends AbstractClient {
 		});
 	}
 	
-	public void request(Command cmd, Object obj) {
-
-		executorService.execute(() -> {
-			try {
-				SRMessage srMsg = new SRMessage(cmd, obj);
-				srMsg.setSecondaryAttachedData(null);
-				instance.sendToServer(srMsg);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		});
-	}
+	
 
 	@Override
 	protected void handleMessageFromServer(Object msg) {

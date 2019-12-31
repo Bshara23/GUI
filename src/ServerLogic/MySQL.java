@@ -125,14 +125,11 @@ public class MySQL extends MySqlConnBase {
 
 	/**
 	 * Check if an object exist by return true if it does exist, otherwise false.
-	 * */
+	 */
 	public boolean doesObjectExist(SqlObject obj) {
-		
-		String query = qb.select(qb.count(obj.getPrimaryKeyName()))
-				.from(obj.getTableName())
-				.where(obj.getPrimaryKeyName()).eq(obj.getPrimaryKeyValue())
-				.toString();
 
+		String query = qb.select(qb.count(obj.getPrimaryKeyName())).from(obj.getTableName())
+				.where(obj.getPrimaryKeyName()).eq(obj.getPrimaryKeyValue()).toString();
 
 		ArrayList<Integer> res = new ArrayList<Integer>();
 		executeStatement(query, rs -> {
@@ -144,21 +141,18 @@ public class MySQL extends MySqlConnBase {
 				e.printStackTrace();
 			}
 		});
-		
+
 		// if result was not added or the result is 0 then return false
 		// otherwise return true.
 		return res.size() == 0 ? false : res.get(0) > 0 ? true : false;
 	}
-	
+
 	/**
 	 * Returns a new max id by the parameter object table.
-	 * */
+	 */
 	public long getNewMaxID(SqlObject obj) {
-		
-		String query = qb.select(qb.max(obj.getPrimaryKeyName()))
-				.from(obj.getTableName())
-				.toString();
 
+		String query = qb.select(qb.max(obj.getPrimaryKeyName())).from(obj.getTableName()).toString();
 
 		ArrayList<Long> res = new ArrayList<Long>();
 		executeStatement(query, rs -> {
@@ -170,7 +164,7 @@ public class MySQL extends MySqlConnBase {
 				e.printStackTrace();
 			}
 		});
-		
+
 		// Return the max id + 1 to get a new max id.
 		return res.get(0) + 1;
 	}
@@ -180,7 +174,7 @@ public class MySQL extends MySqlConnBase {
 		String query = qb.insertInto(obj.getTableName()).forColumns(obj.getFieldsNames())
 				.theValues(obj.getFieldsValues()).toString();
 
-		//System.out.println(query);
+		// System.out.println(query);
 		return executePreparedStatement(query, null) > 0 ? 1 : 0;
 
 	}
@@ -252,7 +246,7 @@ public class MySQL extends MySqlConnBase {
 
 	public ArrayList<ChangeRequest> getChangeRequests(int options) {
 
-		return getChangeRequests(null);
+		return getChangeRequests(null, -1, -1);
 	}
 
 	public ArrayList<Phase> getPhases() {
@@ -266,9 +260,8 @@ public class MySQL extends MySqlConnBase {
 		if (forRequestID != 0) {
 			query += "WHERE icm.changerequest.requestID = " + forRequestID;
 		}
-		
-		query += " ORDER BY icm.changerequest.requestID ASC ,icm.phase.requestID ASC ";
 
+		query += " ORDER BY icm.changerequest.requestID ASC ,icm.phase.requestID ASC ";
 
 		ArrayList<Phase> results = new ArrayList<Phase>();
 
@@ -277,7 +270,8 @@ public class MySQL extends MySqlConnBase {
 				while (rs.next()) {
 
 					Phase phase = new Phase(rs.getLong(1), rs.getLong(2), rs.getString(3), rs.getString(4),
-							rs.getLong(5), rs.getDate(6).toLocalDate(), rs.getDate(7).toLocalDate(), rs.getDate(8).toLocalDate(), rs.getBoolean(9));
+							rs.getLong(5), rs.getDate(6).toLocalDate(), rs.getDate(7).toLocalDate(),
+							rs.getDate(8).toLocalDate(), rs.getBoolean(9));
 
 					// add at the last change request
 					results.add(phase);
@@ -296,10 +290,10 @@ public class MySQL extends MySqlConnBase {
 
 	}
 
-	public ArrayList<ExecutionReport> getExecutionReports(){
+	public ArrayList<ExecutionReport> getExecutionReports() {
 		return getExecutionReports(0);
 	}
-	
+
 	public ArrayList<ExecutionReport> getExecutionReports(long forRequestID) {
 		String query = "SELECT icm.executionreport.* FROM icm.changerequest "
 				+ "INNER JOIN icm.executionreport ON icm.executionreport.requestID=icm.changerequest.requestID ";
@@ -338,7 +332,7 @@ public class MySQL extends MySqlConnBase {
 	public ArrayList<EvaluationReport> getEvaluationReports() {
 		return getEvaluationReports(0);
 	}
-	
+
 	public ArrayList<EvaluationReport> getEvaluationReports(long forRequestID) {
 		String query = "SELECT icm.evaluationreport.* FROM icm.changerequest "
 				+ "INNER JOIN icm.evaluationreport ON icm.evaluationreport.requestID=icm.changerequest.requestID ";
@@ -348,7 +342,6 @@ public class MySQL extends MySqlConnBase {
 		}
 		query += " ORDER BY icm.changerequest.requestID ASC ,icm.evaluationreport.requestID ASC ";
 
-
 		ArrayList<EvaluationReport> results = new ArrayList<EvaluationReport>();
 
 		IStatement prepS = rs -> {
@@ -356,7 +349,8 @@ public class MySQL extends MySqlConnBase {
 				while (rs.next()) {
 
 					EvaluationReport evalRep = new EvaluationReport(rs.getLong(5), rs.getLong(6), rs.getString(7),
-							rs.getString(8), rs.getString(1), rs.getString(2), rs.getString(3), rs.getDate(4).toLocalDate());
+							rs.getString(8), rs.getString(1), rs.getString(2), rs.getString(3),
+							rs.getDate(4).toLocalDate());
 
 					results.add(evalRep);
 
@@ -377,11 +371,10 @@ public class MySQL extends MySqlConnBase {
 	public ArrayList<File> getFiles() {
 		return getFiles(0);
 	}
-	
+
 	public ArrayList<File> getFiles(long forRequestID) {
 		String query = "SELECT icm.file.* FROM icm.changerequest "
 				+ "INNER JOIN icm.file ON icm.file.requestID=icm.changerequest.requestID ";
-				
 
 		if (forRequestID != 0) {
 			query += "WHERE icm.changerequest.username = " + forRequestID;
@@ -413,12 +406,23 @@ public class MySQL extends MySqlConnBase {
 		return results;
 
 	}
-	
+
 	public ArrayList<ChangeRequest> getChangeRequests() {
 		return getChangeRequests(0);
 	}
 
-	public ArrayList<ChangeRequest> getChangeRequests(String forUsername) {
+	// SELECT COUNT(*) FROM icm.changerequest WHERE icm.changerequest.username =
+	// 'username2'
+
+	public int getCountOf(SqlObject obj, String whereCondition) {
+
+		String query = qb.select(qb.count("*")).from(obj.getTableName()).where(whereCondition).toString();
+
+		return executeStatement(query);
+
+	}
+
+	public ArrayList<ChangeRequest> getChangeRequests(String forUsername, int startingRow, int size) {
 
 		String query = "SELECT * FROM icm.changerequest ";
 
@@ -428,7 +432,10 @@ public class MySQL extends MySqlConnBase {
 			query += "WHERE icm.changerequest.username = 'username2' ";
 		}
 
-		query += "ORDER BY icm.changerequest.requestID ASC;";
+		query += "ORDER BY icm.changerequest.requestID ASC ";
+
+		if (size > 0)
+			query += "LIMIT " + startingRow + ", " + size;
 
 		ArrayList<ChangeRequest> results = new ArrayList<ChangeRequest>();
 
@@ -437,9 +444,9 @@ public class MySQL extends MySqlConnBase {
 
 				while (rs.next()) {
 
-					ChangeRequest cr = new ChangeRequest(rs.getLong(1), rs.getString(2), rs.getDate(3).toLocalDate(), rs.getDate(4).toLocalDate(),
-							rs.getDate(5).toLocalDate(), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9),
-							rs.getString(10));
+					ChangeRequest cr = new ChangeRequest(rs.getLong(1), rs.getString(2), rs.getDate(3).toLocalDate(),
+							rs.getDate(4).toLocalDate(), rs.getDate(5).toLocalDate(), rs.getString(6), rs.getString(7),
+							rs.getString(8), rs.getString(9), rs.getString(10));
 
 					results.add(cr);
 				}

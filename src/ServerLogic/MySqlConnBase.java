@@ -71,6 +71,23 @@ public abstract class MySqlConnBase {
 		}
 	}
 	
+	public int executeStatement(String query) {
+		int result = 0;
+		try {
+			
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			if (rs.next()) {
+				result = rs.getInt(1);
+			}
+			rs.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
 	public int executePreparedStatement(String query, IPreparedStatement func) {
 		try {
 			PreparedStatement ps = conn.prepareStatement(query);

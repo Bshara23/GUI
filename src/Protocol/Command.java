@@ -6,7 +6,7 @@ public enum Command {
 	Update, Insert, Delete, Search,
 	DoesExist,
 	GetAllData,
-	
+	countOfObjects,
 	updateProfile,
 	
 	insertRequest, insertRequestWithFiles, insertPhase,
