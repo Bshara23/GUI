@@ -73,7 +73,7 @@ public class ClientGUI extends Application implements Initializable {
 
 	@FXML
 	private HBox hbNavigator;
-	
+
 
 	private AnchorPane selectedMenuElement;
 

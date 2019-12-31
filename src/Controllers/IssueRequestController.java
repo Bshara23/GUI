@@ -43,7 +43,10 @@ public class IssueRequestController implements Initializable {
 
 	@FXML
 	private Text txtCurrentDate;
-
+	
+    @FXML
+    private Text txtNumberOfAttachedFiles;
+    
 	@FXML
 	private ComboBox<String> cbInformationSystem;
 
@@ -100,15 +103,22 @@ public class IssueRequestController implements Initializable {
 
 		final FileChooser fileChooser = new FileChooser();
 
+		txtNumberOfAttachedFiles.setText("(0 files)");
+
 		hbBrowseFiles.setOnMousePressed(event -> {
 			List<java.io.File> list = fileChooser.showOpenMultipleDialog(ClientGUI.getStage());
 			filesPaths.clear();
 			if (list != null) {
+
 				for (java.io.File file : list) {
 					String path = file.getPath();
 					path = path.replace("\\", "/");
 					filesPaths.add(path);
 				}
+				txtNumberOfAttachedFiles.setText("("+filesPaths.size()+" files)");
+
+			}else {
+				txtNumberOfAttachedFiles.setText("(0 files)");
 			}
 		});
 
