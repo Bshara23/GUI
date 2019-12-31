@@ -37,11 +37,11 @@ public class MySqlCreationTester {
 
 		// db.insertFile(file);
 
-		// insertObjects();
+		//insertObjects();
 		// changeRequestTest();
 
 		//populateChangeRequest();
-		// createDatabase();
+		createDatabase();
 
 		// insertObjects();
 		

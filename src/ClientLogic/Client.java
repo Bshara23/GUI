@@ -27,7 +27,9 @@ public class Client extends AbstractClient {
 	private int poolSize = 5;
 
 	static {
-		instance = new Client("10.0.0.6", 5555);
+		//instance = new Client("10.0.0.212", 5555);
+		instance = new Client("localhost", 5555);
+
 		serverExceptionEvents = new HashMap<String, VoidFunc>();
 		serverConnectionClosedEvents = new HashMap<String, VoidFunc>();
 		serverConnectionEstablishedEvents = new HashMap<String, VoidFunc>();

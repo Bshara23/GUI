@@ -75,7 +75,6 @@ public class ClientGUI extends Application implements Initializable {
 	private HBox hbNavigator;
 	
 
-
 	private AnchorPane selectedMenuElement;
 
 	private ArrayList<Node> apList;
@@ -97,7 +96,7 @@ public class ClientGUI extends Application implements Initializable {
 	@Override
 	public void start(Stage stage) {
 		stage.initStyle(StageStyle.UNDECORATED);
-		Client.getInstance().initialize("10.0.0.6", 5555);
+		Client.getInstance().initialize("localhost", 5555);
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(FxmlNames.GLOBAL_MENUS));
 		Parent root = null;
