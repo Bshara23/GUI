@@ -90,6 +90,7 @@ public class ListOfMessagesController implements Initializable {
 	private ArrayList<Node> buttons, messageTypes;
 	private boolean xddd = true;
 	private ArrayList<MessageEntryController> msgEntryControllers;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
@@ -122,54 +123,53 @@ public class ListOfMessagesController implements Initializable {
 			ControllerManager.setMouseHoverPressEffects(node, CommonEffects.REQUEST_DETAILS_BUTTON_BLACK,
 					CommonEffects.REQUEST_DETAILS_BUTTON_GRAY, CommonEffects.REQUEST_DETAILS_BUTTON_BLUE, messageTypes,
 					Cursor.HAND);
-
 		}
-
 		
+		
+		ControllerManager.setMouseHoverPressEffects(imgTrashBin, CommonEffects.REQUEST_DETAILS_BUTTON_RED,
+				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY, CommonEffects.REQUEST_DETAILS_BUTTON_BLACK, messageTypes,
+				Cursor.HAND);
+
 		imgTrashBin.setOnMousePressed(event -> {
 			boolean hasAtleastOneSelected = false;
 			for (MessageEntryController messageEntryController : msgEntryControllers) {
-				if(messageEntryController.checked) {
+				if (messageEntryController.checked) {
 					hasAtleastOneSelected = true;
 					break;
 				}
 			}
-			
-			if(hasAtleastOneSelected) {
-				ControllerManager.ShowAlertMessage("Delete", "Delete messages", "Are you sure you want to delete the selected messages?", () -> {
-					for (int i = 0; i < msgEntryControllers.size(); i++) {
-						MessageEntryController cc = msgEntryControllers.get(i);
-						
-						if(cc.checked) {
-							cc.deleteSelf();
-							msgEntryControllers.remove(cc);
-						}
-					}
-				});
+
+			if (hasAtleastOneSelected) {
+				ControllerManager.showOkCancelMessage("Delete", "Delete messages",
+						"Are you sure you want to delete the selected messages?", () -> {
+							for (int i = 0; i < msgEntryControllers.size(); i++) {
+								MessageEntryController cc = msgEntryControllers.get(i);
+
+								if (cc.checked) {
+									cc.deleteSelf();
+									//msgEntryControllers.remove(cc);
+								}
+							}
+						}, null);
 			}
-			
-			
+
 		});
-		
+
 		ControllerManager.setEffect(lineTableJob, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE);
 		ControllerManager.setEffect(hbPrimary, CommonEffects.REQUEST_DETAILS_BUTTON_BLUE);
 
 		hbMessagesContainer.getChildren();
 
-		// TODO
-
 		ObservableList<Node> nodes = FXCollections.observableArrayList();
 		for (int i = 0; i < 10; i++) {
 
-
 			try {
-
 				FXMLLoader loader = new FXMLLoader(getClass().getResource("MessageEntry.fxml"));
 				AnchorPane pane = loader.load();
 				MessageEntryController msgController = (MessageEntryController) loader.getController();
 				msgEntryControllers.add(msgController);
 				nodes.addAll(pane);
-				msgController.setFields(xddd, xddd, "ddd", "ddd", "ddd");
+				msgController.setFields(xddd, xddd, "ddd" + i, "ddd" + i, "ddd" + i);
 				msgController.setAttachedPane(pane);
 				xddd = !xddd;
 			} catch (IOException e) {

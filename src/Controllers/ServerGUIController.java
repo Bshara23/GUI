@@ -175,7 +175,7 @@ public class ServerGUIController extends Application implements Initializable {
 			String schemaName = ifDbSchemaName.getText();
 
 			if (username == "" || password == "" || schemaName == "") {
-				ControllerManager.ShowAlertMessage("Input error", "Missing fields", "Please fill the missing fields",
+				ControllerManager.showInformationMessage("Input error", "Missing fields", "Please fill the missing fields",
 						null);
 			} else {
 

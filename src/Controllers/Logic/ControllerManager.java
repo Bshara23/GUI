@@ -26,7 +26,27 @@ public class ControllerManager {
 	 * 
 	 * @param func The function to call after the "OK" button has been pressed.
 	 */
-	public static void ShowAlertMessage(String title, String header, String content, VoidFunc func) {
+	public static void showOkCancelMessage(String title, String header, String content, VoidFunc okFunc, VoidFunc cancelFunc) {
+		Alert alertSuccess = new Alert(AlertType.CONFIRMATION);
+		alertSuccess.setTitle(title);
+		alertSuccess.setHeaderText(header);
+		alertSuccess.setContentText(content);
+		alertSuccess.showAndWait().ifPresent(rs -> {
+			if (rs == ButtonType.OK) {
+				Platform.runLater(() -> {
+					if (okFunc != null)
+						okFunc.call();
+				});
+			}
+			if(rs == ButtonType.CANCEL) {
+				Platform.runLater(() -> {
+					if (cancelFunc != null)
+						cancelFunc.call();
+				});
+			}
+		});
+	}
+	public static void showInformationMessage(String title, String header, String content, VoidFunc okFunc) {
 		Alert alertSuccess = new Alert(AlertType.INFORMATION);
 		alertSuccess.setTitle(title);
 		alertSuccess.setHeaderText(header);
@@ -35,14 +55,14 @@ public class ControllerManager {
 			if (rs == ButtonType.OK) {
 				Platform.runLater(() -> {
 
-					if (func != null)
-						func.call();
+					if (okFunc != null)
+						okFunc.call();
 
 				});
 			}
+			
 		});
 	}
-
 	public static void setEffect(ArrayList<Node> nodes, Effect effect) {
 		for (Node node : nodes) {
 			node.setEffect(effect);

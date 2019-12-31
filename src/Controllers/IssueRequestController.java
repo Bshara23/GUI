@@ -153,7 +153,7 @@ public class IssueRequestController implements Initializable {
 						file.autoSetTypeAndNameFromPath();
 						files.add(file);
 						if (file.getStoredBytesSize() > MB_4) {
-							ControllerManager.ShowAlertMessage("Error", "The attached file is too large",
+							ControllerManager.showInformationMessage("Error", "The attached file is too large",
 									"Please attach files that are 4MB and below", null);
 							return;
 						}
@@ -162,7 +162,7 @@ public class IssueRequestController implements Initializable {
 
 				}
 			} else {
-				ControllerManager.ShowAlertMessage("Error", "Required Fields Are Missing",
+				ControllerManager.showInformationMessage("Error", "Required Fields Are Missing",
 						"Please fill the missing fields", null);
 			}
 
@@ -175,32 +175,32 @@ public class IssueRequestController implements Initializable {
 			if (srMsg.getCommand() == Command.insertRequest) {
 
 				if (srMsg.getReturnType() == MsgReturnType.Success) {
-					ControllerManager.ShowAlertMessage("Issue Request", "Success",
+					ControllerManager.showInformationMessage("Issue Request", "Success",
 							"The request has been successfully issued!", null);
 				} else if (srMsg.getReturnType() == MsgReturnType.Failure) {
 					System.out.println("insertRequest");
 
 					if ((String) srMsg.getAttachedData()[0] == null) {
-						ControllerManager.ShowAlertMessage("Issue Request", "Failure", "Something went wrong!", null);
+						ControllerManager.showInformationMessage("Issue Request", "Failure", "Something went wrong!", null);
 
 					} else {
-						ControllerManager.ShowAlertMessage("Issue Request", "Failure",
+						ControllerManager.showInformationMessage("Issue Request", "Failure",
 								(String) srMsg.getAttachedData()[0], null);
 					}
 				}
 
 			} else if (srMsg.getCommand() == Command.insertRequestWithFiles) {
 				if (srMsg.getReturnType() == MsgReturnType.Success) {
-					ControllerManager.ShowAlertMessage("Issue Request", "Success",
+					ControllerManager.showInformationMessage("Issue Request", "Success",
 							"The request has been successfully issued!", null);
 
 				} else if (srMsg.getReturnType() == MsgReturnType.Failure) {
 					System.out.println("insertRequestWithFiles");
 					if ((String) srMsg.getAttachedData()[0] == null) {
-						ControllerManager.ShowAlertMessage("Issue Request", "Failure", "Something went wrong!", null);
+						ControllerManager.showInformationMessage("Issue Request", "Failure", "Something went wrong!", null);
 
 					} else {
-						ControllerManager.ShowAlertMessage("Issue Request", "Failure", (String) srMsg.getAttachedData()[0],
+						ControllerManager.showInformationMessage("Issue Request", "Failure", (String) srMsg.getAttachedData()[0],
 								null);
 					}
 				}
