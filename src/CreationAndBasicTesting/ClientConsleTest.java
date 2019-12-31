@@ -56,7 +56,7 @@ public class ClientConsleTest extends Application implements Initializable {
 
 		Client.addMessageRecievedFromServer("dddadwd", msg -> {
 			if (msg.getCommand() == Command.getFile) {
-				File dowloadedFile = (File) msg.getAttachedData();
+				File dowloadedFile = (File) msg.getAttachedData()[0];
 				dowloadedFile.writeFileToLocal();
 			}
 		});

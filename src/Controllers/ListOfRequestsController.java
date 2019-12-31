@@ -126,7 +126,7 @@ public class ListOfRequestsController implements Initializable {
 
 	private int currentRowIndex = 0;
 	private int countOfRequests;
-	private int rowCountLimit = 7;
+	private int rowCountLimit = 16;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -220,7 +220,11 @@ public class ListOfRequestsController implements Initializable {
 				case myRequests:
 
 					loadRequestToTable(myRequests);
-
+					if(myRequests.size() < rowCountLimit) {
+						txtRequestsCount.setText(
+								(currentRowIndex + 1) + "-" + (currentRowIndex + rowCountLimit) + " of " + countOfRequests);
+					}
+					
 					break;
 
 				default:
@@ -258,7 +262,7 @@ public class ListOfRequestsController implements Initializable {
 
 		imgForward.setOnMousePressed(event -> {
 
-			if (currentRowIndex + rowCountLimit <= countOfRequests) {
+			if (currentRowIndex + rowCountLimit < countOfRequests) {
 				currentRowIndex += rowCountLimit;
 				Client.getInstance().request(Command.GetMyRequests, ClientGUI.userName, RequestsType.myRequests,
 						currentRowIndex, rowCountLimit);

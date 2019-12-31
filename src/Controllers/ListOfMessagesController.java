@@ -1,5 +1,6 @@
 package Controllers;
 
+import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,9 +17,11 @@ import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Utility.AppManager;
 import Utility.ControllerSwapper;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -29,6 +32,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
@@ -84,10 +88,12 @@ public class ListOfMessagesController implements Initializable {
 	private VBox hbMessagesContainer;
 
 	private ArrayList<Node> buttons, messageTypes;
-
+	private boolean xddd = true;
+	private ArrayList<MessageEntryController> msgEntryControllers;
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
+		msgEntryControllers = new ArrayList<MessageEntryController>();
 		buttons = new ArrayList<Node>();
 		messageTypes = new ArrayList<Node>();
 
@@ -119,16 +125,56 @@ public class ListOfMessagesController implements Initializable {
 
 		}
 
+		
+		imgTrashBin.setOnMousePressed(event -> {
+			boolean hasAtleastOneSelected = false;
+			for (MessageEntryController messageEntryController : msgEntryControllers) {
+				if(messageEntryController.checked) {
+					hasAtleastOneSelected = true;
+					break;
+				}
+			}
+			
+			if(hasAtleastOneSelected) {
+				ControllerManager.ShowAlertMessage("Delete", "Delete messages", "Are you sure you want to delete the selected messages?", () -> {
+					for (int i = 0; i < msgEntryControllers.size(); i++) {
+						MessageEntryController cc = msgEntryControllers.get(i);
+						
+						if(cc.checked) {
+							cc.deleteSelf();
+							msgEntryControllers.remove(cc);
+						}
+					}
+				});
+			}
+			
+			
+		});
+		
 		ControllerManager.setEffect(lineTableJob, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE);
 		ControllerManager.setEffect(hbPrimary, CommonEffects.REQUEST_DETAILS_BUTTON_BLUE);
 
 		hbMessagesContainer.getChildren();
 
+		// TODO
 
-		//TODO
 		ObservableList<Node> nodes = FXCollections.observableArrayList();
-		for (int i = 0; i < 5; i++) {
-			nodes.addAll(ControllerSwapper.getChildrenOf("MessageEntry.fxml"));
+		for (int i = 0; i < 10; i++) {
+
+
+			try {
+
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("MessageEntry.fxml"));
+				AnchorPane pane = loader.load();
+				MessageEntryController msgController = (MessageEntryController) loader.getController();
+				msgEntryControllers.add(msgController);
+				nodes.addAll(pane);
+				msgController.setFields(xddd, xddd, "ddd", "ddd", "ddd");
+				msgController.setAttachedPane(pane);
+				xddd = !xddd;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		hbMessagesContainer.getChildren().setAll(nodes);
 
