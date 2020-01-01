@@ -215,10 +215,10 @@ public abstract class SqlObject {
 		String[] results = new String[fieldsCount * 2];
 
 		for (int i = 0, j = 0; i < fieldsCount; i++, j += 2) {
-			results[j] = fields[i].getName();
+			results[j] = "`" + fields[i].getName() + "`";
 			try {
-				results[j + 1] = fields[i].get(this).toString();
-			} catch (IllegalArgumentException | IllegalAccessException e) {
+				results[j + 1] = fieldValueDecoder(fields[i]);
+			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -242,7 +242,6 @@ public abstract class SqlObject {
 		return fieldsNames;
 	}
 
-	
 	public String[] getFieldsValues() {
 
 		Field[] fields = getClass().getFields();

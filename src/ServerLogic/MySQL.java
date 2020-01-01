@@ -90,10 +90,11 @@ public class MySQL extends MySqlConnBase {
 		String updateQuery = qb.update(obj.getTableName()).set(obj.getFieldsAndValues()).where(obj.getPrimaryKeyName())
 				.eq(obj.getPrimaryKeyValue()).toString();
 
+		System.out.println(updateQuery);
 		int numOfRowsChanged = executePreparedStatement(updateQuery, null);
 
 		// Execute after getting the number of changed rows
-		uFunc.execute(numOfRowsChanged);
+		//uFunc.execute(numOfRowsChanged);
 	}
 
 	public void updateByObject(SqlObject obj) {
@@ -108,7 +109,7 @@ public class MySQL extends MySqlConnBase {
 
 		for (int i = 0; i < fields.length; i++) {
 			try {
-				result += fields[i].getName() + " = '";
+				result += "`"+fields[i].getName() + "` = '";
 				result += fields[i].get(obj).toString() + "'";
 				if (i != fields.length - 1)
 					result += ", ";
@@ -184,6 +185,7 @@ public class MySQL extends MySqlConnBase {
 		String query = qb.deleteFrom(obj.getTableName()).where(obj.getPrimaryKeyName()).eq(obj.getPrimaryKeyValue())
 				.toString();
 
+		System.out.println(query);
 		return executePreparedStatement(query, null) > 0 ? 1 : 0;
 
 	}
@@ -191,7 +193,7 @@ public class MySQL extends MySqlConnBase {
 	public void createTable(SqlObject obj) {
 
 		StringBuilder query = new StringBuilder();
-		query.append("CREATE TABLE ");
+		query.append("CREATE TABLE IF NOT EXISTS ");
 		query.append(obj.tableInfo());
 
 		query.append(";");
@@ -447,6 +449,40 @@ public class MySQL extends MySqlConnBase {
 					ChangeRequest cr = new ChangeRequest(rs.getLong(1), rs.getString(2), rs.getDate(3).toLocalDate(),
 							rs.getDate(4).toLocalDate(), rs.getDate(5).toLocalDate(), rs.getString(6), rs.getString(7),
 							rs.getString(8), rs.getString(9), rs.getString(10));
+
+					results.add(cr);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		executeStatement(query, prepS);
+
+		return results;
+	}
+	
+	public ArrayList<Message> getMessages(String forUsername, int startingRow, int size) {
+		String query = "SELECT * FROM icm.message WHERE icm.message.to = '" + forUsername + "' ";
+
+		query += "ORDER BY icm.message.sentAt DESC ";
+
+		if (size > 0)
+			query += "LIMIT " + startingRow + ", " + size;
+
+
+		ArrayList<Message> results = new ArrayList<Message>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				while (rs.next()) {
+
+					Message cr = new Message(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getString(4),
+							rs.getString(5), rs.getBoolean(6), rs.getDate(7).toLocalDate(), rs.getBoolean(8),
+							rs.getBoolean(9), rs.getBoolean(10));
 
 					results.add(cr);
 				}

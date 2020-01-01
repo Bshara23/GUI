@@ -37,20 +37,29 @@ public class MySqlCreationTester {
 
 		// db.insertFile(file);
 
-		//insertObjects();
+		// insertObjects();
+		
+		Message msg = new Message(32811, "subject4029999", "username2", "username2", "messageContent402", true, LocalDate.now(), true, true, true);
+		
+		db.updateByObject(msg);
+		
 		// changeRequestTest();
 
-		//populateChangeRequest();
-		//createDatabase();
+		// populateChangeRequest();
+		// createDatabase();
 
 		// insertObjects();
-		int count = db.getCountOf(ChangeRequest.getEmptyInstance(), "`username`='username2'");
-		System.out.println(count);
+		// int count = db.getCountOf(ChangeRequest.getEmptyInstance(),
+		// "`username`='username2'");
+		// System.out.println(count);
+		// insertUsers();
+
+		// createDatabase();
+
 //		boolean res = db.doesObjectExist(new ChangeRequest(9996, null, null, null, null, null, null, null, null, null));
 //		System.out.println(res);
-		
-		
-		//System.out.println(db.getNewMaxID(ChangeRequest.getEmptyInstance()));
+
+		// System.out.println(db.getNewMaxID(ChangeRequest.getEmptyInstance()));
 	}
 
 	private static void changeRequestTest() {
@@ -127,7 +136,7 @@ public class MySqlCreationTester {
 
 	private static void populateChangeRequest() {
 
-		Random rnd = new Random(); 
+		Random rnd = new Random();
 		for (int i = 1; i < 500; i++) {
 
 			LocalDate d1 = LocalDate.of(2020, rnd.nextInt(11) + 1, rnd.nextInt(27) + 1);
@@ -144,16 +153,16 @@ public class MySqlCreationTester {
 
 	private static void insertObjects() {
 
-		LocalDate d1 = LocalDate.of(2020, AppManager.getRnd().nextInt(12) + 1, AppManager.getRnd().nextInt(28) + 1);
-		LocalDate d2 = LocalDate.of(2020, AppManager.getRnd().nextInt(12) + 1, AppManager.getRnd().nextInt(28) + 1);
-		LocalDate d3 = LocalDate.of(2020, AppManager.getRnd().nextInt(12) + 1, AppManager.getRnd().nextInt(28) + 1);
-		for (int i = 0; i < 10; i++) {
-			ChangeRequest cr = new ChangeRequest(i, "username" + 2, d1, d2, d3, "comments" + i,
-					"request description" + i, "descriptionOfRequestedChange" + i, "descriptionOfCurrentState",
-					"Software");
-
-			db.insertObject(cr);
-		}
+//		LocalDate d1 = LocalDate.of(2020, AppManager.getRnd().nextInt(12) + 1, AppManager.getRnd().nextInt(28) + 1);
+//		LocalDate d2 = LocalDate.of(2020, AppManager.getRnd().nextInt(12) + 1, AppManager.getRnd().nextInt(28) + 1);
+//		LocalDate d3 = LocalDate.of(2020, AppManager.getRnd().nextInt(12) + 1, AppManager.getRnd().nextInt(28) + 1);
+//		for (int i = 0; i < 10; i++) {
+//			ChangeRequest cr = new ChangeRequest(i, "username" + 2, d1, d2, d3, "comments" + i,
+//					"request description" + i, "descriptionOfRequestedChange" + i, "descriptionOfCurrentState",
+//					"Software");
+//
+//			db.insertObject(cr);
+//		}
 
 //		for (int i = 0; i < 10; i++) {
 //		ChangeRequest cr = new ChangeRequest(i, "username" + 2, new Date(2020, 3, 5), new Date(100, 3, 5), new Date(155, 3, 5), "comments" + i,
@@ -194,12 +203,14 @@ public class MySqlCreationTester {
 //		}
 
 //		
-//		for (int i = 0; i < 500; i++) {
-//
-//			Message msg = new Message(i, "subject" + i, "username" + (i + 5) % 10 , "username" + i % 20, "messageContent" + i, i % 2, new Date(120, 3, 5), (i + 1) % 2, i % 2, i % 2);
-//			db.insertObject(msg);
-//
-//		}
+		Random rnd = new Random();
+		for (int i = 0; i < 500; i++) {
+
+			Message msg = new Message((long) rnd.nextInt(99999), "subject" + i, "username2", "username" + i % 20,
+					"messageContent" + i, i % 2 == 0, LocalDate.now(), (i + 1) % 2 == 0, i % 2 == 0, i % 2 == 0);
+			db.insertObject(msg);
+
+		}
 
 //		
 //		for (int i = 1; i < 10; i++) {

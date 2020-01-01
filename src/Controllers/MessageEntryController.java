@@ -1,8 +1,13 @@
 package Controllers;
 
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
+import ClientLogic.Client;
+import Entities.Message;
+import Protocol.Command;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
@@ -37,9 +42,13 @@ public class MessageEntryController implements Initializable {
 	
 	public boolean starred, checked;
 	
+	private Message message;
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
+		
+		
 		imgStar.setCursor(Cursor.HAND);
 		imgCheckBox.setCursor(Cursor.HAND);
 		hbContainer.setCursor(Cursor.HAND);
@@ -47,6 +56,7 @@ public class MessageEntryController implements Initializable {
 
 		imgStar.setOnMousePressed(event -> {
 			setStarredImage(!starred);
+			updateInDatabase();
 		});
 		
 		imgCheckBox.setOnMousePressed(event -> {
@@ -55,28 +65,34 @@ public class MessageEntryController implements Initializable {
 		
 		
 		hbContainer.setOnMousePressed(event -> {
-			setCheckedImage(!checked);
+
+			//load new fxml
 		});
 		
 		
 	}
 	
-	public void setFields(boolean starred, boolean checked, String subject, String content, String date) {
+	public void setFields(Message msg) {
 		
+		message = msg;
+		
+		// TODO: shorten it
+		txtContent.setText(msg.getMessageContentLT());
+		
+		txtSubject.setText(msg.getSubject());
+		
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		txtDate.setText(dtf.format(msg.getSentAt()));
 
-		
-		txtContent.setText(content);
-		txtSubject.setText(subject);
-		txtDate.setText(date);
-		
-		
-		setStarredImage(starred);
-		setCheckedImage(checked);
+		setStarredImage(msg.isStarred());
+		//setStarredImage(msg.isStarred());
+		setCheckedImage(false);
 	}
 	
 	
 	private void setStarredImage(boolean value) {
 		this.starred = value;
+		message.setStarred(value);
 		if(value) {
 			imgStar.setImage(new Image("Images\\Messages\\icons8_star_50px_2.png"));
 		}else {
@@ -95,8 +111,24 @@ public class MessageEntryController implements Initializable {
 	
 	public void deleteSelf() {
 		p.getChildren().clear();
+		checked = false;
+		message = null;
 		
 	}
+	
+	public void updateInDatabase() {
+		Client.getInstance().request(Command.Update, message);
+	}
+
+	public Message getMessage() {
+		return message;
+	}
+
+	public void setMessage(Message message) {
+		this.message = message;
+	}
+
+
 
 	private AnchorPane p;
 	public void setAttachedPane(AnchorPane containerPane) {

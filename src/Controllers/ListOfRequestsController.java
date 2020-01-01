@@ -112,6 +112,7 @@ public class ListOfRequestsController implements Initializable {
 
 	@FXML
 	private Line lineBottomJobs;
+
 	@FXML
 	private Text txtPageHeader;
 
@@ -200,12 +201,10 @@ public class ListOfRequestsController implements Initializable {
 
 			if (srMsg.getCommand() == Command.countOfObjects) {
 
-				countOfRequests = ((ArrayList<Integer>) srMsg.getAttachedData()[0]).get(0);
+				countOfRequests = (int) srMsg.getAttachedData()[0];
 
 				Client.getInstance().request(Command.GetMyRequests, ClientGUI.userName, RequestsType.myRequests,
 						currentRowIndex, rowCountLimit);
-				txtRequestsCount.setText(
-						(currentRowIndex + 1) + "-" + (currentRowIndex + rowCountLimit) + " of " + countOfRequests);
 			}
 		});
 
@@ -215,16 +214,17 @@ public class ListOfRequestsController implements Initializable {
 
 				ArrayList<ChangeRequest> myRequests = (ArrayList<ChangeRequest>) srMsg.getAttachedData()[0];
 				RequestsType requestType = (RequestsType) srMsg.getAttachedData()[1];
-
+				int size = myRequests.size();
 				switch (requestType) {
 				case myRequests:
 
 					loadRequestToTable(myRequests);
-					if(myRequests.size() < rowCountLimit) {
+					// TODO: no need to check '<' ?
+					if (myRequests.size() < rowCountLimit) {
 						txtRequestsCount.setText(
-								(currentRowIndex + 1) + "-" + (currentRowIndex + rowCountLimit) + " of " + countOfRequests);
+								(currentRowIndex + 1) + "-" + (currentRowIndex + size) + " of " + countOfRequests);
 					}
-					
+
 					break;
 
 				default:
@@ -233,9 +233,8 @@ public class ListOfRequestsController implements Initializable {
 			}
 		});
 
-		ArrayList<String> dd = new ArrayList<String>();
-		dd.add("`username`='username2'");
-		Client.getInstance().request(Command.countOfObjects, dd);
+		Client.getInstance().request(Command.countOfObjects, "`username`='" + ClientGUI.userName + "'",
+				ChangeRequest.getEmptyInstance());
 
 		// RequestsType rType = firstRelatedRequests(ClientGUI.myID);
 		// requestDataForTable(ClientGUI.myID, rType);

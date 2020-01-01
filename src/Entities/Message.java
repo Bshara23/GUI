@@ -151,4 +151,15 @@ public class Message extends SqlObject implements Serializable {
 		return 0;
 	}
 
+
+
+	@Override
+	public String toString() {
+		return "Message [messageID=" + messageID + ", subject=" + subject + ", from=" + from + ", to=" + to
+				+ ", messageContentLT=" + messageContentLT + ", hasBeenViewed=" + hasBeenViewed + ", sentAt=" + sentAt
+				+ ", isStarred=" + isStarred + ", isRead=" + isRead + ", isArchived=" + isArchived + "]";
+	}
+	
+	
+
 }

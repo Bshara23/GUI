@@ -89,7 +89,10 @@ public class Client extends AbstractClient {
 		});
 	}
 	
-	
+	public void request(Command cmd) {
+
+		request(cmd, new Object[1]);
+	}
 
 	@Override
 	protected void handleMessageFromServer(Object msg) {

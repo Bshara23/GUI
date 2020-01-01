@@ -47,7 +47,16 @@ public class ControllerManager {
 		});
 	}
 	public static void showInformationMessage(String title, String header, String content, VoidFunc okFunc) {
-		Alert alertSuccess = new Alert(AlertType.INFORMATION);
+		showMessage(title, header, content, okFunc, AlertType.INFORMATION);
+
+	}
+
+	public static void showErrorMessage(String title, String header, String content, VoidFunc okFunc) {
+		showMessage(title, header, content, okFunc, AlertType.ERROR);
+	}
+	
+	public static void showMessage(String title, String header, String content, VoidFunc okFunc, AlertType alertType) {
+		Alert alertSuccess = new Alert(alertType);
 		alertSuccess.setTitle(title);
 		alertSuccess.setHeaderText(header);
 		alertSuccess.setContentText(content);

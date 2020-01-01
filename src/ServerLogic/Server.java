@@ -11,6 +11,8 @@ import java.util.concurrent.TimeUnit;
 import Controllers.Logic.RequestsType;
 import Entities.ChangeRequest;
 import Entities.File;
+import Entities.Message;
+import Entities.SqlObject;
 import Protocol.Command;
 import Protocol.MsgReturnType;
 import Protocol.SRMessage;
@@ -22,6 +24,7 @@ import Utility.VoidFunc;
 import javafx.application.Platform;
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
+import Protocol.SeriObject;
 
 public class Server extends AbstractServer {
 
@@ -136,17 +139,47 @@ public class Server extends AbstractServer {
 
 			switch (srMsg.getCommand()) {
 
+			
+			case Update:
+				
+				SqlObject updateObj = (SqlObject)srMsg.getAttachedData()[0];
+				db.updateByObject(updateObj);
+				
+				break;
+			case deleteObjects:
+				String MESSAGES_DELETED_LIST_OF_MESSAGES_RESPONSE = "messagesDeletedListOfMessagesResponse";
+				
+				ArrayList<SqlObject> objs = (ArrayList<SqlObject>)srMsg.getAttachedData()[0];
+				
+				int res = 1;
+				for (SqlObject sqlObject : objs) {
+					res *= db.deleteObject(sqlObject);
+				}
+				
+				MsgReturnType retType = res == 1 ? MsgReturnType.Success : MsgReturnType.Failure;
+				sendMessageToClient(client, Command.deleteObjects, MESSAGES_DELETED_LIST_OF_MESSAGES_RESPONSE, retType);
+
+				break;
+			case getMessagesPrimary:
+				
+				// TODO for now this is for all messages, not just primary
+				String userName = (String)srMsg.getAttachedData()[0];
+				int startingRowMessages = (int) srMsg.getAttachedData()[1];
+				int sizeMessages = (int) srMsg.getAttachedData()[2];
+
+				ArrayList<Message> msgs = db.getMessages(userName, startingRowMessages, sizeMessages);
+				// TODO add failure and success cases
+				
+				sendMessageToClient(client, Command.getMessagesPrimary, msgs);
+				
+
+				break;
 			case countOfObjects:
 
-				ArrayList<String> cooCondition = (ArrayList<String>)srMsg.getAttachedData()[0];
-				System.out.println("Sent condition = " + cooCondition);
-				int countOfObject = db.getCountOf(ChangeRequest.getEmptyInstance(), cooCondition.get(0));
-				ArrayList<Integer> count =  new ArrayList<Integer>();
-				count.add(countOfObject);
-				
-				
-				//System.out.println(count.get(0));
-				sendMessageToClient(client, Command.countOfObjects, count);
+				String cooCondition = (String)srMsg.getAttachedData()[0];
+				SqlObject sqlObject = (SqlObject)srMsg.getAttachedData()[1];
+				int countOfObject = db.getCountOf(sqlObject, cooCondition);
+				sendMessageToClient(client, Command.countOfObjects, countOfObject);
 
 				break;
 			case insertFile:

@@ -44,7 +44,7 @@
                   <Image url="@../Images/Table/icons8_forward_50px_1.png" />
                </image>
             </ImageView>
-            <Text fill="#5f5f5f" layoutX="1069.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1-11 of 3,756" />
+            <Text fx:id="txtMessagesCount" fill="#5f5f5f" layoutX="1069.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1-11 of 3,756" />
             <ImageView fx:id="imgSettings" fitHeight="34.0" fitWidth="28.0" layoutX="1266.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../Images/Table/icons8_settings_50px_2.png" />

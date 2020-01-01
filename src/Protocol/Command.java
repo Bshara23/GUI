@@ -9,6 +9,8 @@ public enum Command {
 	countOfObjects,
 	updateProfile,
 	
+	deleteObjects,
+	
 	insertRequest, insertRequestWithFiles, insertPhase,
 	
 	insertEvaluationReport, getEvaluationReport, 

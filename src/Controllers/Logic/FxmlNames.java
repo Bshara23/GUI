@@ -2,7 +2,8 @@ package Controllers.Logic;
 
 public class FxmlNames {
 	
-	
+	public static final String MESSAGE_ENTRY_FXML = "MessageEntry.fxml";
+
 	public static final String ISSUE_REQUEST = "IssueRequest.fxml";
 
 
