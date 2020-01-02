@@ -22,6 +22,7 @@ public class FxmlNames {
 	public static final String REQUEST_DETAILS_EVALUATE = "RequestDetailsEvaluator.fxml";
 	public static final String REQUEST_DETAILS_DECISION = "RequestDetailsDecision.fxml";
 
+	public static final String LIST_OF_REQUESTS_FOR_TREATMENT = "ListOfRequestsForTreatmentGUI.fxml";
 	
 	public static final String EVALUATION_REPORT_PAGE_1 = "EvaluationReportPage1.fxml";
 	public static final String EVALUATION_REPORT_PAGE_2 = "EvaluationReportPage2.fxml";

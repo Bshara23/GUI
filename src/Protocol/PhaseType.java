@@ -1,6 +1,6 @@
-package Controllers.Logic;
+package Protocol;
 
-public enum RequestsType {
+public enum PhaseType {
 
 	myRequests, evaluation, supervision, execution, decision, examination, noRequests
 }

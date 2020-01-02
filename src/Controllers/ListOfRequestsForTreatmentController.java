@@ -17,6 +17,7 @@ import Controllers.Logic.ControllerManager;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Entities.ChangeRequest;
+import Entities.Phase;
 import Protocol.Command;
 import Protocol.PhaseType;
 import Utility.AppManager;
@@ -40,7 +41,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
-public class ListOfRequestsController implements Initializable {
+public class ListOfRequestsForTreatmentController implements Initializable {
 
 	private static final String GET_MY_REQUESTS_AS_SUPERVISOR = "GetMyRequestsAsSupervisor";
 
@@ -61,19 +62,23 @@ public class ListOfRequestsController implements Initializable {
 	private TableView<TableDataRequests> tblSupervisorRequests;
 
 	@FXML
-	private TableColumn<TableDataRequests, String> tcRequestID;
+    private TableColumn<TableDataRequests, String> tcIssuedBy;
 
-	@FXML
-	private TableColumn<TableDataRequests, String> tcIssueDate;
+    @FXML
+    private TableColumn<TableDataRequests, String> tcPhaseStatus;
 
-	@FXML
-	private TableColumn<TableDataRequests, String> tcCurrentPhase;
+    @FXML
+    private TableColumn<TableDataRequests, String> tcPhaseStartingDate;
 
-	@FXML
-	private TableColumn<TableDataRequests, String> tcStatus;
+    @FXML
+    private TableColumn<TableDataRequests, String> tcPhaseDeadline;
 
-	@FXML
-	private TableColumn<TableDataRequests, String> tcDeadline;
+    @FXML
+    private TableColumn<TableDataRequests, String> tcPhaseTimeLeft;
+
+    @FXML
+    private TableColumn<TableDataRequests, String> tcHasBeenTimeExtended;
+	
 	@FXML
 	private HBox hbRequestsType;
 
@@ -125,7 +130,6 @@ public class ListOfRequestsController implements Initializable {
 	private ArrayList<Node> tableButtons, jobs;
 
 	public static boolean disableAllJobs = false;
-	public static String pageHeader = "";
 	public static PhaseType phaseType;
 
 	private int currentRowIndex = 0;
@@ -181,26 +185,10 @@ public class ListOfRequestsController implements Initializable {
 		ControllerManager.setEffect(jobs, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
 		ControllerManager.setEffect(tableButtons, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
 
-//		tblSupervisorRequests.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-//		final ObservableList<TablePosition> selectedCells = tblSupervisorRequests.getSelectionModel().getSelectedCells();
-//		selectedCells.addListener(new ListChangeListener<TablePosition>() {
-//		    @Override
-//		    public void onChanged(Change change) {
-//		        for (TablePosition pos : selectedCells) {
-//		        	if(pos.getColumn() == 0) {
-//			            System.out.println("row 0 is selected, call a function here");
-//		        	}
-//		        	if(pos.getColumn() == 1) {
-//			            System.out.println("row 0 is selected, call a function here");
-//		        	}
-//		        }
-//		    };
-//		});
-
 		// Set a listener for the requests list from the server.
 
-		// addRandomDataToTable(); TODO
-		Client.addMessageRecievedFromServer(GET_COUNT_OF_REQUESTS, srMsg -> {
+		// TODO: implement
+		Client.addMessageRecievedFromServer(GET_COUNT_OF_REQUESTS + 2, srMsg -> {
 
 			if (srMsg.getCommand() == Command.countOfObjects) {
 
@@ -219,77 +207,41 @@ public class ListOfRequestsController implements Initializable {
 				PhaseType requestType = (PhaseType) srMsg.getAttachedData()[0];
 				ArrayList<ChangeRequest> myRequests = (ArrayList<ChangeRequest>) srMsg.getAttachedData()[1];
 				int size = myRequests.size();
+				txtRequestsCount.setText("Size: " + size);
 				switch (requestType) {
-				case myRequests:
 
-					loadRequestToTable(myRequests);
-					// TODO: no need to check '<' ?
-					if (myRequests.size() < rowCountLimit) {
-						txtRequestsCount.setText(
-								(currentRowIndex + 1) + "-" + (currentRowIndex + size) + " of " + countOfRequests);
-					}
-
-					break;
-
-					// TODO: add the closing with the supervision; or instead of
+				// TODO: add the closing with the supervision; or instead of
 				case supervision:
-					for (ChangeRequest cr : myRequests) {
-						System.out.println(cr.getPhases().get(0));
-					}
 
+					loadIntoTable(myRequests);
 					break;
-					
+
 				case examination:
-					for (ChangeRequest cr : myRequests) {
-						System.out.println(cr.getPhases().get(0));
-					}
+					loadIntoTable(myRequests);
 
 					break;
-					
+
 				case execution:
-					for (ChangeRequest cr : myRequests) {
-						System.out.println(cr.getPhases().get(0));
-					}
+					loadIntoTable(myRequests);
 
 					break;
-					
+
 				case decision:
-					for (ChangeRequest cr : myRequests) {
-						System.out.println(cr.getPhases().get(0));
-					}
+					loadIntoTable(myRequests);
 
 					break;
-					
+
 				case evaluation:
-					for (ChangeRequest cr : myRequests) {
-						System.out.println(cr.getPhases().get(0));
-					}
+					loadIntoTable(myRequests);
 
 					break;
-					
+
 				// TODO: add the rest of the phases
 				default:
 					break;
 				}
 			}
 		});
-
-		// TODO: create headers as constants, fix this to match my list of requests.
-		if (pageHeader.compareTo("ListOfMyRequest") == 0) {
-			Client.getInstance().request(Command.countOfObjects, "`username`='" + ClientGUI.userName + "'",
-					ChangeRequest.getEmptyInstance());
-		}
-
-		// RequestsType rType = firstRelatedRequests(ClientGUI.myID);
-		// requestDataForTable(ClientGUI.myID, rType);
-
-		// TODO: bug. the line does not work unless the function has been called by the
-		// mouse pressed event!!
-		// Select the first job at the initialization
-//		if (jobs.size() != 0) {
-//			Node node = jobs.get(0);
-//			selectNode(node);
-//		}
 
 		ArrayList<Node> nodes = ControllerManager.getAllNodes(hbRequestsType);
 		nodes.add(lineTableJob);
@@ -298,10 +250,10 @@ public class ListOfRequestsController implements Initializable {
 			node.setDisable(disableAllJobs);
 			node.setOpacity(disableAllJobs ? 0 : 1);
 		}
+
 		if (disableAllJobs) {
 			NavigationBar.setCurrentPage("Request Details", FxmlNames.REQUEST_DETAILS_MY);
 		}
-		txtPageHeader.setText(pageHeader);
 
 		imgForward.setOnMousePressed(event -> {
 
@@ -328,42 +280,41 @@ public class ListOfRequestsController implements Initializable {
 
 		});
 
-		
 		/**
 		 * 
-		 * Adding a behavior for all of the five phases
-		 * TODO: make one for the closing 
+		 * Adding a behavior for all of the five phases TODO: make one for the closing
 		 * 
-		 * */
-		
-		// The behavior of the button of supervisor tap when pressed on.
-		apSupervise.setOnMousePressed(event -> {
-			// Assuming that this anchor pane does exist. otherwise there shouldn't have
-			// been any requests of this type
-			Client.getInstance().request(Command.GetMyRequests, PhaseType.supervision, ClientGUI.empNumber);
-		});
-		
-		apAnalyze.setOnMousePressed(event -> {
-			Client.getInstance().request(Command.GetMyRequests, PhaseType.evaluation, ClientGUI.empNumber);
-		});
-		
-		apDecide.setOnMousePressed(event -> {
-			Client.getInstance().request(Command.GetMyRequests, PhaseType.decision, ClientGUI.empNumber);
-		});
-		
-		apExecute.setOnMousePressed(event -> {
-			Client.getInstance().request(Command.GetMyRequests, PhaseType.execution, ClientGUI.empNumber);
-		});
-		
-		apExamine.setOnMousePressed(event -> {
-			Client.getInstance().request(Command.GetMyRequests, PhaseType.examination, ClientGUI.empNumber);
-		});
+		 */
+
+	}
+
+	private void loadIntoTable(ArrayList<ChangeRequest> myRequests) {
+		ArrayList<TableDataRequests> tableContent = new ArrayList<TableDataRequests>();
+
+		for (ChangeRequest cr : myRequests) {
+
+			Phase ph = cr.getPhases().get(0);
+			
+			String issuedBy = cr.getUsername();
+			String phaseStatus = ph.getStatus();
+			String phaseStartingDate = ControllerManager.getDateTime(ph.getStartingDate());
+			String phaseDeadline = ControllerManager.getDateTime(ph.getDeadline());
+			String phaseTimeLeft = ControllerManager.getDateTimeDiff(ph.getStartingDate(), ph.getDeadline());
+			String hasBeenTimeExtended = ph.isHasBeenTimeExtended() ? "Yes" : "No";
+			
+			
+			TableDataRequests tableRow = new TableDataRequests(issuedBy, phaseStatus, phaseStartingDate, phaseDeadline,
+					phaseTimeLeft, hasBeenTimeExtended);
+			tableContent.add(tableRow);
+		}
+
+		tblSupervisorRequests.setItems(FXCollections.observableArrayList(tableContent));
 
 	}
 
 	@Override
 	protected void finalize() throws Throwable {
-		Client.removeMessageRecievedFromServer(GET_REQS_LIST_CTRL);
+		Client.removeMessageRecievedFromServer(GET_COUNT_OF_REQUESTS + 2);
 		Client.removeMessageRecievedFromServer(GET_MY_REQUESTS_AS_SUPERVISOR);
 
 		super.finalize();
@@ -372,77 +323,6 @@ public class ListOfRequestsController implements Initializable {
 	// TODO: implement
 	private PhaseType firstRelatedRequests(long myID) {
 		return PhaseType.supervision;
-	}
-
-	private void requestDataForTable(long myID, PhaseType rType) {
-
-		switch (rType) {
-		case myRequests:
-
-			Client.getInstance().request(Command.GetMyRequests, new Object[] { ClientGUI.userName, rType });
-			break;
-
-		default:
-			break;
-		}
-
-	}
-
-	private void loadRequestToTable(ArrayList<ChangeRequest> changeRequests) {
-
-		ArrayList<TableDataRequests> strs = new ArrayList<TableDataRequests>();
-
-		for (ChangeRequest changeRequest : changeRequests) {
-
-			strs.add(new TableDataRequests(changeRequest.getRequestID() + "",
-
-					ControllerManager.getDateTime(changeRequest.getDateOfRequest()),
-					ControllerManager.getDateTimeDiff(changeRequest.getEndDateOfRequest(),
-							changeRequest.getDateOfRequest()) + "",
-					"Active", ControllerManager.getDateTime(changeRequest.getEndDateOfRequest())));
-		}
-
-		addContentToTable(strs);
-	}
-
-	private void addRandomDataToTable() {
-
-		Random rnd = new Random();
-
-		String[] statuses = new String[] { "Frozen", "Active" };
-
-		ArrayList<TableDataRequests> strs = new ArrayList<TableDataRequests>();
-
-		for (int i = 0; i < 20; i++) {
-			String s1 = rnd.nextInt(200) + 1 + "";
-
-			int day = rnd.nextInt(28);
-
-			Calendar calendar = new GregorianCalendar(2013, 1, day);
-
-			int year = calendar.get(Calendar.YEAR);
-			int month = calendar.get(Calendar.MONTH);
-			int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-
-			String s2 = dayOfMonth + "/" + month + "/" + year;
-
-			String s4 = statuses[rnd.nextInt(statuses.length)];
-
-			int rand = rnd.nextInt(8);
-			calendar.add(Calendar.DAY_OF_MONTH, rand);
-
-			int year1 = calendar.get(Calendar.YEAR);
-			int month1 = calendar.get(Calendar.MONTH);
-			int dayOfMonth1 = calendar.get(Calendar.DAY_OF_MONTH);
-
-			String s5 = dayOfMonth1 + "/" + month1 + "/" + year1;
-
-			String s3 = rand + " Days";
-
-			strs.add(new TableDataRequests(s1, s2, s3, s4, s5));
-		}
-
-		addContentToTable(strs);
 	}
 
 	private void selectNode(Node node) {
@@ -461,27 +341,29 @@ public class ListOfRequestsController implements Initializable {
 
 		switch (text) {
 		case "Supervise":
-			addRandomDataToTable();
+			Client.getInstance().request(Command.GetMyRequests, PhaseType.supervision, ClientGUI.empNumber);
+			// This only prepares the next page in case that the user has double clicked on
+			// one of the requests from the table
 			NavigationBar.setCurrentPage("Request Details (Supervisor View)", FxmlNames.REQUEST_DETAILS_SUPERVISOR);
 			break;
 		case "Evaluate":
-			addRandomDataToTable();
+			Client.getInstance().request(Command.GetMyRequests, PhaseType.evaluation, ClientGUI.empNumber);
 			NavigationBar.setCurrentPage("Request Details (Evaluator View)", FxmlNames.REQUEST_DETAILS_EVALUATE);
 
 			break;
 		case "Decide":
-			addRandomDataToTable();
+			Client.getInstance().request(Command.GetMyRequests, PhaseType.decision, ClientGUI.empNumber);
 			NavigationBar.setCurrentPage("Request Details (Committee Members View)",
 					FxmlNames.REQUEST_DETAILS_DECISION);
 
 			break;
 		case "Execute":
-			addRandomDataToTable();
+			Client.getInstance().request(Command.GetMyRequests, PhaseType.execution, ClientGUI.empNumber);
 			NavigationBar.setCurrentPage("Request Details (Executer View)", FxmlNames.REQUEST_DETAILS_EXECUTIONER);
 
 			break;
 		case "Examine":
-			addRandomDataToTable();
+			Client.getInstance().request(Command.GetMyRequests, PhaseType.examination, ClientGUI.empNumber);
 			NavigationBar.setCurrentPage("Request Details (Examiner View)", FxmlNames.REQUEST_DETAILS_EXAMINER);
 
 			break;
@@ -494,55 +376,78 @@ public class ListOfRequestsController implements Initializable {
 
 	private void initTable() {
 
-		tcRequestID.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S1"));
-		tcIssueDate.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S2"));
-		tcCurrentPhase.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S3"));
-		tcStatus.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S4"));
-		tcDeadline.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("S5"));
+		
+		
+		tcHasBeenTimeExtended.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("hasBeenTimeExtended"));
+		tcIssuedBy.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("issuedBy"));
+		tcPhaseDeadline.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("phaseDeadline"));
+		tcPhaseStartingDate.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("phaseStartingDate"));
+		tcPhaseStatus.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("phaseStatus"));
+		tcPhaseTimeLeft.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("phaseTimeLeft"));
 
-	}
-
-	private void addContentToTable(ArrayList<TableDataRequests> strs) {
-		// tblSupervisorRequests.getSelectionModel().setCellSelectionEnabled(true);
-
-		tblSupervisorRequests.setItems(FXCollections.observableArrayList(strs));
 
 	}
 
 	public class TableDataRequests {
-		public String s1, s2, s3, s4, s5;
+		public String issuedBy, phaseStatus, phaseStartingDate, phaseDeadline, phaseTimeLeft, hasBeenTimeExtended;
 
-		public TableDataRequests(String s1, String s2, String s3, String s4, String s5) {
-			this.s1 = s1;
-			this.s2 = s2;
-			this.s3 = s3;
-			this.s4 = s4;
-			this.s5 = s5;
+		public TableDataRequests(String issuedBy, String phaseStatus, String phaseStartingDate, String phaseDeadline,
+				String phaseTimeLeft, String hasBeenTimeExtended) {
+			super();
+			this.issuedBy = issuedBy;
+			this.phaseStatus = phaseStatus;
+			this.phaseStartingDate = phaseStartingDate;
+			this.phaseDeadline = phaseDeadline;
+			this.phaseTimeLeft = phaseTimeLeft;
+			this.hasBeenTimeExtended = hasBeenTimeExtended;
 		}
 
-		public String getS1() {
-			return s1;
+		public String getIssuedBy() {
+			return issuedBy;
 		}
 
-		public String getS2() {
-			return s2;
+		public void setIssuedBy(String issuedBy) {
+			this.issuedBy = issuedBy;
 		}
 
-		public String getS3() {
-			return s3;
+		public String getPhaseStatus() {
+			return phaseStatus;
 		}
 
-		public String getS4() {
-			return s4;
+		public void setPhaseStatus(String phaseStatus) {
+			this.phaseStatus = phaseStatus;
 		}
 
-		public String getS5() {
-			return s5;
+		public String getPhaseStartingDate() {
+			return phaseStartingDate;
 		}
 
-		@Override
-		public String toString() {
-			return "TableDataRequests [s1=" + s1 + ", s2=" + s2 + ", s3=" + s3 + ", s4=" + s4 + ", s5=" + s5 + "]";
+		public void setPhaseStartingDate(String phaseStartingDate) {
+			this.phaseStartingDate = phaseStartingDate;
+		}
+
+		public String getPhaseDeadline() {
+			return phaseDeadline;
+		}
+
+		public void setPhaseDeadline(String phaseDeadline) {
+			this.phaseDeadline = phaseDeadline;
+		}
+
+		public String getPhaseTimeLeft() {
+			return phaseTimeLeft;
+		}
+
+		public void setPhaseTimeLeft(String phaseTimeLeft) {
+			this.phaseTimeLeft = phaseTimeLeft;
+		}
+
+		public String getHasBeenTimeExtended() {
+			return hasBeenTimeExtended;
+		}
+
+		public void setHasBeenTimeExtended(String hasBeenTimeExtended) {
+			this.hasBeenTimeExtended = hasBeenTimeExtended;
 		}
 
 	}

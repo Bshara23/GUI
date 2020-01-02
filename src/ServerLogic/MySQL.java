@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import Entities.*;
+import Protocol.PhaseType;
 import ServerLogic.UtilityInterfaces.IPreparedStatement;
 import ServerLogic.UtilityInterfaces.IStatement;
 import ServerLogic.UtilityInterfaces.UpdateFunc;
@@ -176,7 +177,7 @@ public class MySQL extends MySqlConnBase {
 				.theValues(obj.getFieldsValues()).toString();
 
 		System.out.println(query);
-	
+
 		return executePreparedStatement(query, null) > 0 ? 1 : 0;
 
 	}
@@ -273,8 +274,8 @@ public class MySQL extends MySqlConnBase {
 				while (rs.next()) {
 
 					Phase phase = new Phase(rs.getLong(1), rs.getLong(2), rs.getString(3), rs.getString(4),
-							rs.getLong(5), rs.getDate(6).toLocalDate(), rs.getDate(7).toLocalDate(),
-							rs.getDate(8).toLocalDate(), rs.getBoolean(9));
+							rs.getLong(5), rs.getTimestamp(6), rs.getTimestamp(7), rs.getTimestamp(8),
+							rs.getTimestamp(9), rs.getBoolean(10));
 
 					// add at the last change request
 					results.add(phase);
@@ -448,10 +449,53 @@ public class MySQL extends MySqlConnBase {
 				while (rs.next()) {
 
 					ChangeRequest cr = new ChangeRequest(rs.getLong(1), rs.getString(2), rs.getTimestamp(3),
-							rs.getTimestamp(4), rs.getTimestamp(5), rs.getString(6), rs.getString(7),
-							rs.getString(8), rs.getString(9), rs.getString(10));
+							rs.getTimestamp(4), rs.getTimestamp(5), rs.getString(6), rs.getString(7), rs.getString(8),
+							rs.getString(9), rs.getString(10));
 
 					results.add(cr);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		executeStatement(query, prepS);
+
+		return results;
+	}
+
+	public ArrayList<ChangeRequest> getChangeRequestPhaseByEmployee(long empNum, PhaseType phaseType) {
+
+		String query = "SELECT * FROM icm.employee as emp "
+				+ "INNER JOIN icm.phase as ph ON ph.empNumber = emp.empNumber "
+				+ "INNER JOIN icm.changerequest as cr ON cr.requestID = ph.requestID " + "WHERE ph.empNumber = '"
+				+ empNum + "' AND ph.phaseName = '" + phaseType.name() + "' ORDER BY ph.deadline ASC";
+
+		ArrayList<ChangeRequest> results = new ArrayList<ChangeRequest>();
+
+		IStatement prepS = rs -> {
+
+			// o = offset
+			try {
+
+				while (rs.next()) {
+					int o = 4;
+
+					Phase phase = new Phase(rs.getLong(o + 1), rs.getLong(o + 2), rs.getString(o + 3),
+							rs.getString(o + 4), rs.getLong(o + 5), rs.getTimestamp(o + 6), rs.getTimestamp(o + 7),
+							rs.getTimestamp(o + 8), rs.getTimestamp(o + 9), rs.getBoolean(o + 10));
+
+					o += 10;
+
+					ChangeRequest changeRequest = new ChangeRequest(rs.getLong(o + 1), rs.getString(o + 2),
+							rs.getTimestamp(o + 3), rs.getTimestamp(o + 4), rs.getTimestamp(o + 5), rs.getString(o + 6),
+							rs.getString(o + 7), rs.getString(o + 8), rs.getString(o + 9), rs.getString(o + 10));
+
+					changeRequest.getPhases().add(phase);
+
+					results.add(changeRequest);
 				}
 
 			} catch (SQLException e) {
@@ -522,7 +566,6 @@ public class MySQL extends MySqlConnBase {
 		return res.get(0);
 	}
 
-
 	public ArrayList<Message> getMessages(String forUsername, int startingRow, int size) {
 		String query = "SELECT * FROM icm.message WHERE icm.message.to = '" + forUsername + "' ";
 
@@ -556,7 +599,4 @@ public class MySQL extends MySqlConnBase {
 		return results;
 	}
 
-	
-	
-	
 }

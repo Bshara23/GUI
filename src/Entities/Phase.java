@@ -2,12 +2,13 @@ package Entities;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Phase extends SqlObject implements Serializable {
 
-	private static Phase emptyInstance = new Phase(0, 0, null, null, 0, null, null, null, false);
+	private static Phase emptyInstance = new Phase(0, 0, null, null, 0, null, null, null, null, false);
 
 	public static Phase getEmptyInstance() {
 		return emptyInstance;
@@ -18,7 +19,7 @@ public class Phase extends SqlObject implements Serializable {
 	public String phaseName, status;
 	public long empNumber;
 
-	public LocalDate deadline, estimatedTimeOfCompletion, timeOfCompletion;
+	public Timestamp deadline, estimatedTimeOfCompletion, timeOfCompletion, startingDate;
 	public boolean hasBeenTimeExtended;
 
 	private PhaseTimeExtensionRequest phaseTimeExtensionRequest;
@@ -26,10 +27,9 @@ public class Phase extends SqlObject implements Serializable {
 	private ArrayList<File> files;
 	private EvaluationReport evaluationReport;
 
-	
-
-	public Phase(long phaseID, long requestID, String phaseName, String status, long empNumber, LocalDate deadline,
-			LocalDate estimatedTimeOfCompletion, LocalDate timeOfCompletion, boolean hasBeenTimeExtended) {
+	public Phase(long phaseID, long requestID, String phaseName, String status, long empNumber, Timestamp deadline,
+			Timestamp estimatedTimeOfCompletion, Timestamp timeOfCompletion, Timestamp startingDate,
+			boolean hasBeenTimeExtended) {
 		super();
 		this.phaseID = phaseID;
 		this.requestID = requestID;
@@ -39,10 +39,29 @@ public class Phase extends SqlObject implements Serializable {
 		this.deadline = deadline;
 		this.estimatedTimeOfCompletion = estimatedTimeOfCompletion;
 		this.timeOfCompletion = timeOfCompletion;
+		this.startingDate = startingDate;
 		this.hasBeenTimeExtended = hasBeenTimeExtended;
-
+		
 		files = new ArrayList<File>();
+
 	}
+
+
+	
+
+	public Timestamp getStartingDate() {
+		return startingDate;
+	}
+
+
+
+
+	public void setStartingDate(Timestamp startingDate) {
+		this.startingDate = startingDate;
+	}
+
+
+
 
 	public long getRequestID() {
 		return requestID;
@@ -108,27 +127,27 @@ public class Phase extends SqlObject implements Serializable {
 		this.empNumber = empNumber;
 	}
 
-	public LocalDate getDeadline() {
+	public Timestamp getDeadline() {
 		return deadline;
 	}
 
-	public void setDeadline(LocalDate deadline) {
+	public void setDeadline(Timestamp deadline) {
 		this.deadline = deadline;
 	}
 
-	public LocalDate getEstimatedTimeOfCompletion() {
+	public Timestamp getEstimatedTimeOfCompletion() {
 		return estimatedTimeOfCompletion;
 	}
 
-	public void setEstimatedTimeOfCompletion(LocalDate estimatedTimeOfCompletion) {
+	public void setEstimatedTimeOfCompletion(Timestamp estimatedTimeOfCompletion) {
 		this.estimatedTimeOfCompletion = estimatedTimeOfCompletion;
 	}
 
-	public LocalDate getTimeOfCompletion() {
+	public Timestamp getTimeOfCompletion() {
 		return timeOfCompletion;
 	}
 
-	public void setTimeOfCompletion(LocalDate timeOfCompletion) {
+	public void setTimeOfCompletion(Timestamp timeOfCompletion) {
 		this.timeOfCompletion = timeOfCompletion;
 	}
 

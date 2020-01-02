@@ -8,13 +8,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import Controllers.Logic.RequestsType;
 import Entities.ChangeRequest;
 import Entities.File;
 import Entities.Message;
 import Entities.SqlObject;
 import Protocol.Command;
 import Protocol.MsgReturnType;
+import Protocol.PhaseType;
 import Protocol.SRMessage;
 import ServerLogic.UtilityInterfaces.ClientFunc;
 import ServerLogic.UtilityInterfaces.ClientThrowableFunc;
@@ -137,56 +137,55 @@ public class Server extends AbstractServer {
 		// Execute in a separate thread
 		executorService.execute(() -> {
 
-			switch (srMsg.getCommand()) {
+			Command command = srMsg.getCommand();
+			switch (command) {
 
-			
 			case updateMessage:
-				
-				Message msgToUpdate = (Message)srMsg.getAttachedData()[0];
+
+				Message msgToUpdate = (Message) srMsg.getAttachedData()[0];
 				db.updateMessage(msgToUpdate);
-				
+
 				break;
-			
+
 			case Update:
-				
-				SqlObject updateObj = (SqlObject)srMsg.getAttachedData()[0];
+
+				SqlObject updateObj = (SqlObject) srMsg.getAttachedData()[0];
 				db.updateByObject(updateObj);
-				
+
 				break;
 			case deleteObjects:
 				String MESSAGES_DELETED_LIST_OF_MESSAGES_RESPONSE = "messagesDeletedListOfMessagesResponse";
-				
-				ArrayList<SqlObject> objs = (ArrayList<SqlObject>)srMsg.getAttachedData()[0];
-				
+
+				ArrayList<SqlObject> objs = (ArrayList<SqlObject>) srMsg.getAttachedData()[0];
+
 				int res = 1;
 				for (SqlObject sqlObject : objs) {
 					res *= db.deleteObject(sqlObject);
 				}
-				
+
 				MsgReturnType retType = res == 1 ? MsgReturnType.Success : MsgReturnType.Failure;
-				sendMessageToClient(client, Command.deleteObjects, MESSAGES_DELETED_LIST_OF_MESSAGES_RESPONSE, retType);
+				sendMessageToClient(client, command, MESSAGES_DELETED_LIST_OF_MESSAGES_RESPONSE, retType);
 
 				break;
 			case getMessagesPrimary:
-				
+
 				// TODO for now this is for all messages, not just primary
-				String userName = (String)srMsg.getAttachedData()[0];
+				String userName = (String) srMsg.getAttachedData()[0];
 				int startingRowMessages = (int) srMsg.getAttachedData()[1];
 				int sizeMessages = (int) srMsg.getAttachedData()[2];
 
 				ArrayList<Message> msgs = db.getMessages(userName, startingRowMessages, sizeMessages);
 				// TODO add failure and success cases
-				
-				sendMessageToClient(client, Command.getMessagesPrimary, msgs);
-				
+
+				sendMessageToClient(client, command, msgs);
 
 				break;
 			case countOfObjects:
 
-				String cooCondition = (String)srMsg.getAttachedData()[0];
-				SqlObject sqlObject = (SqlObject)srMsg.getAttachedData()[1];
+				String cooCondition = (String) srMsg.getAttachedData()[0];
+				SqlObject sqlObject = (SqlObject) srMsg.getAttachedData()[1];
 				int countOfObject = db.getCountOf(sqlObject, cooCondition);
-				sendMessageToClient(client, Command.countOfObjects, countOfObject);
+				sendMessageToClient(client, command, countOfObject);
 
 				break;
 			case insertFile:
@@ -205,7 +204,7 @@ public class Server extends AbstractServer {
 				// Make multiple threads or a thread queue?
 				File downloadedFile = db.getFile(fileID);
 
-				sendMessageToClient(client, Command.getFile, downloadedFile);
+				sendMessageToClient(client, command, downloadedFile);
 
 				break;
 
@@ -220,18 +219,15 @@ public class Server extends AbstractServer {
 
 			case insertRequest:
 
-				
-				
 				ChangeRequest changeRequest = (ChangeRequest) srMsg.getAttachedData()[0];
 				// Set a new max id
 				changeRequest.setRequestID(db.getNewMaxID(changeRequest));
-				
+
 				result = 1;
 				result = db.insertObject(changeRequest); // TODO: make it return a boolean
-				
-				sendBooleanResultMessage(client, Command.insertRequest, result);
-				
-				
+
+				sendBooleanResultMessage(client, command, result);
+
 				break;
 
 			case insertRequestWithFiles:
@@ -250,48 +246,45 @@ public class Server extends AbstractServer {
 					result *= db.insertFile(file);
 				}
 
-				sendBooleanResultMessage(client, Command.insertRequestWithFiles, result);
+				sendBooleanResultMessage(client, command, result);
 
 				break;
 
 			case GetMyRequests:
+				
+				// TODO: fix in my requests list
+				PhaseType phaseType = (PhaseType) srMsg.getAttachedData()[0];
 
-				String forUsername = (String) srMsg.getAttachedData()[0];
-				RequestsType requestType = (RequestsType) srMsg.getAttachedData()[1];
-
-				switch (requestType) {
+				switch (phaseType) {
 
 				case myRequests:
-					
+					String forUsername = (String) srMsg.getAttachedData()[1];
+
 					int startingRow = (int) srMsg.getAttachedData()[2];
 					int size = (int) srMsg.getAttachedData()[3];
 
 					ArrayList<ChangeRequest> crs = db.getChangeRequests(forUsername, startingRow, size);
 
-					sendMessageToClient(client, Command.GetMyRequests, crs, requestType);
+					sendMessageToClient(client, command, crs, phaseType);
 
 					break;
 
 				case decision:
-
-					break;
-
 				case evaluation:
-
-					break;
 				case examination:
-
-					break;
 				case execution:
-
-					break;
-
 				case supervision:
+
+					long empNum = (long)srMsg.getAttachedData()[1];
+					
+					ArrayList<ChangeRequest> crSupervision = db.getChangeRequestPhaseByEmployee(empNum, phaseType);
+
+					sendMessageToClient(client, command, phaseType, crSupervision);
 
 					break;
 
 				default:
-					System.err.println("Error, the RequestsType " + requestType.toString() + " is not defined!");
+					System.err.println("Error, the RequestsType " + phaseType.toString() + " is not defined!");
 					break;
 				}
 

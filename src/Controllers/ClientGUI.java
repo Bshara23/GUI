@@ -12,7 +12,7 @@ import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
-import Controllers.Logic.RequestsType;
+import Protocol.PhaseType;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -94,7 +94,7 @@ public class ClientGUI extends Application implements Initializable {
 	public static long myID = 5;
 
 	public static String userName = "username2";
-
+	public static long empNumber = 10;
 	
 	
 	
@@ -223,7 +223,7 @@ public class ClientGUI extends Application implements Initializable {
 
 		ListOfRequestsController.disableAllJobs = true;
 		ListOfRequestsController.pageHeader = "List of My Requests";
-		ListOfRequestsController.requestsType = RequestsType.myRequests;
+		ListOfRequestsController.phaseType = PhaseType.myRequests;
 		commondMenuBehavior(apBtnMyRequests, "My Requests", FxmlNames.REQUESTS_LIST);
 	}
 
@@ -255,9 +255,7 @@ public class ClientGUI extends Application implements Initializable {
 	void onRequestTreatmentPress(MouseEvent event) {
 
 		ListOfRequestsController.disableAllJobs = false;
-		ListOfRequestsController.pageHeader = "List of Requests for Treatment";
-		ListOfRequestsController.requestsType = RequestsType.supervision;
-		commondMenuBehavior(apBtnMyRequests, "Requests Treatment", FxmlNames.REQUESTS_LIST);
+		commondMenuBehavior(apBtnMyRequests, "Requests Treatment", FxmlNames.LIST_OF_REQUESTS_FOR_TREATMENT);
 
 	}
 
