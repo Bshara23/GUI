@@ -45,11 +45,13 @@ import javafx.scene.text.Text;
 
 public class ListOfMessagesController implements Initializable {
 
+	private static final String GET_COUNT_OF_MESSAGES = "GetCountOfMessages";
+
+
+
 	private static final String MESSAGES_DELETED_LIST_OF_MESSAGES_RESPONSE = "messagesDeletedListOfMessagesResponse";
 
-	private static final String GET_COUNT_OF_MESSAGES = "dawdwa42r2353465346346";
 
-	private static final String GET_COUNT_OF_REQUESTS = "35325236236325r32r";
 
 	private static final String GET_MESSAGES_PRIMARY_LIST_OF_MESSAGES = "getMessagesPrimaryListOfMessages";
 
@@ -116,7 +118,16 @@ public class ListOfMessagesController implements Initializable {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		System.out.println("Init: ListOfMessagesController");
+		ClientGUI.addOnMenuBtnClickedEvent(getClass().getName() + "332423457745125", ()->{
+			System.out.println("Finalize: ListOfMessagesController");
+			
+			Client.removeMessageRecievedFromServer(MESSAGES_DELETED_LIST_OF_MESSAGES_RESPONSE);
+			Client.removeMessageRecievedFromServer(GET_MESSAGES_PRIMARY_LIST_OF_MESSAGES);
+			Client.removeMessageRecievedFromServer(GET_COUNT_OF_MESSAGES);
 
+		});
+		
 		msgEntryControllers = new ArrayList<MessageEntryController>();
 		buttons = new ArrayList<Node>();
 		messageTypes = new ArrayList<Node>();
@@ -237,8 +248,8 @@ public class ListOfMessagesController implements Initializable {
 
 		});
 
-		// Client.getInstance().request(Command.getMessagesPrimary, new
-		// SeriObject(ClientGUI.userName));
+//		 Client.getInstance().request(Command.getMessagesPrimary, new
+//		 SeriObject(ClientGUI.userName));
 
 		imgForward.setOnMousePressed(event -> {
 
@@ -273,6 +284,7 @@ public class ListOfMessagesController implements Initializable {
 	@Override
 	protected void finalize() throws Throwable {
 		Client.removeMessageRecievedFromServer(GET_MESSAGES_PRIMARY_LIST_OF_MESSAGES);
+		Client.removeMessageRecievedFromServer(MESSAGES_DELETED_LIST_OF_MESSAGES_RESPONSE);
 		super.finalize();
 	}
 

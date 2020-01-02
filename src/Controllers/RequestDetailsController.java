@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
+import Entities.ChangeRequest;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -22,61 +23,99 @@ public class RequestDetailsController implements Initializable {
 	private AnchorPane apLoadRequestDetails;
 
 	@FXML
+	private HBox hbInformationContainer;
+
+	@FXML
+	private Text txtRequestID;
+
+	@FXML
+	private Text txtRelatedInfoSystem;
+
+	@FXML
+	private Text txtIssuedBy;
+
+	@FXML
+	private Text txtIssueDate;
+
+	@FXML
+	private Text txtRequestDescription;
+
+	@FXML
+	private Text txtDescriptionOfCurrentChange;
+
+	@FXML
+	private Text txtDescriptionOfRequestedChange;
+
+	@FXML
+	private Text txtComments;
+
+	@FXML
+	private Text txtAttachedFilesNames;
+
+	@FXML
 	private HBox hbHide;
-	
-    @FXML
-    private HBox hbEditRequestDetails;
-    
-    @FXML
-    private HBox hbInformationContainer;
-    
-    @FXML
-    private Text txtShowHide;
-    
-    private ObservableList<Node> nodes;
-    private boolean swapper = false;
+
+	@FXML
+	private Text txtShowHide;
+
+	@FXML
+	private HBox hbEditRequestDetails;
+
+	private ObservableList<Node> nodes;
+	private boolean swapper = false;
+	private ChangeRequest changeRequest;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		nodes = FXCollections.observableArrayList(hbInformationContainer.getChildren());
+		changeRequest = ListOfRequestsForTreatmentController.lastSelectedRequest;
 
+		if(changeRequest != null) {
+			txtRequestID.setText(changeRequest.getRequestID() + "");
+			txtComments.setText(changeRequest.getCommentsLT());
+			txtDescriptionOfCurrentChange.setText(changeRequest.getDescriptionOfCurrentStateLT());
+			txtIssueDate.setText(ControllerManager.getDateTime(changeRequest.getDateOfRequest()));
+			txtDescriptionOfRequestedChange.setText(changeRequest.getDescriptionOfRequestedChangeLT());
+			txtRelatedInfoSystem.setText(changeRequest.getRelatedInformationSystem());
+			txtRequestDescription.setText(changeRequest.getRequestDescriptionLT());
+		}
 		
+		
+		
+
 		hbInformationContainer.setPrefHeight(20);
 		hbInformationContainer.getChildren().clear();
 		txtShowHide.setText("Show");
 		ControllerManager.setEffect(hbHide, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 
-
-		
 		hbHide.setCursor(Cursor.HAND);
 
-		//ControllerManager.setOnHoverEffect(hbHide, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
-		//		CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
-		
-		
+		// ControllerManager.setOnHoverEffect(hbHide,
+		// CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
+		// CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+
 		hbEditRequestDetails.setCursor(Cursor.HAND);
 		ControllerManager.setEffect(hbEditRequestDetails, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 		ControllerManager.setOnHoverEffect(hbEditRequestDetails, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
 				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
-		
-		
+
 		hbHide.setOnMousePressed(event -> {
-			
+
 			swapper = !swapper;
-			if(swapper) {
+			if (swapper) {
 				hbInformationContainer.setPrefHeight(289);
 				hbInformationContainer.getChildren().setAll(nodes);
 				txtShowHide.setText("Hide");
 				ControllerManager.setEffect(hbHide, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE);
-			}else {
+			} else {
 				hbInformationContainer.setPrefHeight(20);
 				hbInformationContainer.getChildren().clear();
 				txtShowHide.setText("Show");
 				ControllerManager.setEffect(hbHide, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 
-
 			}
-			//hbInformationContainer.getChildren().setAll(nodes);
-			//System.out.println("DDDD");
+			// hbInformationContainer.getChildren().setAll(nodes);
+			// System.out.println("DDDD");
 
 		});
 

@@ -361,14 +361,6 @@ public class ListOfRequestsController implements Initializable {
 
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		Client.removeMessageRecievedFromServer(GET_REQS_LIST_CTRL);
-		Client.removeMessageRecievedFromServer(GET_MY_REQUESTS_AS_SUPERVISOR);
-
-		super.finalize();
-	}
-
 	// TODO: implement
 	private PhaseType firstRelatedRequests(long myID) {
 		return PhaseType.supervision;

@@ -171,22 +171,27 @@ public class Client extends AbstractClient {
 	}
 
 	public static void addServerConnectionEstablishedEvent(String key, VoidFunc voidFunc) {
+		serverConnectionEstablishedEvents.remove(key);
 		serverConnectionEstablishedEvents.put(key, voidFunc);
 	}
 
 	public static void addServerConnectionClosedEvent(String key, VoidFunc voidFunc) {
+		serverConnectionClosedEvents.remove(key);
 		serverConnectionClosedEvents.put(key, voidFunc);
 	}
 
 	public static void addServerExceptionEvent(String key, VoidFunc voidFunc) {
+		serverExceptionEvents.remove(key);
 		serverExceptionEvents.put(key, voidFunc);
 	}
 
 	public static void addStringRecievedFromServer(String key, StringFunc stringFunc) {
+		stringRecievedFromServerEvents.remove(key);
 		stringRecievedFromServerEvents.put(key, stringFunc);
 	}
 
 	public static void addMessageRecievedFromServer(String key, SRMessageFunc sRMessageFunc) {
+		messageRecievedFromServerEvents.remove(key);
 		messageRecievedFromServerEvents.put(key, sRMessageFunc);
 	}
 	

@@ -140,6 +140,21 @@ public class Server extends AbstractServer {
 			Command command = srMsg.getCommand();
 			switch (command) {
 
+			case getCountOfPhasesTypes:
+
+				long empNumberForPhases = (long) srMsg.getAttachedData()[0];
+
+				int cntSupervision = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.supervision);
+				int cntEvaluation = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.evaluation);
+				int cntDecision = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.decision);
+				int cntExecution = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.execution);
+				int cntExamination = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.examination);
+
+				sendMessageToClient(client, command, cntSupervision, cntEvaluation, cntDecision, cntExecution,
+						cntExamination);
+
+				break;
+
 			case updateMessage:
 
 				Message msgToUpdate = (Message) srMsg.getAttachedData()[0];
@@ -251,7 +266,7 @@ public class Server extends AbstractServer {
 				break;
 
 			case GetMyRequests:
-				
+
 				// TODO: fix in my requests list
 				PhaseType phaseType = (PhaseType) srMsg.getAttachedData()[0];
 
@@ -275,8 +290,8 @@ public class Server extends AbstractServer {
 				case execution:
 				case supervision:
 
-					long empNum = (long)srMsg.getAttachedData()[1];
-					
+					long empNum = (long) srMsg.getAttachedData()[1];
+
 					ArrayList<ChangeRequest> crSupervision = db.getChangeRequestPhaseByEmployee(empNum, phaseType);
 
 					sendMessageToClient(client, command, phaseType, crSupervision);

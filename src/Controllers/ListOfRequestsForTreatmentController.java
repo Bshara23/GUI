@@ -43,6 +43,8 @@ import javafx.scene.text.Text;
 
 public class ListOfRequestsForTreatmentController implements Initializable {
 
+	private static final String GET_COUNT_OF_PHASES_TYPES = "GetCountOfPhasesTypes";
+
 	private static final String GET_MY_REQUESTS_AS_SUPERVISOR = "GetMyRequestsAsSupervisor";
 
 	private static final String GET_COUNT_OF_REQUESTS = "GET_COUINT_RESQUEST234256354";
@@ -62,25 +64,55 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 	private TableView<TableDataRequests> tblSupervisorRequests;
 
 	@FXML
-    private TableColumn<TableDataRequests, String> tcIssuedBy;
+	private TableColumn<TableDataRequests, String> tcIssuedBy;
 
-    @FXML
-    private TableColumn<TableDataRequests, String> tcPhaseStatus;
+	@FXML
+	private TableColumn<TableDataRequests, String> tcPhaseStatus;
 
-    @FXML
-    private TableColumn<TableDataRequests, String> tcPhaseStartingDate;
+	@FXML
+	private TableColumn<TableDataRequests, String> tcPhaseStartingDate;
 
-    @FXML
-    private TableColumn<TableDataRequests, String> tcPhaseDeadline;
+	@FXML
+	private TableColumn<TableDataRequests, String> tcPhaseDeadline;
 
-    @FXML
-    private TableColumn<TableDataRequests, String> tcPhaseTimeLeft;
+	@FXML
+	private TableColumn<TableDataRequests, String> tcPhaseTimeLeft;
 
-    @FXML
-    private TableColumn<TableDataRequests, String> tcHasBeenTimeExtended;
-	
+	@FXML
+	private TableColumn<TableDataRequests, String> tcHasBeenTimeExtended;
+
+	@FXML
+	private ImageView imgSearch;
+
+	@FXML
+	private Text txtPageHeader;
+
+	@FXML
+	private ImageView imgBack;
+
+	@FXML
+	private ImageView imgForward;
+
+	@FXML
+	private Text txtRequestsCount;
+
+	@FXML
+	private ImageView imgSettings;
+
+	@FXML
+	private ImageView imgRefresh;
+
+	@FXML
+	private ImageView imgMenu;
+
+	@FXML
+	private Line lineBottomJobs;
+
 	@FXML
 	private HBox hbRequestsType;
+
+	@FXML
+	private HBox apSupervise;
 
 	@FXML
 	private HBox apAnalyze;
@@ -95,37 +127,7 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 	private HBox apExamine;
 
 	@FXML
-	private ImageView imgSettings;
-
-	@FXML
-	private ImageView imgRefresh;
-
-	@FXML
-	private ImageView imgMenu;
-
-	@FXML
-	private ImageView imgSearch;
-
-	@FXML
-	private ImageView imgBack;
-
-	@FXML
-	private ImageView imgForward;
-
-	@FXML
-	private HBox apSupervise;
-
-	@FXML
 	private Line lineTableJob;
-
-	@FXML
-	private Line lineBottomJobs;
-
-	@FXML
-	private Text txtPageHeader;
-
-	@FXML
-	private Text txtRequestsCount;
 
 	private ArrayList<Node> tableButtons, jobs;
 
@@ -135,11 +137,28 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 	private int currentRowIndex = 0;
 	private int countOfRequests;
 	private int rowCountLimit = 16;
+	private ArrayList<Node> requestTypesAPs;
+
+	private ArrayList<ChangeRequest> myRequests;
+
+	public static ChangeRequest lastSelectedRequest;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		System.out.println("Init: ListOfRequestsForTreatmentController");
+
+		ClientGUI.addOnMenuBtnClickedEvent(getClass().getName() + "3232145125", () -> {
+			System.out.println("Finalize: ListOfRequestsForTreatmentController");
+
+			Client.removeMessageRecievedFromServer(GET_COUNT_OF_REQUESTS + 2);
+			Client.removeMessageRecievedFromServer(GET_MY_REQUESTS_AS_SUPERVISOR);
+			Client.removeMessageRecievedFromServer(GET_COUNT_OF_PHASES_TYPES);
+		});
+
 		initTable();
+
+		requestTypesAPs = ControllerManager.getAllNodes(hbRequestsType);
 
 		tableButtons = new ArrayList<Node>();
 		jobs = new ArrayList<Node>();
@@ -205,7 +224,8 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 			if (srMsg.getCommand() == Command.GetMyRequests) {
 
 				PhaseType requestType = (PhaseType) srMsg.getAttachedData()[0];
-				ArrayList<ChangeRequest> myRequests = (ArrayList<ChangeRequest>) srMsg.getAttachedData()[1];
+				myRequests = (ArrayList<ChangeRequest>) srMsg.getAttachedData()[1];
+
 				int size = myRequests.size();
 				txtRequestsCount.setText("Size: " + size);
 				switch (requestType) {
@@ -280,11 +300,77 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 		});
 
-		/**
-		 * 
-		 * Adding a behavior for all of the five phases TODO: make one for the closing
-		 * 
-		 */
+		allowExistingTabsOnly();
+
+	}
+
+	private void allowExistingTabsOnly() {
+
+		Client.addMessageRecievedFromServer(GET_COUNT_OF_PHASES_TYPES, srMsg -> {
+
+			if (srMsg.getCommand() == Command.getCountOfPhasesTypes) {
+				int cntSupervision = (int) srMsg.getAttachedData()[0];
+				int cntEvaluation = (int) srMsg.getAttachedData()[1];
+				int cntDecision = (int) srMsg.getAttachedData()[2];
+				int cntExecution = (int) srMsg.getAttachedData()[3];
+				int cntExamination = (int) srMsg.getAttachedData()[4];
+
+				ArrayList<Node> newNodesForRequestTypes = new ArrayList<Node>();
+
+				for (Node node : requestTypesAPs) {
+					if (node instanceof HBox) {
+						Node textNode = ((HBox) node).getChildren().get(1);
+						String text = ((Text) textNode).getText();
+						switch (text) {
+						case "Supervise":
+
+							if (cntSupervision > 0) {
+								newNodesForRequestTypes.add(node);
+							}
+
+							break;
+						case "Evaluate":
+
+							if (cntEvaluation > 0) {
+								newNodesForRequestTypes.add(node);
+							}
+
+							break;
+						case "Decide":
+
+							if (cntDecision > 0) {
+								newNodesForRequestTypes.add(node);
+							}
+
+							break;
+						case "Execute":
+
+							if (cntExecution > 0) {
+								newNodesForRequestTypes.add(node);
+							}
+
+							break;
+						case "Examine":
+
+							if (cntExamination > 0) {
+								newNodesForRequestTypes.add(node);
+							}
+
+							break;
+						default:
+							System.err.println("Error, case not defined! [allowExistingTabsOnly]");
+							break;
+						}
+					}
+				}
+
+				hbRequestsType.getChildren().clear();
+				hbRequestsType.getChildren().setAll(FXCollections.observableArrayList(newNodesForRequestTypes));
+			}
+
+		});
+
+		Client.getInstance().request(Command.getCountOfPhasesTypes, ClientGUI.empNumber);
 
 	}
 
@@ -294,15 +380,14 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 		for (ChangeRequest cr : myRequests) {
 
 			Phase ph = cr.getPhases().get(0);
-			
+
 			String issuedBy = cr.getUsername();
 			String phaseStatus = ph.getStatus();
 			String phaseStartingDate = ControllerManager.getDateTime(ph.getStartingDate());
 			String phaseDeadline = ControllerManager.getDateTime(ph.getDeadline());
 			String phaseTimeLeft = ControllerManager.getDateTimeDiff(ph.getStartingDate(), ph.getDeadline());
 			String hasBeenTimeExtended = ph.isHasBeenTimeExtended() ? "Yes" : "No";
-			
-			
+
 			TableDataRequests tableRow = new TableDataRequests(issuedBy, phaseStatus, phaseStartingDate, phaseDeadline,
 					phaseTimeLeft, hasBeenTimeExtended);
 			tableContent.add(tableRow);
@@ -310,14 +395,6 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 		tblSupervisorRequests.setItems(FXCollections.observableArrayList(tableContent));
 
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		Client.removeMessageRecievedFromServer(GET_COUNT_OF_REQUESTS + 2);
-		Client.removeMessageRecievedFromServer(GET_MY_REQUESTS_AS_SUPERVISOR);
-
-		super.finalize();
 	}
 
 	// TODO: implement
@@ -376,15 +453,14 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 	private void initTable() {
 
-		
-		
-		tcHasBeenTimeExtended.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("hasBeenTimeExtended"));
+		tcHasBeenTimeExtended
+				.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("hasBeenTimeExtended"));
 		tcIssuedBy.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("issuedBy"));
 		tcPhaseDeadline.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("phaseDeadline"));
-		tcPhaseStartingDate.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("phaseStartingDate"));
+		tcPhaseStartingDate
+				.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("phaseStartingDate"));
 		tcPhaseStatus.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("phaseStatus"));
 		tcPhaseTimeLeft.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("phaseTimeLeft"));
-
 
 	}
 
@@ -457,9 +533,12 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 		if (event.getClickCount() == 2) // Checking double click
 		{
 
-			NavigationBar.next(NavigationBar.getNextPage().getPageTitle(),
-					NavigationBar.getNextPage().getPageLocation());
-
+			int selectedIndex = tblSupervisorRequests.getSelectionModel().getSelectedIndex();
+			if (selectedIndex != -1) {
+				lastSelectedRequest = myRequests.get(selectedIndex);
+				NavigationBar.next(NavigationBar.getNextPage().getPageTitle(),
+						NavigationBar.getNextPage().getPageLocation());
+			}
 		}
 	}
 

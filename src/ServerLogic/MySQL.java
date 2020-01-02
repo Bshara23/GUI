@@ -599,4 +599,25 @@ public class MySQL extends MySqlConnBase {
 		return results;
 	}
 
+	public int getCountOfPhasesByType(long empNumberForPhases, PhaseType phaseType) {
+		String query = "SELECT COUNT(*) FROM icm.phase as ph WHERE ph.empNumber = '" + empNumberForPhases
+				+ "' AND ph.phaseName = '" + phaseType.name() + "'";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(rs.getInt(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.get(0);
+	}
+
 }

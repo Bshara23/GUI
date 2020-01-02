@@ -38,15 +38,15 @@
                <children>
                   <VBox spacing="15.0">
                      <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="77" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Moodle" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Dwayne (You)" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="5/5/2020" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The request is regarding the missleading info..." />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The system is not given me the info." />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="A change is needed regarding the misslead..." />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="This is an example comment." />
-                        <Text fill="#3076ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Screenshot55.jpg" underline="true" />
+                        <Text fx:id="txtRequestID" strokeType="OUTSIDE" strokeWidth="0.0" text="77" />
+                        <Text fx:id="txtRelatedInfoSystem" strokeType="OUTSIDE" strokeWidth="0.0" text="Moodle" />
+                        <Text fx:id="txtIssuedBy" strokeType="OUTSIDE" strokeWidth="0.0" text="Dwayne (You)" />
+                        <Text fx:id="txtIssueDate" strokeType="OUTSIDE" strokeWidth="0.0" text="5/5/2020" />
+                        <Text fx:id="txtRequestDescription" strokeType="OUTSIDE" strokeWidth="0.0" text="The request is regarding the missleading info..." />
+                        <Text fx:id="txtDescriptionOfCurrentChange" strokeType="OUTSIDE" strokeWidth="0.0" text="The system is not given me the info." />
+                        <Text fx:id="txtDescriptionOfRequestedChange" strokeType="OUTSIDE" strokeWidth="0.0" text="A change is needed regarding the misslead..." />
+                        <Text fx:id="txtComments" strokeType="OUTSIDE" strokeWidth="0.0" text="This is an example comment." />
+                        <Text fx:id="txtAttachedFilesNames" fill="#3076ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Screenshot55.jpg" underline="true" />
                      </children>
                      <padding>
                         <Insets top="5.0" />

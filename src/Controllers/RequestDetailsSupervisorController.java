@@ -15,8 +15,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 
 public class RequestDetailsSupervisorController implements Initializable {
 
@@ -24,16 +26,58 @@ public class RequestDetailsSupervisorController implements Initializable {
 	private VBox vbLoadRequestDetails;
 
 	@FXML
-	private Canvas canvasRight;
-
-	@FXML
-	private Canvas canvasLeft;
-
-	@FXML
 	private HBox hbEditPhaseDetails;
 
 	@FXML
 	private HBox hbBrowsePhases;
+
+	@FXML
+	private Text txtPhaseName;
+
+	@FXML
+	private Text txtEstimateTimeOfCompletion;
+
+	@FXML
+	private Text txtAssignedByName;
+
+	@FXML
+	private Text txtDeadLine;
+
+	@FXML
+	private Text txtExtendedTime;
+
+	@FXML
+	private Text txtCompletedOnTime;
+
+	@FXML
+	private Text txtTimeException;
+
+	@FXML
+	private Text txtRequestedTimeExtension;
+
+	@FXML
+	private ImageView imgWarningAutoAssign;
+
+	@FXML
+	private HBox hbConfirmAutoAssign;
+
+	@FXML
+	private HBox hbAssignOtherEmp;
+
+	@FXML
+	private ImageView imgWarningRequestedTimeExtension;
+
+	@FXML
+	private HBox hbConfirmTimeRequestExtension;
+
+	@FXML
+	private HBox hbDeclineRequestTimeExtension;
+
+	@FXML
+	private Canvas canvasRight;
+
+	@FXML
+	private Canvas canvasLeft;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -49,6 +93,13 @@ public class RequestDetailsSupervisorController implements Initializable {
 		ControllerManager.setEffect(hbBrowsePhases, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 		ControllerManager.setOnHoverEffect(hbBrowsePhases, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
 				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		
+		
+		
+		AppManager.safeUpdate("awdawfwa4234", ()->{
+			// TODO: intorpelate effect
+			//imgWarningRequestedTimeExtension.setEffect(C);
+		});
 	}
 
 }

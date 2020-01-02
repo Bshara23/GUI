@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
@@ -13,6 +15,8 @@ import Controllers.Logic.ControllerManager;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Protocol.PhaseType;
+import Utility.Func;
+import Utility.VoidFunc;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -97,6 +101,23 @@ public class ClientGUI extends Application implements Initializable {
 	public static long empNumber = 10;
 	
 	
+	private static HashMap<String, VoidFunc> onMenuBtnClickedEvents;
+	static {
+		onMenuBtnClickedEvents = new HashMap<String, VoidFunc>();
+	}
+	
+	
+	/**
+	 * Adds a function that executes whenever a button from the main menu is clicked on.
+	 * This function runs only once and then delete itself from the map.
+	 * */
+	public static void addOnMenuBtnClickedEvent(String key, VoidFunc func) {
+		onMenuBtnClickedEvents.remove(key);
+		onMenuBtnClickedEvents.put(key, func);
+	}
+	
+	
+	
 	
 	@Override
 	public void start(Stage stage) {
@@ -133,6 +154,7 @@ public class ClientGUI extends Application implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		
 		NavigationBar.imgNavigationBarArrow = imgNavigationBarArrow;
 		NavigationBar.navigationBar = hbNavigator;
 		NavigationBar.apMainContent = apMainContent;
@@ -200,10 +222,6 @@ public class ClientGUI extends Application implements Initializable {
 	private int index = 0;
 	private int size = BlendMode.values().length;
 
-	
-	
-
-
 
 	@FXML
 	void onIssueRequestPress(MouseEvent event) {
@@ -260,6 +278,13 @@ public class ClientGUI extends Application implements Initializable {
 	}
 
 	private void commondMenuBehavior(AnchorPane ap, String pageName, String fxmlName) {
+
+		for (Entry<String, VoidFunc> func : onMenuBtnClickedEvents.entrySet()) {
+			if(func.getValue() != null)
+				func.getValue().call();
+			// Self delete after running once
+			onMenuBtnClickedEvents.remove(func.getKey());
+		}
 		selectedMenuElement = ap;
 		NavigationBar.clear();
 		NavigationBar.next(pageName, fxmlName);

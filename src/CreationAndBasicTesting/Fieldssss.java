@@ -15,16 +15,8 @@ public class Fieldssss {
 	private static MySQL db = new MySQL("root", "Aa123456", "ICM", null);
 
 	public static void main(String[] args) {
-				
-		ArrayList<ChangeRequest> crSupervision = db.getChangeRequestPhaseByEmployee(10, PhaseType.examination);
-		
-		for (ChangeRequest changeRequest : crSupervision) {
-			System.out.println(crSupervision.get(0).getPhases().get(0));
 
-		}
-		
-		
-		
-		
+		System.out.println(db.getCountOfPhasesByType(10, PhaseType.supervision));
+
 	}
 }

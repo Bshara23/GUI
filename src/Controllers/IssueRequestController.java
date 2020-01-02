@@ -83,6 +83,12 @@ public class IssueRequestController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
+		ClientGUI.addOnMenuBtnClickedEvent(getClass().getName() + "3232145125", ()->{
+			System.out.println("Finalize: IssueRequestController");
+			
+			Client.removeMessageRecievedFromServer(TIME_OF_ISSUE_REQUEST);
+		});
+		
 		// Apply the effects for the canvas
 		RequestDetailsUserController.applyCanvasEffects(canvasRight, canvasLeft);
 
@@ -139,10 +145,9 @@ public class IssueRequestController implements Initializable {
 				long reqestID = 9996; // TODO: if id = -1, the server should know that he has to find a fitting id
 
 				Timestamp ts = Timestamp.valueOf(LocalDateTime.now());
-				
-				ChangeRequest changeRequest = new ChangeRequest(reqestID, ClientGUI.userName, ts,
-						ts, ts, comments, reqDesc, descReqChange, descCurrState,
-						relateInfoSys);
+
+				ChangeRequest changeRequest = new ChangeRequest(reqestID, ClientGUI.userName, ts, ts, ts, comments,
+						reqDesc, descReqChange, descCurrState, relateInfoSys);
 
 				if (filesPaths.size() == 0) {
 					Client.getInstance().request(Command.insertRequest, changeRequest);
@@ -184,7 +189,8 @@ public class IssueRequestController implements Initializable {
 					System.out.println("insertRequest");
 
 					if ((String) srMsg.getAttachedData()[0] == null) {
-						ControllerManager.showInformationMessage("Issue Request", "Failure", "Something went wrong!", null);
+						ControllerManager.showInformationMessage("Issue Request", "Failure", "Something went wrong!",
+								null);
 
 					} else {
 						ControllerManager.showInformationMessage("Issue Request", "Failure",
@@ -200,11 +206,12 @@ public class IssueRequestController implements Initializable {
 				} else if (srMsg.getReturnType() == MsgReturnType.Failure) {
 					System.out.println("insertRequestWithFiles");
 					if ((String) srMsg.getAttachedData()[0] == null) {
-						ControllerManager.showInformationMessage("Issue Request", "Failure", "Something went wrong!", null);
+						ControllerManager.showInformationMessage("Issue Request", "Failure", "Something went wrong!",
+								null);
 
 					} else {
-						ControllerManager.showInformationMessage("Issue Request", "Failure", (String) srMsg.getAttachedData()[0],
-								null);
+						ControllerManager.showInformationMessage("Issue Request", "Failure",
+								(String) srMsg.getAttachedData()[0], null);
 					}
 				}
 			}

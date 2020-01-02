@@ -50,7 +50,7 @@ public enum Command {
 	getExtraTimeRelateToEvaluatedTime,
 	
 	
-	debug_simulateBigCalculations,
+	debug_simulateBigCalculations, getCountOfPhasesTypes,
 	
 	
 	
