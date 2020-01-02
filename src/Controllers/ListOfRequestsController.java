@@ -1,6 +1,7 @@
 package Controllers;
 
 import java.net.URL;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -317,10 +318,11 @@ public class ListOfRequestsController implements Initializable {
 		for (ChangeRequest changeRequest : changeRequests) {
 
 			strs.add(new TableDataRequests(changeRequest.getRequestID() + "",
-					changeRequest.getDateOfRequest().toString(),
-					(changeRequest.getEndDateOfRequest().toEpochDay() - changeRequest.getDateOfRequest().toEpochDay())
-							+ "",
-					"Active", changeRequest.getEndDateOfRequest().toString()));
+
+					ControllerManager.getDateTime(changeRequest.getDateOfRequest()),
+					ControllerManager.getDateTimeDiff(changeRequest.getEndDateOfRequest(),
+							changeRequest.getDateOfRequest()) + "",
+					"Active", ControllerManager.getDateTime(changeRequest.getEndDateOfRequest())));
 		}
 
 		addContentToTable(strs);

@@ -13,7 +13,7 @@ public abstract class SqlObject {
 	public static class Config {
 		public static final String sqlLong = "BIGINT(8)";
 		public static final String sqlInt = "INT";
-		public static final String sqlDate = "DATE";
+		public static final String sqlDate = "TIMESTAMP";
 		public static final String sqlBlob = "LONGBLOB";
 		public static final String sqlBoolean = "BOOLEAN";
 		public static final String sqlString = "VARCHAR(256)";
@@ -97,7 +97,7 @@ public abstract class SqlObject {
 				sb.append(Config.sqlBoolean);
 				break;
 
-			case "class java.time.LocalDateTime":
+			case "class java.sql.Timestamp":
 				sb.append(Config.sqlDate);
 
 				break;

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class Student extends SystemUser implements Serializable {
 
-	private static Student emptyInstance = new Student(null, null, null, null, null, null, 0, null);
+	private static Student emptyInstance = new Student(null, null, null, null, null, null, false, 0, null);
 
 	public static Student getEmptyInstance() {
 		return emptyInstance;
@@ -13,9 +13,11 @@ public class Student extends SystemUser implements Serializable {
 	public long stuNumber;
 	public String stuDepartment;
 
+
+
 	public Student(String userName, String password, String email, String firstName, String lastName, String phoneNo,
-			long stuNumber, String stuDepartment) {
-		super(userName, password, email, firstName, lastName, phoneNo);
+			boolean isOnline, long stuNumber, String stuDepartment) {
+		super(userName, password, email, firstName, lastName, phoneNo, isOnline);
 		this.stuNumber = stuNumber;
 		this.stuDepartment = stuDepartment;
 	}

@@ -6,14 +6,15 @@ public class SystemUser extends SqlObject implements Serializable {
 
 	public String userName, password, email;
 	public String firstName, lastName, phoneNo;
+	public boolean isOnline;
 	
-	private static SystemUser emptyInstance = new SystemUser(null, null, null, null, null, null);
+	private static SystemUser emptyInstance = new SystemUser(null, null, null, null, null, null, false);
 	public static SystemUser getEmptyInstance() {
 		return emptyInstance;
 	}
 	
-	public SystemUser(String userName, String password, String email, String firstName, String lastName,
-			String phoneNo) {
+	public SystemUser(String userName, String password, String email, String firstName, String lastName, String phoneNo,
+			boolean isOnline) {
 		super();
 		this.userName = userName;
 		this.password = password;
@@ -21,6 +22,18 @@ public class SystemUser extends SqlObject implements Serializable {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.phoneNo = phoneNo;
+		this.isOnline = isOnline;
+	}
+
+	
+	
+	
+	public boolean isOnline() {
+		return isOnline;
+	}
+
+	public void setOnline(boolean isOnline) {
+		this.isOnline = isOnline;
 	}
 
 	public String getUserName() {

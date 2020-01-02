@@ -1,6 +1,9 @@
 package Controllers.Logic;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.TimeZone;
 
 import Utility.VoidFunc;
 import javafx.application.Platform;
@@ -20,7 +23,16 @@ import javafx.scene.text.Text;
 import javafx.scene.control.Alert.AlertType;
 
 public class ControllerManager {
-
+	
+	public static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+	static {
+		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+		sdf.setTimeZone(TimeZone.getTimeZone("Asia/Jerusalem"));
+	}
+	
+	
+	
+	
 	/**
 	 * Displays an alert message
 	 * 
@@ -173,5 +185,17 @@ public class ControllerManager {
 	}
 	
 	
+	public static String getDateTime(Timestamp ts) {
+		return sdf.format(ts);
+	}
+	
+	
+	/**
+	 * Returns the difference between a and b, meaning a - b.
+	 * */
+	public static String getDateTimeDiff(Timestamp a, Timestamp b) {
+		Timestamp diff = new Timestamp(a.getTime() - b.getTime());
+		return sdf.format(diff);
+	}
 
 }

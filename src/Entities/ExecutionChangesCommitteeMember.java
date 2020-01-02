@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class ExecutionChangesCommitteeMember extends Employee implements Serializable {
 
 	private static ExecutionChangesCommitteeMember emptyInstance = new ExecutionChangesCommitteeMember(null, null, null,
-			null, null, null, 0, null, null, false);
+			null, null, null, false, 0, null, null, false);
 
 	public static Employee getEmptyInstance() {
 		return emptyInstance;
@@ -14,9 +14,10 @@ public class ExecutionChangesCommitteeMember extends Employee implements Seriali
 	public boolean isManager;
 
 	public ExecutionChangesCommitteeMember(String userName, String password, String email, String firstName,
-			String lastName, String phoneNo, long empNumber, String empDepartment, String organizationalRole,
-			boolean isManager) {
-		super(userName, password, email, firstName, lastName, phoneNo, empNumber, empDepartment, organizationalRole);
+			String lastName, String phoneNo, boolean isOnline, long empNumber, String empDepartment,
+			String organizationalRole, boolean isManager) {
+		super(userName, password, email, firstName, lastName, phoneNo, isOnline, empNumber, empDepartment,
+				organizationalRole);
 		this.isManager = isManager;
 	}
 
@@ -62,7 +63,5 @@ public class ExecutionChangesCommitteeMember extends Employee implements Seriali
 		// TODO Auto-generated method stub
 		return 1;
 	}
-
-	
 
 }

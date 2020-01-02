@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import java.util.TimeZone;
 
 import ClientLogic.Client;
+import Controllers.Logic.ControllerManager;
 import Entities.Message;
 import Protocol.Command;
 import javafx.fxml.FXML;
@@ -83,7 +84,7 @@ public class MessageEntryController implements Initializable {
 		
 		txtSubject.setText(msg.getSubject());
 		
-		txtDate.setText(ClientGUI.sdf.format(msg.getSentAt()));
+		txtDate.setText(ControllerManager.getDateTime(msg.getSentAt()));
 
 		setStarredImage(msg.isStarred());
 		//setStarredImage(msg.isStarred());

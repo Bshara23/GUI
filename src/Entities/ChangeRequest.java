@@ -2,6 +2,7 @@ package Entities;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -20,7 +21,7 @@ public class ChangeRequest extends SqlObject implements Serializable {
 
 	public long requestID;
 	public String username;
-	public LocalDate startDateOfRequest, estimatedTimeForExecution, endDateOfRequest;
+	public Timestamp startDateOfRequest, estimatedTimeForExecution, endDateOfRequest;
 	public String commentsLT, requestDescriptionLT;
 	public String descriptionOfRequestedChangeLT;
 	public String descriptionOfCurrentStateLT;
@@ -40,8 +41,8 @@ public class ChangeRequest extends SqlObject implements Serializable {
 	}
 	
 
-	public ChangeRequest(long requestID, String username, LocalDate startDateOfRequest, LocalDate estimatedTimeForExecution,
-			LocalDate endDateOfRequest, String commentsLT, String requestDescriptionLT,
+	public ChangeRequest(long requestID, String username, Timestamp startDateOfRequest, Timestamp estimatedTimeForExecution,
+			Timestamp endDateOfRequest, String commentsLT, String requestDescriptionLT,
 			String descriptionOfRequestedChangeLT, String descriptionOfCurrentStateLT,
 			String relatedInformationSystem) {
 		super();
@@ -65,37 +66,37 @@ public class ChangeRequest extends SqlObject implements Serializable {
 
 
 
-	public LocalDate getStartDateOfRequest() {
+	public Timestamp getStartDateOfRequest() {
 		return startDateOfRequest;
 	}
 
 
 
-	public void setStartDateOfRequest(LocalDate startDateOfRequest) {
+	public void setStartDateOfRequest(Timestamp startDateOfRequest) {
 		this.startDateOfRequest = startDateOfRequest;
 	}
 
 
 
-	public LocalDate getEstimatedTimeForExecution() {
+	public Timestamp getEstimatedTimeForExecution() {
 		return estimatedTimeForExecution;
 	}
 
 
 
-	public void setEstimatedTimeForExecution(LocalDate estimatedTimeForExecution) {
+	public void setEstimatedTimeForExecution(Timestamp estimatedTimeForExecution) {
 		this.estimatedTimeForExecution = estimatedTimeForExecution;
 	}
 
 
 
-	public LocalDate getEndDateOfRequest() {
+	public Timestamp getEndDateOfRequest() {
 		return endDateOfRequest;
 	}
 
 
 
-	public void setEndDateOfRequest(LocalDate endDateOfRequest) {
+	public void setEndDateOfRequest(Timestamp endDateOfRequest) {
 		this.endDateOfRequest = endDateOfRequest;
 	}
 
@@ -169,12 +170,12 @@ public class ChangeRequest extends SqlObject implements Serializable {
 	}
 
 
-	public LocalDate getDateOfRequest() {
+	public Timestamp getDateOfRequest() {
 		return startDateOfRequest;
 	}
 
 
-	public void setDateOfRequest(LocalDate dateOfRequest) {
+	public void setDateOfRequest(Timestamp dateOfRequest) {
 		this.startDateOfRequest = dateOfRequest;
 	}
 

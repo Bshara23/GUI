@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import Entities.*;
@@ -176,7 +175,8 @@ public class MySQL extends MySqlConnBase {
 		String query = qb.insertInto(obj.getTableName()).forColumns(obj.getFieldsNames())
 				.theValues(obj.getFieldsValues()).toString();
 
-		// System.out.println(query);
+		System.out.println(query);
+	
 		return executePreparedStatement(query, null) > 0 ? 1 : 0;
 
 	}
@@ -447,8 +447,8 @@ public class MySQL extends MySqlConnBase {
 
 				while (rs.next()) {
 
-					ChangeRequest cr = new ChangeRequest(rs.getLong(1), rs.getString(2), rs.getDate(3).toLocalDate(),
-							rs.getDate(4).toLocalDate(), rs.getDate(5).toLocalDate(), rs.getString(6), rs.getString(7),
+					ChangeRequest cr = new ChangeRequest(rs.getLong(1), rs.getString(2), rs.getTimestamp(3),
+							rs.getTimestamp(4), rs.getTimestamp(5), rs.getString(6), rs.getString(7),
 							rs.getString(8), rs.getString(9), rs.getString(10));
 
 					results.add(cr);
@@ -479,7 +479,7 @@ public class MySQL extends MySqlConnBase {
 				ps.setString(3, msg.getTo());
 				ps.setString(4, msg.getMessageContentLT());
 				ps.setBoolean(5, msg.isHasBeenViewed());
-				ps.setObject(6, msg.getSentAt());
+				ps.setTimestamp(6, msg.getSentAt());
 				ps.setBoolean(7, msg.isStarred());
 				ps.setBoolean(8, msg.isRead());
 				ps.setBoolean(9, msg.isArchived());
@@ -556,4 +556,7 @@ public class MySQL extends MySqlConnBase {
 		return results;
 	}
 
+	
+	
+	
 }

@@ -3,6 +3,7 @@ package Controllers;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -137,8 +138,10 @@ public class IssueRequestController implements Initializable {
 			if (areAllFieldsFilled) {
 				long reqestID = 9996; // TODO: if id = -1, the server should know that he has to find a fitting id
 
-				ChangeRequest changeRequest = new ChangeRequest(reqestID, ClientGUI.userName, LocalDate.now(),
-						LocalDate.now(), LocalDate.now(), comments, reqDesc, descReqChange, descCurrState,
+				Timestamp ts = Timestamp.valueOf(LocalDateTime.now());
+				
+				ChangeRequest changeRequest = new ChangeRequest(reqestID, ClientGUI.userName, ts,
+						ts, ts, comments, reqDesc, descReqChange, descCurrState,
 						relateInfoSys);
 
 				if (filesPaths.size() == 0) {

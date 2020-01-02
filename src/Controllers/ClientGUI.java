@@ -96,11 +96,7 @@ public class ClientGUI extends Application implements Initializable {
 	public static String userName = "username2";
 
 	
-	public static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-	static {
-		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-		sdf.setTimeZone(TimeZone.getTimeZone("Asia/Jerusalem"));
-	}
+	
 	
 	@Override
 	public void start(Stage stage) {
