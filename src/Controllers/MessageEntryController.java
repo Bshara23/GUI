@@ -1,9 +1,11 @@
 package Controllers;
 
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 
 import ClientLogic.Client;
 import Entities.Message;
@@ -81,8 +83,7 @@ public class MessageEntryController implements Initializable {
 		
 		txtSubject.setText(msg.getSubject());
 		
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-		txtDate.setText(dtf.format(msg.getSentAt()));
+		txtDate.setText(ClientGUI.sdf.format(msg.getSentAt()));
 
 		setStarredImage(msg.isStarred());
 		//setStarredImage(msg.isStarred());
@@ -117,7 +118,7 @@ public class MessageEntryController implements Initializable {
 	}
 	
 	public void updateInDatabase() {
-		Client.getInstance().request(Command.Update, message);
+		Client.getInstance().request(Command.updateMessage, message);
 	}
 
 	public Message getMessage() {

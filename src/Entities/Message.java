@@ -2,7 +2,9 @@ package Entities;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Message extends SqlObject implements Serializable {
 
@@ -15,11 +17,11 @@ public class Message extends SqlObject implements Serializable {
 	public long messageID;
 	public String subject, from, to, messageContentLT;
 	public boolean hasBeenViewed;
-	public LocalDate sentAt;
+	public Timestamp sentAt;
 	public boolean isStarred, isRead, isArchived;
 
 	public Message(long messageID, String subject, String from, String to, String messageContentLT,
-			boolean hasBeenViewed, LocalDate sentAt, boolean isStarred, boolean isRead, boolean isArchived) {
+			boolean hasBeenViewed, Timestamp sentAt, boolean isStarred, boolean isRead, boolean isArchived) {
 		super();
 		this.messageID = messageID;
 		this.subject = subject;
@@ -71,11 +73,11 @@ public class Message extends SqlObject implements Serializable {
 		this.subject = subject;
 	}
 
-	public LocalDate getSentAt() {
+	public Timestamp getSentAt() {
 		return sentAt;
 	}
 
-	public void setSentAt(LocalDate sentAt) {
+	public void setSentAt(Timestamp sentAt) {
 		this.sentAt = sentAt;
 	}
 

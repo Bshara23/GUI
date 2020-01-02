@@ -140,6 +140,13 @@ public class Server extends AbstractServer {
 			switch (srMsg.getCommand()) {
 
 			
+			case updateMessage:
+				
+				Message msgToUpdate = (Message)srMsg.getAttachedData()[0];
+				db.updateMessage(msgToUpdate);
+				
+				break;
+			
 			case Update:
 				
 				SqlObject updateObj = (SqlObject)srMsg.getAttachedData()[0];

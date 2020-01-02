@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import Entities.*;
@@ -94,7 +95,7 @@ public class MySQL extends MySqlConnBase {
 		int numOfRowsChanged = executePreparedStatement(updateQuery, null);
 
 		// Execute after getting the number of changed rows
-		//uFunc.execute(numOfRowsChanged);
+		// uFunc.execute(numOfRowsChanged);
 	}
 
 	public void updateByObject(SqlObject obj) {
@@ -109,7 +110,7 @@ public class MySQL extends MySqlConnBase {
 
 		for (int i = 0; i < fields.length; i++) {
 			try {
-				result += "`"+fields[i].getName() + "` = '";
+				result += "`" + fields[i].getName() + "` = '";
 				result += fields[i].get(obj).toString() + "'";
 				if (i != fields.length - 1)
 					result += ", ";
@@ -463,7 +464,65 @@ public class MySQL extends MySqlConnBase {
 
 		return results;
 	}
-	
+
+	public int updateMessage(Message msg) {
+
+		String query = "UPDATE `icm`.`message` SET `subject` = ?, `from` = ?, `to` = ?,"
+				+ " `messageContentLT` = ?, `hasBeenViewed` = ?, `sentAt` = ?,"
+				+ " `isStarred` = ?, `isRead` = ?, `isArchived` = ? WHERE (`messageID` = ?);";
+
+		IPreparedStatement prepS = ps -> {
+			try {
+
+				ps.setString(1, msg.getSubject());
+				ps.setString(2, msg.getFrom());
+				ps.setString(3, msg.getTo());
+				ps.setString(4, msg.getMessageContentLT());
+				ps.setBoolean(5, msg.isHasBeenViewed());
+				ps.setObject(6, msg.getSentAt());
+				ps.setBoolean(7, msg.isStarred());
+				ps.setBoolean(8, msg.isRead());
+				ps.setBoolean(9, msg.isArchived());
+				ps.setLong(10, msg.getMessageID());
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		return executePreparedStatement(query, prepS);
+
+	}
+
+	public Message getMessage(long msgID) {
+		String query = "SELECT * FROM icm.message where icm.message.messageID = '" + msgID + "';";
+
+		ArrayList<Message> res = new ArrayList<Message>(1);
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+
+					Message msg = new Message(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getString(4),
+							rs.getString(5), rs.getBoolean(6), rs.getTimestamp(7), rs.getBoolean(8), rs.getBoolean(9),
+							rs.getBoolean(10));
+
+					res.add(msg);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		executeStatement(query, prepS);
+
+		return res.get(0);
+	}
+
+
 	public ArrayList<Message> getMessages(String forUsername, int startingRow, int size) {
 		String query = "SELECT * FROM icm.message WHERE icm.message.to = '" + forUsername + "' ";
 
@@ -471,7 +530,6 @@ public class MySQL extends MySqlConnBase {
 
 		if (size > 0)
 			query += "LIMIT " + startingRow + ", " + size;
-
 
 		ArrayList<Message> results = new ArrayList<Message>();
 
@@ -481,8 +539,8 @@ public class MySQL extends MySqlConnBase {
 				while (rs.next()) {
 
 					Message cr = new Message(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getString(4),
-							rs.getString(5), rs.getBoolean(6), rs.getDate(7).toLocalDate(), rs.getBoolean(8),
-							rs.getBoolean(9), rs.getBoolean(10));
+							rs.getString(5), rs.getBoolean(6), rs.getTimestamp(7), rs.getBoolean(8), rs.getBoolean(9),
+							rs.getBoolean(10));
 
 					results.add(cr);
 				}

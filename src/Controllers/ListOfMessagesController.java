@@ -161,10 +161,10 @@ public class ListOfMessagesController implements Initializable {
 					selectedMessagesCount++;
 				}
 			}
-			
+
 			if (hasAtleastOneSelected) {
 				ControllerManager.showOkCancelMessage("Delete", "Delete messages",
-						"Are you sure you want to delete "+ selectedMessagesCount +" messages?", () -> {
+						"Are you sure you want to delete " + selectedMessagesCount + " messages?", () -> {
 							ArrayList<Message> messagesToDelete = new ArrayList<Message>();
 
 							for (int i = 0; i < msgEntryControllers.size(); i++) {
@@ -191,9 +191,11 @@ public class ListOfMessagesController implements Initializable {
 
 				countOfMessages = (int) srMsg.getAttachedData()[0];
 
-				System.out.println(countOfMessages);
-				Client.getInstance().request(Command.getMessagesPrimary, ClientGUI.userName, currentRowIndex,
-						rowCountLimit);
+				if (countOfMessages > 0) {
+					Client.getInstance().request(Command.getMessagesPrimary, ClientGUI.userName, currentRowIndex,
+							rowCountLimit);
+				}
+
 			}
 		});
 
@@ -201,12 +203,13 @@ public class ListOfMessagesController implements Initializable {
 
 			if (rsMsg.getCommand() == Command.getMessagesPrimary) {
 				ArrayList<Message> msgs = (ArrayList<Message>) rsMsg.getAttachedData()[0];
-				
+
 				int size = msgs.size();
-				
+
 				loadMessages(msgs);
 
-				txtMessagesCount.setText((currentRowIndex + 1) + "-" + (currentRowIndex + size) + " of " + countOfMessages);
+				txtMessagesCount
+						.setText((currentRowIndex + 1) + "-" + (currentRowIndex + size) + " of " + countOfMessages);
 
 			}
 
@@ -221,13 +224,13 @@ public class ListOfMessagesController implements Initializable {
 				if (responseId.compareTo(MESSAGES_DELETED_LIST_OF_MESSAGES_RESPONSE) == 0) {
 					// We don't care if the delete was successful; show error message on failure of
 					// deletion.
-					if ((MsgReturnType)rsMsg.getAttachedData()[1] == MsgReturnType.Failure) {
+					if ((MsgReturnType) rsMsg.getAttachedData()[1] == MsgReturnType.Failure) {
 						ControllerManager.showErrorMessage("Error", "Deletion Error",
 								"Server was not able to delete the message!", null);
 					}
 					Client.getInstance().request(Command.countOfObjects, "`to`='" + ClientGUI.userName + "'",
 							Message.getEmptyInstance());
-					
+
 				}
 
 			}

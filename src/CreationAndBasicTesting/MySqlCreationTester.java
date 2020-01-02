@@ -11,7 +11,9 @@ import java.lang.reflect.Method;
 import java.sql.Blob;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -39,10 +41,10 @@ public class MySqlCreationTester {
 
 		// insertObjects();
 		
-		Message msg = new Message(32811, "subject4029999", "username2", "username2", "messageContent402", true, LocalDate.now(), true, true, true);
+		//Message msg = new Message(32811, "subject4029999", "username2", "username2", "messageContent402", true, LocalDate.now(), true, true, true);
 		
-		db.updateByObject(msg);
-		
+		//db.updateByObject(msg);
+		insertObjects();
 		// changeRequestTest();
 
 		// populateChangeRequest();
@@ -206,8 +208,8 @@ public class MySqlCreationTester {
 		Random rnd = new Random();
 		for (int i = 0; i < 500; i++) {
 
-			Message msg = new Message((long) rnd.nextInt(99999), "subject" + i, "username2", "username" + i % 20,
-					"messageContent" + i, i % 2 == 0, LocalDate.now(), (i + 1) % 2 == 0, i % 2 == 0, i % 2 == 0);
+			Message msg = new Message((long) rnd.nextInt(99999), "subject" + i, i > 2 ? "username" + i : "username1", "username2",
+					"messageContent" + i, i % 2 == 0, Timestamp.valueOf(LocalDateTime.now()), (i + 1) % 2 == 0, i % 2 == 0, i % 2 == 0);
 			db.insertObject(msg);
 
 		}

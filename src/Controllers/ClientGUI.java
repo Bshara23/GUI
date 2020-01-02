@@ -2,8 +2,10 @@ package Controllers;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 
 import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
@@ -93,6 +95,13 @@ public class ClientGUI extends Application implements Initializable {
 
 	public static String userName = "username2";
 
+	
+	public static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+	static {
+		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+		sdf.setTimeZone(TimeZone.getTimeZone("Asia/Jerusalem"));
+	}
+	
 	@Override
 	public void start(Stage stage) {
 		stage.initStyle(StageStyle.UNDECORATED);

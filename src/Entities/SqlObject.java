@@ -97,7 +97,7 @@ public abstract class SqlObject {
 				sb.append(Config.sqlBoolean);
 				break;
 
-			case "class java.time.LocalDate":
+			case "class java.time.LocalDateTime":
 				sb.append(Config.sqlDate);
 
 				break;
