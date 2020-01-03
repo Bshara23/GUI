@@ -47,7 +47,9 @@ public class Phase extends SqlObject implements Serializable {
 	}
 
 
-	
+	public boolean hasTimeException() {
+		return deadline.getTime() - timeOfCompletion.getTime() < 0;
+	}
 
 	public Timestamp getStartingDate() {
 		return startingDate;

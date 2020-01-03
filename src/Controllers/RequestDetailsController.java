@@ -4,9 +4,11 @@ import java.net.URL;
 import java.util.Observable;
 import java.util.ResourceBundle;
 
+import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
 import Entities.ChangeRequest;
+import Protocol.Command;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -18,6 +20,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
 public class RequestDetailsController implements Initializable {
+
+	private static final String GET_FULL_NAME_OF_SYSTEM_USER = "GetFullNameOfSystemUser";
 
 	@FXML
 	private AnchorPane apLoadRequestDetails;
@@ -70,18 +74,7 @@ public class RequestDetailsController implements Initializable {
 		nodes = FXCollections.observableArrayList(hbInformationContainer.getChildren());
 		changeRequest = ListOfRequestsForTreatmentController.lastSelectedRequest;
 
-		if(changeRequest != null) {
-			txtRequestID.setText(changeRequest.getRequestID() + "");
-			txtComments.setText(changeRequest.getCommentsLT());
-			txtDescriptionOfCurrentChange.setText(changeRequest.getDescriptionOfCurrentStateLT());
-			txtIssueDate.setText(ControllerManager.getDateTime(changeRequest.getDateOfRequest()));
-			txtDescriptionOfRequestedChange.setText(changeRequest.getDescriptionOfRequestedChangeLT());
-			txtRelatedInfoSystem.setText(changeRequest.getRelatedInformationSystem());
-			txtRequestDescription.setText(changeRequest.getRequestDescriptionLT());
-		}
-		
-		
-		
+		loadFields();
 
 		hbInformationContainer.setPrefHeight(20);
 		hbInformationContainer.getChildren().clear();
@@ -119,6 +112,28 @@ public class RequestDetailsController implements Initializable {
 
 		});
 
+		Client.addMessageRecievedFromServer(GET_FULL_NAME_OF_SYSTEM_USER, srMsg -> {
+
+			if (srMsg.getCommand() == Command.getFullNameByUsername) {
+				String fullName = (String) srMsg.getAttachedData()[0];
+				txtIssuedBy.setText(fullName);
+			}
+		});
+	}
+
+	private void loadFields() {
+		if (changeRequest != null) {
+
+			txtRequestID.setText(changeRequest.getRequestID() + "");
+			txtComments.setText(changeRequest.getCommentsLT());
+			txtDescriptionOfCurrentChange.setText(changeRequest.getDescriptionOfCurrentStateLT());
+			txtIssueDate.setText(ControllerManager.getDateTime(changeRequest.getDateOfRequest()));
+			txtDescriptionOfRequestedChange.setText(changeRequest.getDescriptionOfRequestedChangeLT());
+			txtRelatedInfoSystem.setText(changeRequest.getRelatedInformationSystem());
+			txtRequestDescription.setText(changeRequest.getRequestDescriptionLT());
+
+			Client.getInstance().request(Command.getFullNameByUsername, changeRequest.getUsername());
+		}
 	}
 
 }

@@ -125,7 +125,7 @@
                                  <children>
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Phase Name: " />
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Estimated time of completion:" />
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Evaluator (assigned by the system):" />
+                                    <Text fx:id="txtPhaseOwner" strokeType="OUTSIDE" strokeWidth="0.0" text="Evaluator (assigned by the system):" />
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Deadline: " />
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Extended Time:" />
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Completed on: " />

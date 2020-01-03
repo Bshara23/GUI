@@ -2,6 +2,7 @@ package Entities;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 
 public class PhaseTimeExtensionRequest extends SqlObject implements Serializable {
@@ -13,12 +14,12 @@ public class PhaseTimeExtensionRequest extends SqlObject implements Serializable
 	}
 
 	public long phaseID;
-	public LocalDate requestedTime;
+	public Timestamp requestedTime;
 	public String description;
 
 	
 
-	public PhaseTimeExtensionRequest(long phaseID, LocalDate requestedTime, String description) {
+	public PhaseTimeExtensionRequest(long phaseID, Timestamp requestedTime, String description) {
 		super();
 		this.phaseID = phaseID;
 		this.requestedTime = requestedTime;
@@ -41,11 +42,11 @@ public class PhaseTimeExtensionRequest extends SqlObject implements Serializable
 		this.phaseID = phaseID;
 	}
 
-	public LocalDate getRequestedTime() {
+	public Timestamp getRequestedTime() {
 		return requestedTime;
 	}
 
-	public void setRequestedTime(LocalDate requestedTime) {
+	public void setRequestedTime(Timestamp requestedTime) {
 		this.requestedTime = requestedTime;
 	}
 
@@ -84,5 +85,14 @@ public class PhaseTimeExtensionRequest extends SqlObject implements Serializable
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public String toString() {
+		return "PhaseTimeExtensionRequest [phaseID=" + phaseID + ", requestedTime=" + requestedTime + ", description="
+				+ description + "]";
+	}
+	
+	
+	
 
 }

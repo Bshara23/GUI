@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import Entities.ChangeRequest;
 import Entities.Employee;
+import Entities.Phase;
 import Entities.Student;
 import Protocol.PhaseType;
 import ServerLogic.MySQL;
@@ -16,7 +17,14 @@ public class Fieldssss {
 
 	public static void main(String[] args) {
 
-		System.out.println(db.getCountOfPhasesByType(10, PhaseType.supervision));
+
+
+		Employee emp = db.getEmployeeByEmpNumber(10);
+		
+		System.out.println(db.getFullNameByUsername("username1"));
+		
 
 	}
+	
+	
 }

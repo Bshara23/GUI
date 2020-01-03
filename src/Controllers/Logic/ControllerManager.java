@@ -13,6 +13,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.Effect;
 import javafx.scene.image.ImageView;
@@ -31,6 +32,12 @@ public class ControllerManager {
 	}
 	
 	
+	
+	public static void installTooltip(Node node, String content) {
+		Tooltip tooltip = new Tooltip();
+		tooltip.textProperty().set(content);
+		Tooltip.install(node, tooltip);
+	}
 	
 	
 	/**

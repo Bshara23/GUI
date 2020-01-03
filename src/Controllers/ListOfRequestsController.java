@@ -32,6 +32,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -231,42 +232,42 @@ public class ListOfRequestsController implements Initializable {
 
 					break;
 
-					// TODO: add the closing with the supervision; or instead of
-				case supervision:
+				// TODO: add the closing with the supervision; or instead of
+				case Supervision:
 					for (ChangeRequest cr : myRequests) {
 						System.out.println(cr.getPhases().get(0));
 					}
 
 					break;
-					
-				case examination:
+
+				case Examination:
 					for (ChangeRequest cr : myRequests) {
 						System.out.println(cr.getPhases().get(0));
 					}
 
 					break;
-					
-				case execution:
+
+				case Execution:
 					for (ChangeRequest cr : myRequests) {
 						System.out.println(cr.getPhases().get(0));
 					}
 
 					break;
-					
-				case decision:
+
+				case Decision:
 					for (ChangeRequest cr : myRequests) {
 						System.out.println(cr.getPhases().get(0));
 					}
 
 					break;
-					
-				case evaluation:
+
+				case Evaluation:
 					for (ChangeRequest cr : myRequests) {
 						System.out.println(cr.getPhases().get(0));
 					}
 
 					break;
-					
+
 				// TODO: add the rest of the phases
 				default:
 					break;
@@ -328,42 +329,14 @@ public class ListOfRequestsController implements Initializable {
 
 		});
 
-		
-		/**
-		 * 
-		 * Adding a behavior for all of the five phases
-		 * TODO: make one for the closing 
-		 * 
-		 * */
-		
-		// The behavior of the button of supervisor tap when pressed on.
-		apSupervise.setOnMousePressed(event -> {
-			// Assuming that this anchor pane does exist. otherwise there shouldn't have
-			// been any requests of this type
-			Client.getInstance().request(Command.GetMyRequests, PhaseType.supervision, ClientGUI.empNumber);
-		});
-		
-		apAnalyze.setOnMousePressed(event -> {
-			Client.getInstance().request(Command.GetMyRequests, PhaseType.evaluation, ClientGUI.empNumber);
-		});
-		
-		apDecide.setOnMousePressed(event -> {
-			Client.getInstance().request(Command.GetMyRequests, PhaseType.decision, ClientGUI.empNumber);
-		});
-		
-		apExecute.setOnMousePressed(event -> {
-			Client.getInstance().request(Command.GetMyRequests, PhaseType.execution, ClientGUI.empNumber);
-		});
-		
-		apExamine.setOnMousePressed(event -> {
-			Client.getInstance().request(Command.GetMyRequests, PhaseType.examination, ClientGUI.empNumber);
-		});
+
+	
 
 	}
 
 	// TODO: implement
 	private PhaseType firstRelatedRequests(long myID) {
-		return PhaseType.supervision;
+		return PhaseType.Supervision;
 	}
 
 	private void requestDataForTable(long myID, PhaseType rType) {

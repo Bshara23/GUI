@@ -9,9 +9,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import Entities.ChangeRequest;
+import Entities.Employee;
 import Entities.File;
 import Entities.Message;
 import Entities.SqlObject;
+import Entities.SystemUser;
+import Entities.Phase;
+
 import Protocol.Command;
 import Protocol.MsgReturnType;
 import Protocol.PhaseType;
@@ -140,15 +144,47 @@ public class Server extends AbstractServer {
 			Command command = srMsg.getCommand();
 			switch (command) {
 
+
+			case getFullNameByUsername:
+				
+				String username45 = (String)srMsg.getAttachedData()[0];
+				String fullName = db.getFullNameByUsername(username45);
+				sendMessageToClient(client, command, fullName);
+				
+				break;
+			case getEmployeeByEmployeeNumber:
+				long empId = (long)srMsg.getAttachedData()[0];
+				Employee emp = db.getEmployeeByEmpNumber(empId);
+				sendMessageToClient(client, command, emp);
+				break;
+			
+			case getSystemUserByRequest:
+				
+				long requestId2 = (long)srMsg.getAttachedData()[0];
+				SystemUser sysUser = db.getSystemUserByRequestID(requestId2);
+				sendMessageToClient(client, command, sysUser);
+
+				
+				break;
+			
+			case getPhasesOfRequestWithTimeExtensionsIfPossible:
+				
+				
+				long requestIDforPhase = (long)srMsg.getAttachedData()[0];
+				
+				ArrayList<Phase> requestedPhases = db.getPhasesOfRequest(requestIDforPhase);
+				
+				sendMessageToClient(client, command, requestedPhases);
+				
 			case getCountOfPhasesTypes:
 
 				long empNumberForPhases = (long) srMsg.getAttachedData()[0];
 
-				int cntSupervision = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.supervision);
-				int cntEvaluation = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.evaluation);
-				int cntDecision = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.decision);
-				int cntExecution = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.execution);
-				int cntExamination = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.examination);
+				int cntSupervision = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Supervision);
+				int cntEvaluation = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Evaluation);
+				int cntDecision = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Decision);
+				int cntExecution = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Execution);
+				int cntExamination = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Examination);
 
 				sendMessageToClient(client, command, cntSupervision, cntEvaluation, cntDecision, cntExecution,
 						cntExamination);
@@ -284,11 +320,11 @@ public class Server extends AbstractServer {
 
 					break;
 
-				case decision:
-				case evaluation:
-				case examination:
-				case execution:
-				case supervision:
+				case Decision:
+				case Evaluation:
+				case Examination:
+				case Execution:
+				case Supervision:
 
 					long empNum = (long) srMsg.getAttachedData()[1];
 

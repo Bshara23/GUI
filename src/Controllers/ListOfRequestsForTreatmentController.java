@@ -18,6 +18,7 @@ import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Entities.ChangeRequest;
 import Entities.Phase;
+import Entities.SystemUser;
 import Protocol.Command;
 import Protocol.PhaseType;
 import Utility.AppManager;
@@ -33,6 +34,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -42,6 +44,8 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
 public class ListOfRequestsForTreatmentController implements Initializable {
+
+	private static final String GET_SYSTEM_USER_BY_REQUEST_LIST_OF_REQUESTS = "getSystemUserByRequestListOfRequests";
 
 	private static final String GET_COUNT_OF_PHASES_TYPES = "GetCountOfPhasesTypes";
 
@@ -142,6 +146,8 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 	private ArrayList<ChangeRequest> myRequests;
 
 	public static ChangeRequest lastSelectedRequest;
+	public static SystemUser lastSelectedRequestOwner;
+
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -204,8 +210,19 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 		ControllerManager.setEffect(jobs, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
 		ControllerManager.setEffect(tableButtons, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
 
+		
+		
+		
+		
 		// Set a listener for the requests list from the server.
 
+		Client.addMessageRecievedFromServer(GET_SYSTEM_USER_BY_REQUEST_LIST_OF_REQUESTS, srMsg -> {
+			if (srMsg.getCommand() == Command.getSystemUserByRequest) {
+				lastSelectedRequestOwner = (SystemUser)srMsg.getAttachedData()[0];
+				NavigationBar.next(NavigationBar.getNextPage().getPageTitle(),
+						NavigationBar.getNextPage().getPageLocation());
+			}
+		});
 		// TODO: implement
 		Client.addMessageRecievedFromServer(GET_COUNT_OF_REQUESTS + 2, srMsg -> {
 
@@ -231,27 +248,27 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 				switch (requestType) {
 
 				// TODO: add the closing with the supervision; or instead of
-				case supervision:
+				case Supervision:
 
 					loadIntoTable(myRequests);
 					break;
 
-				case examination:
+				case Examination:
 					loadIntoTable(myRequests);
 
 					break;
 
-				case execution:
+				case Execution:
 					loadIntoTable(myRequests);
 
 					break;
 
-				case decision:
+				case Decision:
 					loadIntoTable(myRequests);
 
 					break;
 
-				case evaluation:
+				case Evaluation:
 					loadIntoTable(myRequests);
 
 					break;
@@ -299,7 +316,9 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 			}
 
 		});
-
+		
+		ControllerManager.installTooltip(apAnalyze, "This apprease because you are responsible on a number of requests for evaluation");
+		
 		allowExistingTabsOnly();
 
 	}
@@ -399,7 +418,7 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 	// TODO: implement
 	private PhaseType firstRelatedRequests(long myID) {
-		return PhaseType.supervision;
+		return PhaseType.Supervision;
 	}
 
 	private void selectNode(Node node) {
@@ -418,29 +437,29 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 		switch (text) {
 		case "Supervise":
-			Client.getInstance().request(Command.GetMyRequests, PhaseType.supervision, ClientGUI.empNumber);
+			Client.getInstance().request(Command.GetMyRequests, PhaseType.Supervision, ClientGUI.empNumber);
 			// This only prepares the next page in case that the user has double clicked on
 			// one of the requests from the table
 			NavigationBar.setCurrentPage("Request Details (Supervisor View)", FxmlNames.REQUEST_DETAILS_SUPERVISOR);
 			break;
 		case "Evaluate":
-			Client.getInstance().request(Command.GetMyRequests, PhaseType.evaluation, ClientGUI.empNumber);
+			Client.getInstance().request(Command.GetMyRequests, PhaseType.Evaluation, ClientGUI.empNumber);
 			NavigationBar.setCurrentPage("Request Details (Evaluator View)", FxmlNames.REQUEST_DETAILS_EVALUATE);
 
 			break;
 		case "Decide":
-			Client.getInstance().request(Command.GetMyRequests, PhaseType.decision, ClientGUI.empNumber);
+			Client.getInstance().request(Command.GetMyRequests, PhaseType.Decision, ClientGUI.empNumber);
 			NavigationBar.setCurrentPage("Request Details (Committee Members View)",
 					FxmlNames.REQUEST_DETAILS_DECISION);
 
 			break;
 		case "Execute":
-			Client.getInstance().request(Command.GetMyRequests, PhaseType.execution, ClientGUI.empNumber);
+			Client.getInstance().request(Command.GetMyRequests, PhaseType.Execution, ClientGUI.empNumber);
 			NavigationBar.setCurrentPage("Request Details (Executer View)", FxmlNames.REQUEST_DETAILS_EXECUTIONER);
 
 			break;
 		case "Examine":
-			Client.getInstance().request(Command.GetMyRequests, PhaseType.examination, ClientGUI.empNumber);
+			Client.getInstance().request(Command.GetMyRequests, PhaseType.Examination, ClientGUI.empNumber);
 			NavigationBar.setCurrentPage("Request Details (Examiner View)", FxmlNames.REQUEST_DETAILS_EXAMINER);
 
 			break;
@@ -536,8 +555,8 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 			int selectedIndex = tblSupervisorRequests.getSelectionModel().getSelectedIndex();
 			if (selectedIndex != -1) {
 				lastSelectedRequest = myRequests.get(selectedIndex);
-				NavigationBar.next(NavigationBar.getNextPage().getPageTitle(),
-						NavigationBar.getNextPage().getPageLocation());
+				Client.getInstance().request(Command.getSystemUserByRequest, lastSelectedRequest.getRequestID());
+				// go to next page after receiving the request id from the server.
 			}
 		}
 	}

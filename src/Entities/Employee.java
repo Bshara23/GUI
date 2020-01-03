@@ -80,4 +80,17 @@ public class Employee extends SystemUser implements Serializable {
 		return 3;
 	}
 
+	@Override
+	public String toString() {
+		return "Employee [empNumber=" + empNumber + ", empDepartment=" + empDepartment + ", organizationalRole="
+				+ organizationalRole + ", userName=" + userName + ", password=" + password + ", email=" + email
+				+ ", firstName=" + firstName + ", lastName=" + lastName + ", phoneNo=" + phoneNo + ", isOnline="
+				+ isOnline + "]";
+	}
+
+	
+	
+
+	
+	
 }

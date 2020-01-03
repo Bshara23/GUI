@@ -620,4 +620,137 @@ public class MySQL extends MySqlConnBase {
 		return results.get(0);
 	}
 
+	public ArrayList<Phase> getPhasesOfRequest(long requestID) {
+		String query = "SELECT * " + "FROM icm.phase as ph "
+				+ "INNER JOIN icm.changerequest as cr ON cr.requestID = ph.requestID "
+				+ "LEFT JOIN icm.phasetimeextensionrequest as pte ON pte.phaseID = ph.phaseID "
+				+ "WHERE ph.requestID = '" + requestID + "';";
+
+		ArrayList<Phase> results = new ArrayList<Phase>();
+		IStatement prepS = rs -> {
+			try {
+
+				while (rs.next()) {
+
+					int offset = 0;
+
+					Phase phase = new Phase(rs.getLong(offset + 1), rs.getLong(offset + 2), rs.getString(offset + 3),
+							rs.getString(offset + 4), rs.getLong(offset + 5), rs.getTimestamp(offset + 6),
+							rs.getTimestamp(offset + 7), rs.getTimestamp(offset + 8), rs.getTimestamp(offset + 9),
+							rs.getBoolean(offset + 10));
+
+					offset = 10 + 10;
+
+					if (rs.getLong(offset + 1) == 0) {
+						System.out.println("Null is found");
+					} else {
+
+						System.out.println(
+								rs.getLong(offset + 1) + " is found, adding PhaseTimeExtensionRequest to the phase");
+						PhaseTimeExtensionRequest pter = new PhaseTimeExtensionRequest(rs.getLong(offset + 1),
+								rs.getTimestamp(offset + 2), rs.getString(offset + 2));
+						phase.setPhaseTimeExtensionRequest(pter);
+					}
+
+					results.add(phase);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results;
+
+	}
+
+	public SystemUser getSystemUserByRequestID(long requestId) {
+		String query = "SELECT *  FROM icm.systemUser as su "
+				+ "INNER JOIN icm.changerequest as cr ON cr.username = su.userName WHERE cr.requestID = '" + requestId
+				+ "';";
+
+		ArrayList<SystemUser> results = new ArrayList<SystemUser>();
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+
+					SystemUser systemUser = new SystemUser(rs.getString(1), rs.getString(2), rs.getString(3),
+							rs.getString(4), rs.getString(5), rs.getString(6), rs.getBoolean(7));
+					results.add(systemUser);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+
+		if (results.size() == 1) {
+			return results.get(0);
+		} else {
+			System.err.println("Error, user not found for the request id " + requestId);
+			return SystemUser.getEmptyInstance();
+		}
+	}
+
+	public Employee getEmployeeByEmpNumber(long empId) {
+		String query = "SELECT * FROM icm.systemuser as su  "
+				+ "INNER JOIN icm.employee as emp ON su.username = emp.userName WHERE emp.empNumber = '" + empId + "';";
+
+		ArrayList<Employee> results = new ArrayList<Employee>();
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+
+					Employee employee = new Employee(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4),
+							rs.getString(5), rs.getString(6), rs.getBoolean(7), rs.getLong(8), rs.getString(9),
+							rs.getString(10));
+
+					results.add(employee);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+
+		if (results.size() == 1) {
+			return results.get(0);
+		} else {
+			System.err.println("Error, user not found for the request id " + empId);
+			return Employee.getEmptyInstance();
+		}
+	}
+
+	public String getFullNameByUsername(String username45) {
+		String query = "SELECT su.firstName, su.lastName FROM icm.systemuser as su WHERE su.userName = '" + username45
+				+ "';";
+
+		ArrayList<String> results = new ArrayList<String>();
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+
+					results.add(rs.getString(1));
+					results.add(rs.getString(2));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+
+		return results.get(0) + " " + results.get(1);
+
+	}
+
 }
