@@ -385,6 +385,10 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 				hbRequestsType.getChildren().clear();
 				hbRequestsType.getChildren().setAll(FXCollections.observableArrayList(newNodesForRequestTypes));
+				
+				if(newNodesForRequestTypes.size() > 0) {
+					selectNode(newNodesForRequestTypes.get(0));
+				}
 			}
 
 		});

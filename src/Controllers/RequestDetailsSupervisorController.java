@@ -161,20 +161,20 @@ public class RequestDetailsSupervisorController implements Initializable {
 		txtPhaseName.setText(currentPhase.getPhaseName());
 		txtEstimateTimeOfCompletion.setText(ControllerManager.getDateTime(currentPhase.getEstimatedTimeOfCompletion()));
 
-//		Client.getInstance().requestWithListener(Command.getEmployeeByEmployeeNumber, srMsg -> {
-//			if (srMsg.getCommand() == Command.getEmployeeByEmployeeNumber) {
-//				// Casting error even tho it works and prints the content
-//
-//				if (srMsg.getAttachedData()[0] instanceof Employee) {
-//
-//					currentEmployeeOfSelectedPhase = (Employee) srMsg.getAttachedData()[0];
-//
-//					txtAssignedByName.setText(currentEmployeeOfSelectedPhase.getFirstName() + " "
-//							+ currentEmployeeOfSelectedPhase.getLastName());
-//					Client.removeMessageRecievedFromServer(GET_EMPLOYEE_BY_EMPLOYEE_NUMBER);
-//				}
-//			}
-//		}, GET_EMPLOYEE_BY_EMPLOYEE_NUMBER, currentPhase.getEmpNumber());
+		Client.getInstance().requestWithListener(Command.getEmployeeByEmployeeNumber, srMsg -> {
+			if (srMsg.getCommand() == Command.getEmployeeByEmployeeNumber) {
+				// Casting error even tho it works and prints the content
+
+				if (srMsg.getAttachedData()[0] instanceof Employee) {
+
+					currentEmployeeOfSelectedPhase = (Employee) srMsg.getAttachedData()[0];
+
+					txtAssignedByName.setText(currentEmployeeOfSelectedPhase.getFirstName() + " "
+							+ currentEmployeeOfSelectedPhase.getLastName());
+					Client.removeMessageRecievedFromServer(GET_EMPLOYEE_BY_EMPLOYEE_NUMBER);
+				}
+			}
+		}, GET_EMPLOYEE_BY_EMPLOYEE_NUMBER, currentPhase.getEmpNumber());
 
 		txtDeadLine.setText(ControllerManager.getDateTime(currentPhase.getDeadline()));
 

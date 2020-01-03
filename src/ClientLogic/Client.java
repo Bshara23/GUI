@@ -1,18 +1,15 @@
 package ClientLogic;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import Protocol.Command;
 import Protocol.SRMessage;
-import Utility.VoidFunc;
-import Utility.StringFunc;
 import Utility.SRMessageFunc;
+import Utility.StringFunc;
+import Utility.VoidFunc;
 import javafx.application.Platform;
-import ocsf.client.*;
+import ocsf.client.AbstractClient;
 
 public class Client extends AbstractClient {
 
@@ -39,8 +36,6 @@ public class Client extends AbstractClient {
 
 		return instance;
 	}
-
-	
 
 	// Initialize the client
 	public void initialize(String host, int port) {
