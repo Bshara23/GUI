@@ -129,24 +129,8 @@ public class RequestDetailsSupervisorController implements Initializable {
 //			// TODO: intorpelate effect
 //			//imgWarningRequestedTimeExtension.setEffect(C);
 //		});
-
-		Client.addMessageRecievedFromServer(GET_EMPLOYEE_BY_EMPLOYEE_NUMBER, srMsg -> {
-			if (srMsg.getCommand() == Command.getEmployeeByEmployeeNumber) {
-				// Casting error even tho it works and prints the content
-
-				if (srMsg.getAttachedData()[0] instanceof Employee) {
-
-					currentEmployeeOfSelectedPhase = (Employee) srMsg.getAttachedData()[0];
-
-					txtAssignedByName.setText(currentEmployeeOfSelectedPhase.getFirstName() + " "
-							+ currentEmployeeOfSelectedPhase.getLastName());
-
-				}
-
-			}
-		});
-
-		Client.addMessageRecievedFromServer(GET_PHASES_OF_REQUEST_WITH_TIME_EXTENSIONS_IF_POSSIBLE, srMsg -> {
+//
+		Client.getInstance().requestWithListener(Command.getPhasesOfRequestWithTimeExtensionsIfPossible, srMsg -> {
 			if (srMsg.getCommand() == Command.getPhasesOfRequestWithTimeExtensionsIfPossible) {
 				// Casting error even tho it works and prints the content
 
@@ -154,7 +138,9 @@ public class RequestDetailsSupervisorController implements Initializable {
 
 					requestedPhases = (ArrayList<Phase>) srMsg.getAttachedData()[0];
 
-					for (Phase phase : requestedPhases) {
+					for (
+
+					Phase phase : requestedPhases) {
 						System.out.println(phase);
 						if (phase.getPhaseTimeExtensionRequest() != null)
 							System.out.println(phase.getPhaseTimeExtensionRequest());
@@ -163,13 +149,10 @@ public class RequestDetailsSupervisorController implements Initializable {
 					loadPageDetails();
 
 				}
-
 			}
-		});
+		}, GET_PHASES_OF_REQUEST_WITH_TIME_EXTENSIONS_IF_POSSIBLE,
 
-		Client.getInstance().request(Command.getPhasesOfRequestWithTimeExtensionsIfPossible,
 				changeRequest.getRequestID());
-
 	}
 
 	private void loadPageDetails() {
@@ -178,7 +161,20 @@ public class RequestDetailsSupervisorController implements Initializable {
 		txtPhaseName.setText(currentPhase.getPhaseName());
 		txtEstimateTimeOfCompletion.setText(ControllerManager.getDateTime(currentPhase.getEstimatedTimeOfCompletion()));
 
-		Client.getInstance().request(Command.getEmployeeByEmployeeNumber, currentPhase.getEmpNumber());
+//		Client.getInstance().requestWithListener(Command.getEmployeeByEmployeeNumber, srMsg -> {
+//			if (srMsg.getCommand() == Command.getEmployeeByEmployeeNumber) {
+//				// Casting error even tho it works and prints the content
+//
+//				if (srMsg.getAttachedData()[0] instanceof Employee) {
+//
+//					currentEmployeeOfSelectedPhase = (Employee) srMsg.getAttachedData()[0];
+//
+//					txtAssignedByName.setText(currentEmployeeOfSelectedPhase.getFirstName() + " "
+//							+ currentEmployeeOfSelectedPhase.getLastName());
+//					Client.removeMessageRecievedFromServer(GET_EMPLOYEE_BY_EMPLOYEE_NUMBER);
+//				}
+//			}
+//		}, GET_EMPLOYEE_BY_EMPLOYEE_NUMBER, currentPhase.getEmpNumber());
 
 		txtDeadLine.setText(ControllerManager.getDateTime(currentPhase.getDeadline()));
 
@@ -208,9 +204,9 @@ public class RequestDetailsSupervisorController implements Initializable {
 	private String getPhaseOwnerLabel(String phaseName) {
 		PhaseType phaseType = PhaseType.valueOf(phaseName);
 		switch (phaseType) {
-		
+
 		case Evaluation:
-			
+
 			return "Evaluator";
 
 		case Decision:
@@ -224,10 +220,10 @@ public class RequestDetailsSupervisorController implements Initializable {
 		case Examination:
 
 			return "Examiner";
-			
+
 		case Closing:
 		case Supervision:
-			
+
 			return "Supervisor";
 
 		default:

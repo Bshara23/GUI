@@ -50,7 +50,7 @@ public enum Command {
 	getExtraTimeRelateToEvaluatedTime,
 	
 	
-	debug_simulateBigCalculations, getCountOfPhasesTypes, getPhasesOfRequestWithTimeExtensionsIfPossible, getSystemUserByRequest, getEmployeeByEmployeeNumber, getFullNameByUsername,
+	debug_simulateBigCalculations, getCountOfPhasesTypes, getPhasesOfRequestWithTimeExtensionsIfPossible, getSystemUserByRequest, getEmployeeByEmployeeNumber, getFirstLastName, getFullNameByUsername,
 	
 	
 	

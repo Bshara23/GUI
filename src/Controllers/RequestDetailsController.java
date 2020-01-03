@@ -112,13 +112,6 @@ public class RequestDetailsController implements Initializable {
 
 		});
 
-		Client.addMessageRecievedFromServer(GET_FULL_NAME_OF_SYSTEM_USER, srMsg -> {
-
-			if (srMsg.getCommand() == Command.getFullNameByUsername) {
-				String fullName = (String) srMsg.getAttachedData()[0];
-				txtIssuedBy.setText(fullName);
-			}
-		});
 	}
 
 	private void loadFields() {
@@ -132,7 +125,18 @@ public class RequestDetailsController implements Initializable {
 			txtRelatedInfoSystem.setText(changeRequest.getRelatedInformationSystem());
 			txtRequestDescription.setText(changeRequest.getRequestDescriptionLT());
 
-			Client.getInstance().request(Command.getFullNameByUsername, changeRequest.getUsername());
+			Client.getInstance().requestWithListener(Command.getFullNameByUsername, srMsg -> {
+
+				if (srMsg.getCommand() == Command.getFullNameByUsername) {
+					
+					String fullName = (String) srMsg.getAttachedData()[0];
+					txtIssuedBy.setText(fullName);
+					Client.removeMessageRecievedFromServer(GET_FULL_NAME_OF_SYSTEM_USER);
+				
+				}
+				
+				
+			}, GET_FULL_NAME_OF_SYSTEM_USER, changeRequest.getUsername());
 		}
 	}
 
