@@ -433,7 +433,7 @@ public class MySQL extends MySqlConnBase {
 		// This is added so we get the requests for all of the users, used for the
 		// overridden function.
 		if (forUsername != null) {
-			query += "WHERE icm.changerequest.username = 'username2' ";
+			query += "WHERE icm.changerequest.username = '" + forUsername + "' ";
 		}
 
 		query += "ORDER BY icm.changerequest.requestID ASC ";
@@ -751,6 +751,115 @@ public class MySQL extends MySqlConnBase {
 
 		return results.get(0) + " " + results.get(1);
 
+	}
+
+	public int getCountOfPhaseForEmpByUsername(String username23) {
+
+		String query = "SELECT COUNT(ph.phaseName) FROM icm.employee as emp "
+				+ "INNER JOIN icm.systemUser as su ON su.userName = emp.userName "
+				+ "INNER JOIN icm.phase as ph ON ph.empNumber = emp.empNumber WHERE su.userName = '" + username23 + "'";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(rs.getInt(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+
+		return results.get(0);
+
+	}
+
+	public boolean isUserManager(String username23) {
+
+		String query = "SELECT COUNT(*) FROM icm.systemUser as su "
+				+ "INNER JOIN icm.manager as m ON m.userName = su.userName WHERE su.userName = '" + username23 + "'";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(rs.getInt(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+
+		return results.get(0) == 1;
+	}
+
+	public boolean isEmployeeIsSupervisor(long empNumber) {
+		String query = "SELECT COUNT(*) FROM icm.supervisor as sv WHERE sv.empNumber = '" + empNumber + "'";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(rs.getInt(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.get(0) == 1;
+	}
+
+	public ArrayList<ChangeRequest> getChangeRequestWithCurrentPhase() {
+		String query = "SELECT * FROM icm.phase AS ph "
+				+ "INNER JOIN icm.changeRequest as cr ON cr.requestID = ph.requestID WHERE ph.status = 'Active';";
+
+		ArrayList<ChangeRequest> results = new ArrayList<ChangeRequest>();
+
+		IStatement prepS = rs -> {
+
+			// o = offset
+			try {
+
+				while (rs.next()) {
+					int o = 0;
+
+					Phase phase = new Phase(rs.getLong(o + 1), rs.getLong(o + 2), rs.getString(o + 3),
+							rs.getString(o + 4), rs.getLong(o + 5), rs.getTimestamp(o + 6), rs.getTimestamp(o + 7),
+							rs.getTimestamp(o + 8), rs.getTimestamp(o + 9), rs.getBoolean(o + 10));
+
+					o += 10;
+
+					ChangeRequest changeRequest = new ChangeRequest(rs.getLong(o + 1), rs.getString(o + 2),
+							rs.getTimestamp(o + 3), rs.getTimestamp(o + 4), rs.getTimestamp(o + 5), rs.getString(o + 6),
+							rs.getString(o + 7), rs.getString(o + 8), rs.getString(o + 9), rs.getString(o + 10));
+
+					changeRequest.getPhases().add(phase);
+
+					results.add(changeRequest);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		executeStatement(query, prepS);
+
+		return results;
 	}
 
 }

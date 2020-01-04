@@ -148,7 +148,6 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 	public static ChangeRequest lastSelectedRequest;
 	public static SystemUser lastSelectedRequestOwner;
 
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -210,29 +209,13 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 		ControllerManager.setEffect(jobs, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
 		ControllerManager.setEffect(tableButtons, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
 
-		
-		
-		
-		
 		// Set a listener for the requests list from the server.
 
 		Client.addMessageRecievedFromServer(GET_SYSTEM_USER_BY_REQUEST_LIST_OF_REQUESTS, srMsg -> {
 			if (srMsg.getCommand() == Command.getSystemUserByRequest) {
-				lastSelectedRequestOwner = (SystemUser)srMsg.getAttachedData()[0];
+				lastSelectedRequestOwner = (SystemUser) srMsg.getAttachedData()[0];
 				NavigationBar.next(NavigationBar.getNextPage().getPageTitle(),
 						NavigationBar.getNextPage().getPageLocation());
-			}
-		});
-		// TODO: implement
-		Client.addMessageRecievedFromServer(GET_COUNT_OF_REQUESTS + 2, srMsg -> {
-
-			if (srMsg.getCommand() == Command.countOfObjects) {
-
-				countOfRequests = (int) srMsg.getAttachedData()[0];
-
-				// TODO: this changed order from username, PhaseType to PhaseType, username
-				Client.getInstance().request(Command.GetMyRequests, PhaseType.myRequests, ClientGUI.userName,
-						currentRowIndex, rowCountLimit);
 			}
 		});
 
@@ -316,9 +299,10 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 			}
 
 		});
-		
-		ControllerManager.installTooltip(apAnalyze, "This apprease because you are responsible on a number of requests for evaluation");
-		
+
+		ControllerManager.installTooltip(apAnalyze,
+				"This apprease because you are responsible on a number of requests for evaluation");
+
 		allowExistingTabsOnly();
 
 	}
@@ -328,6 +312,7 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 		Client.addMessageRecievedFromServer(GET_COUNT_OF_PHASES_TYPES, srMsg -> {
 
 			if (srMsg.getCommand() == Command.getCountOfPhasesTypes) {
+
 				int cntSupervision = (int) srMsg.getAttachedData()[0];
 				int cntEvaluation = (int) srMsg.getAttachedData()[1];
 				int cntDecision = (int) srMsg.getAttachedData()[2];
@@ -385,8 +370,8 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 				hbRequestsType.getChildren().clear();
 				hbRequestsType.getChildren().setAll(FXCollections.observableArrayList(newNodesForRequestTypes));
-				
-				if(newNodesForRequestTypes.size() > 0) {
+
+				if (newNodesForRequestTypes.size() > 0) {
 					selectNode(newNodesForRequestTypes.get(0));
 				}
 			}

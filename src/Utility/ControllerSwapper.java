@@ -21,9 +21,8 @@ import javafx.stage.Stage;
 
 public class ControllerSwapper {
 
-
 	public static Stage Show(Stage stage, URL location, String title) {
-		
+
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(location);
 
@@ -34,12 +33,12 @@ public class ControllerSwapper {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		    stage = new Stage();
+			stage = new Stage();
 			stage.setTitle(title);
 			stage.setScene(new Scene(root1));
 
 			ArrayList<Stage> s = new ArrayList<>();
-			
+
 			// Since the we can't use stage.show() directly
 			// encapsulate it in an array list instead.
 			s.add(stage);
@@ -47,16 +46,15 @@ public class ControllerSwapper {
 				s.get(0).show();
 			});
 			return stage;
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-
 	public static ObservableList<Node> getChildrenOf(String fxmlFileName) {
-		
+
 		// Reference a class that exist in the same folder as the FXML files
 		URL url = ClientGUI.class.getResource(fxmlFileName);
 
@@ -71,7 +69,7 @@ public class ControllerSwapper {
 	}
 
 	public static void loadAnchorContent(Pane destination, String fxmlFileName) {
-		
+
 		// Reference a class that exist in the same folder as the FXML files
 		URL url = ClientGUI.class.getResource(fxmlFileName);
 
@@ -84,4 +82,20 @@ public class ControllerSwapper {
 
 		destination.getChildren().setAll(loader);
 	}
+
+	public static void loadContent(Pane destination, String fxmlFileName) {
+
+		// Reference a class that exist in the same folder as the FXML files
+		URL url = ClientGUI.class.getResource(fxmlFileName);
+
+		Pane loader = null;
+		try {
+			loader = FXMLLoader.load(url);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+		destination.getChildren().setAll(loader);
+	}
+
 }

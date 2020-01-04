@@ -202,6 +202,7 @@ public class IssueRequestController implements Initializable {
 				if (srMsg.getReturnType() == MsgReturnType.Success) {
 					ControllerManager.showInformationMessage("Issue Request", "Success",
 							"The request has been successfully issued!", null);
+					resetFields();
 
 				} else if (srMsg.getReturnType() == MsgReturnType.Failure) {
 					System.out.println("insertRequestWithFiles");
@@ -224,29 +225,12 @@ public class IssueRequestController implements Initializable {
 
 	}
 
-	// TODO: add limits to types, size and number of files.
-	private void sendFilesToServer(ArrayList<String> files, long reqID) {
-		for (String path : files) {
-			sendFileToServer(path, reqID);
-		}
-	}
-
-	private void sendFileToServer(String filePath, long reqID) {
-
-		File file = new File(0, reqID, filePath, "");
-		file.loadBytesFromLocal();
-		file.autoSetTypeAndNameFromPath();
-
-		Client.getInstance().request(Command.insertFile, file);
-
-//		Client.addMessageRecievedFromServer("dddadwd", msg -> {
-//			if (msg.getCommand() == Command.getFile) {
-//				File dowloadedFile = (File) msg.getAttachedData();
-//				dowloadedFile.writeFileToLocal();
-//			}
-//		});
-//
-//		Client.getInstance().request(Command.getFile, 5);
+	private void resetFields() {
+		taComments.setText("");
+		taDescriptionOfCurrentState.setText("");
+		taDescriptionOfRequestedChange.setText("");
+		taRequestDescription.setText("");
+		txtNumberOfAttachedFiles.setText("(0 files)");		
 	}
 
 }

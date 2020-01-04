@@ -21,7 +21,7 @@ public class Fieldssss {
 
 		Employee emp = db.getEmployeeByEmpNumber(10);
 		
-		System.out.println(db.getFullNameByUsername("username1"));
+		System.out.println(db.isUserManager("username12"));
 		
 
 	}

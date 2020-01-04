@@ -39,4 +39,7 @@ public class FxmlNames {
 	public static final String SETTINGS = "SettingsGUI.fxml";
 	public static final String HOME = "Home.fxml";
 
+	
+	public static final String MESSAGE_NO_MESSAGES_AVAILABLE_FXML = "MessageNoMessagesAvailable.fxml";
+
 }

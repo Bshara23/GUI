@@ -14,7 +14,7 @@
 
 <AnchorPane fx:id="mainAnchor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="1500.0" style="-fx-background-color: #EEEEEE;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ClientGUI">
    <children>
-      <AnchorPane fx:id="apMainContent" layoutX="153.0" layoutY="124.0" prefHeight="876.0" prefWidth="1348.0" />
+      <AnchorPane fx:id="apMainContent" layoutX="153.0" layoutY="129.0" prefHeight="871.0" prefWidth="1348.0" />
       <VBox fx:id="vbMenu" alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="154.0" spacing="10.0" style="-fx-background-color: #1A2841;">
          <children>
             <AnchorPane fx:id="apBtnLogoMain" nodeOrientation="LEFT_TO_RIGHT" onMouseClicked="#onLogoMainPress" prefHeight="84.0" prefWidth="162.0" style="-fx-background-color: #2B3E61;">

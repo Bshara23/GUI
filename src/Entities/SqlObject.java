@@ -1,9 +1,6 @@
 package Entities;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public abstract class SqlObject {
 

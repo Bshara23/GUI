@@ -93,6 +93,9 @@ public class RequestDetailsSupervisorController implements Initializable {
 
 	@FXML
 	private Text txtPhaseOwner;
+	
+	@FXML
+	private Text txtPhaseStatus;
 
 	private ChangeRequest changeRequest = ListOfRequestsForTreatmentController.lastSelectedRequest;
 
@@ -177,9 +180,12 @@ public class RequestDetailsSupervisorController implements Initializable {
 		}, GET_EMPLOYEE_BY_EMPLOYEE_NUMBER, currentPhase.getEmpNumber());
 
 		txtDeadLine.setText(ControllerManager.getDateTime(currentPhase.getDeadline()));
-
 		txtPhaseOwner.setText(getPhaseOwnerLabel(currentPhase.getPhaseName()) + ": ");
 
+		
+		txtPhaseStatus.setText(currentPhase.getStatus());
+
+		
 		txtCompletedOnTime.setText(ControllerManager.getDateTime(currentPhase.getTimeOfCompletion()));
 		txtTimeException.setText(currentPhase.hasTimeException() ? "True" : "False");
 

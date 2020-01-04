@@ -39,7 +39,7 @@ public class RequestDetailsDecisionGUIController implements Initializable {
 		
 		// Apply the effects for the canvas
 		RequestDetailsUserController.applyCanvasEffects(canvasRight, canvasLeft);
-		ControllerSwapper.loadAnchorContent(vbLoadRequestDetails, FxmlNames.REQUEST_DETAILS);
+		ControllerSwapper.loadContent(vbLoadRequestDetails, FxmlNames.REQUEST_DETAILS);
 		ControllerSwapper.loadAnchorContent(vbEvaluationReport, FxmlNames.EVALUATION_REPORT_REVIEW_PAGE_1);
 
 		hbSendExecutionDetails.setCursor(Cursor.HAND);

@@ -45,7 +45,7 @@ public class Server extends AbstractServer {
 	private static ArrayList<VoidFunc> serverStartedEvents;
 	private static ArrayList<VoidFunc> serverStoppedEvents;
 	private static MySQL db;
-	private static ExecutorService executorService;
+	//private static ExecutorService executorService;
 	static {
 
 		instance = new Server(5555);
@@ -86,22 +86,22 @@ public class Server extends AbstractServer {
 	@Override
 	protected void finalize() throws Throwable {
 
-		executorService.shutdown();
-		try {
-			executorService.awaitTermination(10, TimeUnit.SECONDS);
-		} catch (InterruptedException e1) {
-		}
-		if (executorService.isTerminated())
-			System.out.println("All threads are done.");
-		else
-			System.out.println("Tired of waiting.");
+//		executorService.shutdown();
+//		try {
+//			executorService.awaitTermination(10, TimeUnit.SECONDS);
+//		} catch (InterruptedException e1) {
+//		}
+//		if (executorService.isTerminated())
+//			System.out.println("All threads are done.");
+//		else
+//			System.out.println("Tired of waiting.");
 		super.finalize();
 	}
 
 	// Initialize the client
 	public void initialize(int port, String username, String password, String schemaName, int poolSize) {
 
-		executorService = Executors.newFixedThreadPool(poolSize);
+		//executorService = Executors.newFixedThreadPool(poolSize);
 
 		sqlException = false;
 		instance.setPort(port);
@@ -131,7 +131,7 @@ public class Server extends AbstractServer {
 		return sqlException;
 	}
 
-	private int result;
+	private Integer result;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -139,217 +139,241 @@ public class Server extends AbstractServer {
 		SRMessage srMsg = (SRMessage) msg;
 		System.out.println("Message Received from client: " + srMsg.getCommand().toString());
 		// Execute in a separate thread
-		executorService.execute(() -> {
 
-			Command command = srMsg.getCommand();
-			switch (command) {
+		Command command = srMsg.getCommand();
+		switch (command) {
 
-
-			case getFullNameByUsername:
-				
-				String username45 = (String)srMsg.getAttachedData()[0];
-				String fullName = db.getFullNameByUsername(username45);
-				sendMessageToClient(client, command, fullName);
-				
-				break;
-			case getEmployeeByEmployeeNumber:
-				long empId = (long)srMsg.getAttachedData()[0];
-				Employee emp = db.getEmployeeByEmpNumber(empId);
-				sendMessageToClient(client, command, emp);
-				break;
+		
+		case GetMyIssuedRequests:
 			
-			case getSystemUserByRequest:
-				
-				long requestId2 = (long)srMsg.getAttachedData()[0];
-				SystemUser sysUser = db.getSystemUserByRequestID(requestId2);
-				sendMessageToClient(client, command, sysUser);
+			String forUsername = (String) srMsg.getAttachedData()[0];
 
-				
-				break;
+			int startingRow = (int) srMsg.getAttachedData()[1];
+			int size = (int) srMsg.getAttachedData()[2];
+
+			ArrayList<ChangeRequest> crs = db.getChangeRequests(forUsername, startingRow, size);
+
+			sendMessageToClient(client, command, crs);
+		
+
+			break;
+		
+		case GetMyIssuedRequestsCount:
 			
-			case getPhasesOfRequestWithTimeExtensionsIfPossible:
+			String countOfMyRequestsCondition = (String) srMsg.getAttachedData()[0];
+			int countOfMyIssuedRequests = db.getCountOf(ChangeRequest.getEmptyInstance(), countOfMyRequestsCondition);
+			sendMessageToClient(client, command, countOfMyIssuedRequests);
+			
+			break;
+			
+		case getPermissionsData:
+
+			String username23 = (String) srMsg.getAttachedData()[0];
+			int countOfPhasesForUsername = db.getCountOfPhaseForEmpByUsername(username23);
+			boolean isManager = db.isUserManager(username23);
+
+			boolean hasAtleastOnePhaseToManage = countOfPhasesForUsername > 0;
+
+			sendMessageToClient(client, command, isManager, hasAtleastOnePhaseToManage);
+
+			break;
+
+		case getFullNameByUsername:
+
+			String username45 = (String) srMsg.getAttachedData()[0];
+			String fullName = db.getFullNameByUsername(username45);
+			sendMessageToClient(client, command, fullName);
+
+			break;
+		case getEmployeeByEmployeeNumber:
+			long empId = (long) srMsg.getAttachedData()[0];
+			Employee emp = db.getEmployeeByEmpNumber(empId);
+			sendMessageToClient(client, command, emp);
+			break;
+
+		case getSystemUserByRequest:
+
+			long requestId2 = (long) srMsg.getAttachedData()[0];
+			SystemUser sysUser = db.getSystemUserByRequestID(requestId2);
+			sendMessageToClient(client, command, sysUser);
+
+			break;
+
+		case getPhasesOfRequestWithTimeExtensionsIfPossible:
+
+			long requestIDforPhase = (long) srMsg.getAttachedData()[0];
+
+			ArrayList<Phase> requestedPhases = db.getPhasesOfRequest(requestIDforPhase);
+
+			sendMessageToClient(client, command, requestedPhases);
+
+		case getCountOfPhasesTypes:
+
+			long empNumberForPhases = (long) srMsg.getAttachedData()[0];
+			
+			int cntSupervision = db.isEmployeeIsSupervisor(empNumberForPhases) ? 1 : 0;
+			int cntEvaluation = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Evaluation);
+			int cntDecision = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Decision);
+			int cntExecution = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Execution);
+			int cntExamination = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Examination);
+
+			sendMessageToClient(client, command, cntSupervision, cntEvaluation, cntDecision, cntExecution,
+					cntExamination);
+
+			break;
+
+		case updateMessage:
+
+			Message msgToUpdate = (Message) srMsg.getAttachedData()[0];
+			db.updateMessage(msgToUpdate);
+
+			break;
+
+		case Update:
+
+			SqlObject updateObj = (SqlObject) srMsg.getAttachedData()[0];
+			db.updateByObject(updateObj);
+
+			break;
+		case deleteObjects:
+			String MESSAGES_DELETED_LIST_OF_MESSAGES_RESPONSE = "messagesDeletedListOfMessagesResponse";
+
+			ArrayList<SqlObject> objs = (ArrayList<SqlObject>) srMsg.getAttachedData()[0];
+
+			int res = 1;
+			for (SqlObject sqlObject : objs) {
+				res *= db.deleteObject(sqlObject);
+			}
+
+			MsgReturnType retType = res == 1 ? MsgReturnType.Success : MsgReturnType.Failure;
+			sendMessageToClient(client, command, MESSAGES_DELETED_LIST_OF_MESSAGES_RESPONSE, retType);
+
+			break;
+		case getMessagesPrimary:
+
+			// TODO for now this is for all messages, not just primary
+			String userName = (String) srMsg.getAttachedData()[0];
+			int startingRowMessages = (int) srMsg.getAttachedData()[1];
+			int sizeMessages = (int) srMsg.getAttachedData()[2];
+
+			ArrayList<Message> msgs = db.getMessages(userName, startingRowMessages, sizeMessages);
+			// TODO add failure and success cases
+
+			sendMessageToClient(client, command, msgs);
+
+			break;
+		case countOfObjects:
+
+			String cooCondition = (String) srMsg.getAttachedData()[0];
+			SqlObject sqlObject = (SqlObject) srMsg.getAttachedData()[1];
+			int countOfObject = db.getCountOf(sqlObject, cooCondition);
+			sendMessageToClient(client, command, countOfObject);
+
+			break;
+		case insertFile:
+
+			File fileToInsert = (File) srMsg.getAttachedData()[0];
+			db.insertFile(fileToInsert);
+
+			break;
+
+		case getFile:
+
+			int fileID = (int) srMsg.getAttachedData()[0];
+
+			// TODO: this has to run in a different thread since it might get the server
+			// stuck, other clients wont be able to receive messages
+			// Make multiple threads or a thread queue?
+			File downloadedFile = db.getFile(fileID);
+
+			sendMessageToClient(client, command, downloadedFile);
+
+			break;
+
+		case debug_simulateBigCalculations:
+			ArrayList<String> stra = (ArrayList<String>) srMsg.getAttachedData()[0];
+
+			for (int i = 0; i < 500000; i++) {
+				System.out.println(stra.toString());
+			}
+
+			break;
+
+		case insertRequest:
+
+			ChangeRequest changeRequest = (ChangeRequest) srMsg.getAttachedData()[0];
+			// Set a new max id
+			changeRequest.setRequestID(db.getNewMaxID(changeRequest));
+
+			result = 1;
+			result = db.insertObject(changeRequest); // TODO: make it return a boolean
+
+			sendBooleanResultMessage(client, command, result);
+
+			break;
+
+		case insertRequestWithFiles:
+
+			ChangeRequest changeRequestWithFiles = (ChangeRequest) srMsg.getAttachedData()[0];
+			// Set a new max id
+			changeRequestWithFiles.setRequestID(db.getNewMaxID(changeRequestWithFiles));
+
+			ArrayList<File> files = (ArrayList<File>) srMsg.getAttachedData()[1];
+
+			result = 1;
+			result *= db.insertObject(changeRequestWithFiles); // TODO: make it return a boolean
+			for (File file : files) {
+				// Set the request id for the file
+				file.setRequestID(changeRequestWithFiles.getRequestID());
+				result *= db.insertFile(file);
+			}
+
+			sendBooleanResultMessage(client, command, result);
+
+			break;
+
+		case GetMyRequests:
+
+			// TODO: fix in my requests list
+			PhaseType phaseType = (PhaseType) srMsg.getAttachedData()[0];
+			
+			switch (phaseType) {
+			case Supervision:
 				
-				
-				long requestIDforPhase = (long)srMsg.getAttachedData()[0];
-				
-				ArrayList<Phase> requestedPhases = db.getPhasesOfRequest(requestIDforPhase);
-				
-				sendMessageToClient(client, command, requestedPhases);
-				
-			case getCountOfPhasesTypes:
+				ArrayList<ChangeRequest> requestsWithCurrentPhase = db.getChangeRequestWithCurrentPhase();
 
-				long empNumberForPhases = (long) srMsg.getAttachedData()[0];
+				sendMessageToClient(client, command, phaseType, requestsWithCurrentPhase);
+				break;
+			case Decision:
+			case Evaluation:
+			case Examination:
+			case Execution:
+			
 
-				int cntSupervision = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Supervision);
-				int cntEvaluation = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Evaluation);
-				int cntDecision = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Decision);
-				int cntExecution = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Execution);
-				int cntExamination = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Examination);
+				long empNum = (long) srMsg.getAttachedData()[1];
 
-				sendMessageToClient(client, command, cntSupervision, cntEvaluation, cntDecision, cntExecution,
-						cntExamination);
+
+				ArrayList<ChangeRequest> crSupervision = db.getChangeRequestPhaseByEmployee(empNum, phaseType);
+
+				sendMessageToClient(client, command, phaseType, crSupervision);
 
 				break;
 
-			case updateMessage:
-
-				Message msgToUpdate = (Message) srMsg.getAttachedData()[0];
-				db.updateMessage(msgToUpdate);
-
-				break;
-
-			case Update:
-
-				SqlObject updateObj = (SqlObject) srMsg.getAttachedData()[0];
-				db.updateByObject(updateObj);
-
-				break;
-			case deleteObjects:
-				String MESSAGES_DELETED_LIST_OF_MESSAGES_RESPONSE = "messagesDeletedListOfMessagesResponse";
-
-				ArrayList<SqlObject> objs = (ArrayList<SqlObject>) srMsg.getAttachedData()[0];
-
-				int res = 1;
-				for (SqlObject sqlObject : objs) {
-					res *= db.deleteObject(sqlObject);
-				}
-
-				MsgReturnType retType = res == 1 ? MsgReturnType.Success : MsgReturnType.Failure;
-				sendMessageToClient(client, command, MESSAGES_DELETED_LIST_OF_MESSAGES_RESPONSE, retType);
-
-				break;
-			case getMessagesPrimary:
-
-				// TODO for now this is for all messages, not just primary
-				String userName = (String) srMsg.getAttachedData()[0];
-				int startingRowMessages = (int) srMsg.getAttachedData()[1];
-				int sizeMessages = (int) srMsg.getAttachedData()[2];
-
-				ArrayList<Message> msgs = db.getMessages(userName, startingRowMessages, sizeMessages);
-				// TODO add failure and success cases
-
-				sendMessageToClient(client, command, msgs);
-
-				break;
-			case countOfObjects:
-
-				String cooCondition = (String) srMsg.getAttachedData()[0];
-				SqlObject sqlObject = (SqlObject) srMsg.getAttachedData()[1];
-				int countOfObject = db.getCountOf(sqlObject, cooCondition);
-				sendMessageToClient(client, command, countOfObject);
-
-				break;
-			case insertFile:
-
-				File fileToInsert = (File) srMsg.getAttachedData()[0];
-				db.insertFile(fileToInsert);
-
-				break;
-
-			case getFile:
-
-				int fileID = (int) srMsg.getAttachedData()[0];
-
-				// TODO: this has to run in a different thread since it might get the server
-				// stuck, other clients wont be able to receive messages
-				// Make multiple threads or a thread queue?
-				File downloadedFile = db.getFile(fileID);
-
-				sendMessageToClient(client, command, downloadedFile);
-
-				break;
-
-			case debug_simulateBigCalculations:
-				ArrayList<String> stra = (ArrayList<String>) srMsg.getAttachedData()[0];
-
-				for (int i = 0; i < 500000; i++) {
-					System.out.println(stra.toString());
-				}
-
-				break;
-
-			case insertRequest:
-
-				ChangeRequest changeRequest = (ChangeRequest) srMsg.getAttachedData()[0];
-				// Set a new max id
-				changeRequest.setRequestID(db.getNewMaxID(changeRequest));
-
-				result = 1;
-				result = db.insertObject(changeRequest); // TODO: make it return a boolean
-
-				sendBooleanResultMessage(client, command, result);
-
-				break;
-
-			case insertRequestWithFiles:
-
-				ChangeRequest changeRequestWithFiles = (ChangeRequest) srMsg.getAttachedData()[0];
-				// Set a new max id
-				changeRequestWithFiles.setRequestID(db.getNewMaxID(changeRequestWithFiles));
-
-				ArrayList<File> files = (ArrayList<File>) srMsg.getAttachedData()[1];
-
-				result = 1;
-				result *= db.insertObject(changeRequestWithFiles); // TODO: make it return a boolean
-				for (File file : files) {
-					// Set the request id for the file
-					file.setRequestID(changeRequestWithFiles.getRequestID());
-					result *= db.insertFile(file);
-				}
-
-				sendBooleanResultMessage(client, command, result);
-
-				break;
-
-			case GetMyRequests:
-
-				// TODO: fix in my requests list
-				PhaseType phaseType = (PhaseType) srMsg.getAttachedData()[0];
-
-				switch (phaseType) {
-
-				case myRequests:
-					String forUsername = (String) srMsg.getAttachedData()[1];
-
-					int startingRow = (int) srMsg.getAttachedData()[2];
-					int size = (int) srMsg.getAttachedData()[3];
-
-					ArrayList<ChangeRequest> crs = db.getChangeRequests(forUsername, startingRow, size);
-
-					sendMessageToClient(client, command, crs, phaseType);
-
-					break;
-
-				case Decision:
-				case Evaluation:
-				case Examination:
-				case Execution:
-				case Supervision:
-
-					long empNum = (long) srMsg.getAttachedData()[1];
-
-					ArrayList<ChangeRequest> crSupervision = db.getChangeRequestPhaseByEmployee(empNum, phaseType);
-
-					sendMessageToClient(client, command, phaseType, crSupervision);
-
-					break;
-
-				default:
-					System.err.println("Error, the RequestsType " + phaseType.toString() + " is not defined!");
-					break;
-				}
-
-				break;
 			default:
-				System.err.println("Error, undefine command [" + srMsg.getCommand() + "]");
+				System.err.println("Error, the RequestsType " + phaseType.toString() + " is not defined!");
 				break;
 			}
 
-			for (ObjectClientFunc f : objectRecievedFromClientsEvents) {
-				if (f != null)
-					f.call(msg, client);
-			}
-		});
+			break;
+		default:
+			System.err.println("Error, undefine command [" + srMsg.getCommand() + "]");
+			break;
+		}
+
+		for (ObjectClientFunc f : objectRecievedFromClientsEvents) {
+			if (f != null)
+				f.call(msg, client);
+		}
 
 	}
 
@@ -372,7 +396,7 @@ public class Server extends AbstractServer {
 	}
 
 	private void sendResultMessageToClient(ConnectionToClient client, Command cmd, MsgReturnType returnType) {
-		sendResultMessageToClient(client, cmd, returnType, new Object());
+		sendResultMessageToClient(client, cmd, returnType, null);
 	}
 
 	private void sendResultMessageToClient(ConnectionToClient client, Command cmd, MsgReturnType returnType,
