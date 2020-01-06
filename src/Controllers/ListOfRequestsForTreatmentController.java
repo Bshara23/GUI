@@ -313,12 +313,15 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 			if (srMsg.getCommand() == Command.getCountOfPhasesTypes) {
 
+				System.out.println("dsadasd");
+
 				int cntSupervision = (int) srMsg.getAttachedData()[0];
 				int cntEvaluation = (int) srMsg.getAttachedData()[1];
 				int cntDecision = (int) srMsg.getAttachedData()[2];
 				int cntExecution = (int) srMsg.getAttachedData()[3];
 				int cntExamination = (int) srMsg.getAttachedData()[4];
 
+				System.out.println(cntSupervision);
 				ArrayList<Node> newNodesForRequestTypes = new ArrayList<Node>();
 
 				for (Node node : requestTypesAPs) {

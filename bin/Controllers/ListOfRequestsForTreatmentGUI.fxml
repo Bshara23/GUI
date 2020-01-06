@@ -157,7 +157,7 @@
                      <children>
                         <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../Images/Table/icons8_analyze_50px.png" />
+                              <Image url="@../Images/Table/icons8_pass_fail_50px.png" />
                            </image>
                         </ImageView>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Examine" />
