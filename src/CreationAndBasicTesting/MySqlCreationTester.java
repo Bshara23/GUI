@@ -145,11 +145,11 @@ public class MySqlCreationTester {
 			LocalDate d2 = LocalDate.of(2020, rnd.nextInt(11) + 1, rnd.nextInt(27) + 1);
 			LocalDate d3 = LocalDate.of(2020, rnd.nextInt(11) + 1, rnd.nextInt(27) + 1);
 
-			ChangeRequest cr = new ChangeRequest(i + 1000, "username" + 3, d1, d2, d3, "comments" + i,
+			/*ChangeRequest cr = new ChangeRequest(i + 1000, "username" + 3, d1, d2, d3, "comments" + i,
 					"request description" + i, "descriptionOfRequestedChange" + i, "descriptionOfCurrentState",
 					"Software");
 
-			db.insertObject(cr);
+			db.insertObject(cr);*/
 		}
 	}
 
@@ -248,7 +248,7 @@ public class MySqlCreationTester {
 //		}	
 
 	}
-
+/*
 	private static void insertUsers() {
 		for (int i = 0; i < 23; i++) {
 			SystemUser su = new SystemUser("username" + i, i + "001", i + "@gmail.com", "FN" + i, "LN" + i,
@@ -279,6 +279,7 @@ public class MySqlCreationTester {
 		db.insertObject(ecc2);
 		db.insertObject(eccManager);
 	}
+	*/
 
 	private static void printFields(Class<?> cls) {
 
