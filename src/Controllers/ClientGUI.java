@@ -37,6 +37,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
@@ -86,7 +87,38 @@ public class ClientGUI extends Application implements Initializable {
 
 	@FXML
 	private HBox hbNavigator;
+	@FXML
+    private VBox DropDownMenu;
+	private int DropDownMenuActive=0;
+	@FXML
+	private AnchorPane apHeader1;
 
+ @FXML
+    private HBox hboxHelp;
+
+    @FXML
+    private Label lblHelp;
+
+    @FXML
+    private ImageView imgHelp;
+
+    @FXML
+    private HBox hboxSignout;
+
+    @FXML
+    private Label lblSignOut;
+
+    @FXML
+    private ImageView imgSignOut;
+
+    @FXML
+    private HBox hboxExit;
+
+    @FXML
+    private Label lblExit;
+
+    @FXML
+    private ImageView imgExit;
 	private AnchorPane selectedMenuElement;
 
 	private ArrayList<Node> apList;
@@ -187,40 +219,66 @@ public class ClientGUI extends Application implements Initializable {
 
 		commondMenuBehavior(apBtnLogoMain, "Home", FxmlNames.HOME);
 		ControllerManager.setEffect(apBtnLogoMain, CommonEffects.LOGO_SELECT);
-
-		apHeader.setOnMousePressed(new EventHandler<MouseEvent>() {
+		//DropDown menu is closed
+		DropDownMenu.getChildren().clear();
+		DropDownMenu.setPrefHeight(0);
+		apHeader1.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				xOffset = getStage().getX() - event.getScreenX();
 				yOffset = getStage().getY() - event.getScreenY();
-				apHeader.setCursor(Cursor.CLOSED_HAND);
+				apHeader1.setCursor(Cursor.CLOSED_HAND);
 				// TODO: add the opacity to the settings
 				getStage().setOpacity(0.8);
 
 			}
 		});
-		apHeader.setOnMouseDragged(new EventHandler<MouseEvent>() {
+		apHeader1.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				getStage().setX(event.getScreenX() + xOffset);
 				getStage().setY(event.getScreenY() + yOffset);
 			}
 		});
-		apHeader.setOnMouseReleased(new EventHandler<MouseEvent>() {
+		apHeader1.setOnMouseReleased(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				apHeader.setCursor(Cursor.OPEN_HAND);
+				apHeader1.setCursor(Cursor.OPEN_HAND);
 				getStage().setOpacity(1);
 			}
 		});
 
-		apHeader.setOnMouseClicked(event -> {
+		apHeader1.setOnMouseClicked(event -> {
 			if (event.getClickCount() == 2) {
 				getStage().setIconified(true);
 			}
 		});
-
-		 allowMenuButtonsByPermissions();
+		DropDownMenu.setOnMouseExited(event->{
+			DropDownMenu.getChildren().clear();
+    		DropDownMenu.setPrefHeight(0);
+    		
+    		DropDownMenuActive=0;
+    		hboxExit.setOpacity(1);
+    		hboxSignout.setOpacity(1);
+    		hboxHelp.setOpacity(1);
+			
+		});
+		hboxSignout.setOnMouseEntered(event->{
+			hboxSignout.setOpacity(1);
+			hboxHelp.setOpacity(0.22);
+			hboxExit.setOpacity(0.22);
+		});
+		hboxExit.setOnMouseEntered(event->{
+			hboxExit.setOpacity(1);
+			hboxSignout.setOpacity(0.22);
+			hboxHelp.setOpacity(0.22);
+		});
+		hboxHelp.setOnMouseEntered(event->{
+			hboxHelp.setOpacity(1);
+			hboxSignout.setOpacity(0.22);
+			hboxExit.setOpacity(0.22);
+		});
+		allowMenuButtonsByPermissions();
 	}
 
 	private void allowMenuButtonsByPermissions() {
@@ -371,5 +429,48 @@ public class ClientGUI extends Application implements Initializable {
 		NavigationBar.clear();
 		NavigationBar.next(pageName, fxmlName);
 	}
+	@FXML
+    void DropDownMenu(MouseEvent event) {
+    	if(DropDownMenuActive==0) {
+    		DropDownMenu.getChildren().add(0, hboxHelp);
+    		DropDownMenu.getChildren().add(1, hboxSignout);
+    		DropDownMenu.getChildren().add(2, hboxExit);
+    		DropDownMenu.setPrefHeight(180);
+    		
+    		DropDownMenuActive=1;
+    	}
+    	else {
+    		DropDownMenu.getChildren().clear();
+    		DropDownMenu.setPrefHeight(0);
+    		
+    		DropDownMenuActive=0;
+    	}
+    }
+
+    @FXML
+    void MenuExit(MouseEvent event) {
+    	System.exit(0);
+    }
+
+    @FXML
+    void MenuHelp(MouseEvent event) {
+    	
+    }
+
+    @FXML
+    void MenuSignOut(MouseEvent event) throws IOException {
+    	this.userName=null;
+    	
+    	    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("LogIn.fxml"));
+    	    Parent root1 = (Parent) fxmlLoader.load();
+    	    this.stage.close();
+    	    Stage stage = new Stage();
+    	    stage.initModality(Modality.APPLICATION_MODAL);
+    	    stage.initStyle(StageStyle.UNDECORATED);
+    	    stage.setTitle("ABC");
+    	    stage.setScene(new Scene(root1));  
+    	    stage.show();
+    	
+    }
 
 }

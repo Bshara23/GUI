@@ -155,7 +155,10 @@ public class AnalyticsGUIController implements Initializable {
 				new PieChart.Data("Closed", d));
 		return list;
 	}
-
+	
+/**
+ * 
+ * */
 	private String percentile(int num, int whole) {
 
 		return ((100 * num / whole)) + "%";
