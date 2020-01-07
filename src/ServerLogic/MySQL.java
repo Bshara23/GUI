@@ -737,7 +737,7 @@ public class MySQL extends MySqlConnBase {
 			try {
 
 				if (rs.next()) {
-
+					
 					results.add(rs.getString(1));
 					results.add(rs.getString(2));
 				}

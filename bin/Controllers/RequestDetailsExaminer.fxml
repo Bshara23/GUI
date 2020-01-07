@@ -140,7 +140,7 @@
                            </children>
                         </HBox>
                         <Text layoutX="14.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No, Send failure details instead:" />
-                        <TextArea layoutX="14.0" layoutY="84.0" prefHeight="69.0" prefWidth="672.0" promptText="Enter failure details here..." />
+                        <TextArea fx:id="taFailureDetails" layoutX="14.0" layoutY="84.0" prefHeight="69.0" prefWidth="672.0" promptText="Enter failure details here..." />
                         <HBox fx:id="hbPressToSendFailureDetails" alignment="CENTER_LEFT" layoutX="611.0" layoutY="159.0" prefHeight="30.0" prefWidth="73.0" spacing="10.0">
                            <children>
                               <ImageView fitHeight="30.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
