@@ -70,7 +70,7 @@ public class RequestDetailsExaminerGUIController implements Initializable {
 	}
 
 	private void onPressToSendFailure() {
-		Client.getInstance().request(Command.);
+	//	Client.getInstance().request(Command.);
 		
 	}
 

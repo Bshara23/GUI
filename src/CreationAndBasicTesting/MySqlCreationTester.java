@@ -15,6 +15,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 
 import ClientLogic.Client;
@@ -23,8 +24,9 @@ import ServerLogic.MySQL;
 import Utility.AppManager;
 
 public class MySqlCreationTester {
-	private static MySQL db = new MySQL("root", "Aa123456", "ICM", null);
+	private static MySQL db = new MySQL("root", "A123456", "ICM", null);
 
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 
 		// db.insertObject(SystemUser.emptyInstance);
@@ -44,7 +46,7 @@ public class MySqlCreationTester {
 		//Message msg = new Message(32811, "subject4029999", "username2", "username2", "messageContent402", true, LocalDate.now(), true, true, true);
 		
 		//db.updateByObject(msg);
-		insertObjects();
+		//insertObjects();
 		// changeRequestTest();
 
 		// populateChangeRequest();
@@ -62,6 +64,20 @@ public class MySqlCreationTester {
 //		System.out.println(res);
 
 		// System.out.println(db.getNewMaxID(ChangeRequest.getEmptyInstance()));
+	//	Map<String,Integer> result=db.GetCounterOfRequestByStatus();
+		ArrayList<String> r=new ArrayList<>();
+		r.add("Canceled");
+		r.add("Locked");
+		r.add("Closed");
+		r.add("Active");
+		String status;
+		Random rand = new Random();
+		for(int i=1013;i<1014;i++) {
+			int j=rand.nextInt(4);
+			status=r.get(j)+"";
+			db.updateRequestStatusByID(i+"", status);
+		}
+		
 	}
 
 	private static void changeRequestTest() {

@@ -44,6 +44,8 @@ import javafx.stage.WindowEvent;
 
 public class ClientGUI extends Application implements Initializable {
 
+	private static final String LOGOUT = "Logout";
+
 	private static final String ALLOW_EXISTING_TABS_ONLY_F_MAIN_MENU = "allowExistingTabsOnlyFMainMenu";
 
 	@FXML
@@ -135,7 +137,7 @@ public class ClientGUI extends Application implements Initializable {
 	// TODO: make this dynamic
 	public static long myID = 5;
 
-	public static String userName = "username10";
+	public static String userName = "username2";
 	public static long empNumber = 10;
 
 	private static HashMap<String, VoidFunc> onMenuBtnClickedEvents;
@@ -263,21 +265,37 @@ public class ClientGUI extends Application implements Initializable {
     		hboxHelp.setOpacity(1);
 			
 		});
-		hboxSignout.setOnMouseEntered(event->{
-			hboxSignout.setOpacity(1);
-			hboxHelp.setOpacity(0.22);
-			hboxExit.setOpacity(0.22);
-		});
-		hboxExit.setOnMouseEntered(event->{
-			hboxExit.setOpacity(1);
-			hboxSignout.setOpacity(0.22);
-			hboxHelp.setOpacity(0.22);
-		});
-		hboxHelp.setOnMouseEntered(event->{
-			hboxHelp.setOpacity(1);
-			hboxSignout.setOpacity(0.22);
-			hboxExit.setOpacity(0.22);
-		});
+		
+		hboxSignout.setCursor(Cursor.HAND);
+		ControllerManager.setEffect(hboxSignout, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		ControllerManager.setOnHoverEffect(hboxSignout, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
+				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		
+		hboxExit.setCursor(Cursor.HAND);
+		ControllerManager.setEffect(hboxExit, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		ControllerManager.setOnHoverEffect(hboxExit, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
+				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		hboxHelp.setCursor(Cursor.HAND);
+		ControllerManager.setEffect(hboxHelp, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		ControllerManager.setOnHoverEffect(hboxHelp, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
+				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+
+		
+//		hboxSignout.setOnMouseEntered(event->{
+//			hboxSignout.setOpacity(1);
+//			hboxHelp.setOpacity(0.22);
+//			hboxExit.setOpacity(0.22);
+//		});
+//		hboxExit.setOnMouseEntered(event->{
+//			hboxExit.setOpacity(1);
+//			hboxSignout.setOpacity(0.22);
+//			hboxHelp.setOpacity(0.22);
+//		});
+//		hboxHelp.setOnMouseEntered(event->{
+//			hboxHelp.setOpacity(1);
+//			hboxSignout.setOpacity(0.22);
+//			hboxExit.setOpacity(0.22);
+//		});
 		allowMenuButtonsByPermissions();
 	}
 
@@ -288,7 +306,7 @@ public class ClientGUI extends Application implements Initializable {
 			if (srMsg.getCommand() == Command.getPermissionsData) {
 
 				// get data from server
-				boolean isManager = (boolean) srMsg.getAttachedData()[0];
+				boolean isManager = !((boolean) srMsg.getAttachedData()[0]);
 				boolean hasAtleastOnePhaseToManage = (boolean) srMsg.getAttachedData()[1];
 
 				ArrayList<Node> newNodesForMenu = new ArrayList<Node>();
@@ -459,18 +477,41 @@ public class ClientGUI extends Application implements Initializable {
 
     @FXML
     void MenuSignOut(MouseEvent event) throws IOException {
-    	this.userName=null;
     	
-    	    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("LogIn.fxml"));
-    	    Parent root1 = (Parent) fxmlLoader.load();
-    	    this.stage.close();
-    	    Stage stage = new Stage();
-    	    stage.initModality(Modality.APPLICATION_MODAL);
-    	    stage.initStyle(StageStyle.UNDECORATED);
-    	    stage.setTitle("ABC");
-    	    stage.setScene(new Scene(root1));  
-    	    stage.show();
+    		
+    	  Client.getInstance().request(Command.LogOut,userName);
+    	Client.addMessageRecievedFromServer(LOGOUT, SRMessage->{
+    		if(SRMessage.getCommand()==Command.LogOut) {
+    			
+    				
+    			boolean sucess=(boolean)SRMessage.getAttachedData()[0];
+    			System.out.println("got to here");
+    			if(sucess) {
+    				try {
+						ShowLogIn();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+    				Client.removeMessageRecievedFromServer(LOGOUT);
+    				
+    			}else {
+    				System.err.println("Failed to logout");
+    			}
+    		}
+    	});
     	
     }
+
+	private void ShowLogIn() throws IOException {
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("LogIn.fxml"));
+		Parent root1 = (Parent) fxmlLoader.load();
+		this.stage.close();
+		Stage stage = new Stage();
+		stage.initModality(Modality.APPLICATION_MODAL);
+		stage.initStyle(StageStyle.UNDECORATED);
+		stage.setTitle("ABC");
+		stage.setScene(new Scene(root1));  
+		stage.show();
+	}
 
 }

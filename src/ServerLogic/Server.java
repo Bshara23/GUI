@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -364,6 +365,35 @@ public class Server extends AbstractServer {
 				break;
 			}
 
+			break;
+			
+			/**
+			 * @Author EliaB
+			 * Creating request "counter of request by status"
+			 * */
+			
+		case GetCounterOfRequestsByStatus:
+				
+				int index=(int)srMsg.getAttachedData()[0];
+				System.out.println("data of analytic sent to client[Manager]");
+				sendMessageToClient(client,command,db.GetCounterOfRequestByStatus(index));
+		
+		break;
+		//End case
+		/**
+		 * @author EliaB
+		 * Logout user from server 
+		 * */
+		case LogOut:
+			if(client.isAlive())
+				try {
+					sendMessageToClient(client,command,true);
+					client.close();
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			
 			break;
 		default:
 			System.err.println("Error, undefine command [" + srMsg.getCommand() + "]");

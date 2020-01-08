@@ -2,11 +2,15 @@ package Controllers;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 import java.util.ResourceBundle;
 
+import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
+import Protocol.Command;
+import Protocol.MsgReturnType;
 import Utility.ControllerSwapper;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -99,6 +103,22 @@ public class AnalyticsGUIController implements Initializable {
 		
 		// chartSaReqestExecution.setTitle("Requests Status");
 		
+		/**
+		 * @author EliaB
+		 * get the data about requests from server for till today
+		 * */
+		
+		Client.getInstance().request(Command.GetCounterOfRequestsByStatus,3);
+		Client.addMessageRecievedFromServer("IssueRequestMessageReceieved", srMsg -> {
+			if (srMsg.getCommand() == Command.GetCounterOfRequestsByStatus) {
+				Map<String,Integer> result=(Map<String,Integer>)srMsg.getAttachedData()[0];
+				for(String r:result.keySet()) {
+					System.out.println(r+"-"+result.get(r));
+				}
+			}
+
+
+		});
 		Series<String, Number> s1 = new XYChart.Series<String, Number>();
 		Series<String, Number> s2 = new XYChart.Series<String, Number>();
 		Series<String, Number> s3 = new XYChart.Series<String, Number>();
@@ -106,7 +126,7 @@ public class AnalyticsGUIController implements Initializable {
 
 		s1.setName("Active");
 		s2.setName("Locked");
-		s3.setName("Closed");
+		s3.setName("Close");
 		s4.setName("Canceled");
 
 		Random rnd = new Random();

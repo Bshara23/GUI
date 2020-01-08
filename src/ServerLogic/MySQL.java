@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import Entities.*;
 import Protocol.PhaseType;
@@ -53,6 +55,7 @@ public class MySQL extends MySqlConnBase {
 
 		executeStatement("SELECT * FROM " + tableName, statment);
 	}
+	
 
 	/* get table column name by index */
 
@@ -860,6 +863,77 @@ public class MySQL extends MySqlConnBase {
 		executeStatement(query, prepS);
 
 		return results;
+	}
+	/**
+	 * @author EliaB
+	 * get counter of request with specific status
+	 * */
+	public Map<String,Integer> GetCounterOfRequestByStatus(int i) {
+		Map<String,Integer> results = new HashMap<>();
+		String query = "SELECT count(phaseID),p.status from icm.phase as p WHERE p.startingDate <=CURDATE() - INTERVAL "+i+" DAY AND p.timeOfCompletion <=CURDATE() - INTERVAL "+i+" DAY ;";
+		IStatement prepS = rs -> {
+
+		
+			try {
+
+				while(rs.next()) {
+						results.put(rs.getString(2),rs.getInt(1));
+						
+				
+				}
+				
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results;
+	}
+	/**
+	 * @author EliaB
+	 * update request description by id
+	 * */
+	public int updateRequestStatusByID(String RequestID,String status) {
+		String query = "update icm.changerequest set descriptionOfCurrentStateLT=? where requestID=?;";
+
+		IPreparedStatement prepS = ps -> {
+			try {
+
+				ps.setString(1,status);
+				ps.setString(2, RequestID);
+			
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		return executePreparedStatement(query, prepS);
+	}
+	/**
+	 * @author EliaB
+	 * update phase description by id
+	 * */
+	public int updatePhaseStatusByID(String PhaseID,String status) {
+		String query = "update icm.changerequest set status=? where phaseID=?;";
+
+		IPreparedStatement prepS = ps -> {
+			try {
+
+				ps.setString(1,status);
+				ps.setString(2, PhaseID);
+			
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		return executePreparedStatement(query, prepS);
 	}
 
 }
