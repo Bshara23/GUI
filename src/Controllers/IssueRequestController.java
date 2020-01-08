@@ -146,7 +146,7 @@ public class IssueRequestController implements Initializable {
 
 				Timestamp ts = Timestamp.valueOf(LocalDateTime.now());
 
-				ChangeRequest changeRequest = new ChangeRequest(reqestID, ClientGUI.userName, ts, ts, ts, comments,
+				ChangeRequest changeRequest = new ChangeRequest(reqestID, ClientGUI.systemUser.getUserName(), ts, ts, ts, comments,
 						reqDesc, descReqChange, descCurrState, relateInfoSys);
 
 				if (filesPaths.size() == 0) {

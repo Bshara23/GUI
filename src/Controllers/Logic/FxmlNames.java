@@ -15,7 +15,7 @@ public class FxmlNames {
 	public static final String LOG_IN = "LogIn.fxml";
 
 
-	public static final String REQUEST_DETAILS = "RequestDetails.fxml";
+	public static final String REQUEST_DETAILS = "RequestDetailsExaminerV2.fxml";
 	public static final String REQUEST_DETAILS_SUPERVISOR = "RequestDetailsSupervisorGUI.fxml";
 	public static final String REQUEST_DETAILS_EXAMINER = "RequestDetailsExaminer.fxml";
 	public static final String REQUEST_DETAILS_EXECUTIONER = "RequestDetailsExecutioner.fxml";

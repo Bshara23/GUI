@@ -3,6 +3,8 @@ package ServerLogic;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -45,7 +47,7 @@ public class Server extends AbstractServer {
 	private static ArrayList<VoidFunc> serverStartedEvents;
 	private static ArrayList<VoidFunc> serverStoppedEvents;
 	private static MySQL db;
-	//private static ExecutorService executorService;
+	// private static ExecutorService executorService;
 	static {
 
 		instance = new Server(5555);
@@ -101,7 +103,7 @@ public class Server extends AbstractServer {
 	// Initialize the client
 	public void initialize(int port, String username, String password, String schemaName, int poolSize) {
 
-		//executorService = Executors.newFixedThreadPool(poolSize);
+		// executorService = Executors.newFixedThreadPool(poolSize);
 
 		sqlException = false;
 		instance.setPort(port);
@@ -143,9 +145,8 @@ public class Server extends AbstractServer {
 		Command command = srMsg.getCommand();
 		switch (command) {
 
-		
 		case GetMyIssuedRequests:
-			
+
 			String forUsername = (String) srMsg.getAttachedData()[0];
 
 			int startingRow = (int) srMsg.getAttachedData()[1];
@@ -154,18 +155,17 @@ public class Server extends AbstractServer {
 			ArrayList<ChangeRequest> crs = db.getChangeRequests(forUsername, startingRow, size);
 
 			sendMessageToClient(client, command, crs);
-		
 
 			break;
-		
+
 		case GetMyIssuedRequestsCount:
-			
+
 			String countOfMyRequestsCondition = (String) srMsg.getAttachedData()[0];
 			int countOfMyIssuedRequests = db.getCountOf(ChangeRequest.getEmptyInstance(), countOfMyRequestsCondition);
 			sendMessageToClient(client, command, countOfMyIssuedRequests);
-			
+
 			break;
-			
+
 		case getPermissionsData:
 
 			String username23 = (String) srMsg.getAttachedData()[0];
@@ -210,7 +210,7 @@ public class Server extends AbstractServer {
 		case getCountOfPhasesTypes:
 
 			long empNumberForPhases = (long) srMsg.getAttachedData()[0];
-			
+
 			int cntSupervision = db.isEmployeeIsSupervisor(empNumberForPhases) ? 1 : 0;
 			int cntEvaluation = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Evaluation);
 			int cntDecision = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Decision);
@@ -308,6 +308,11 @@ public class Server extends AbstractServer {
 			result = 1;
 			result = db.insertObject(changeRequest); // TODO: make it return a boolean
 
+			// if the request was issued
+			if (result == 1) {
+				initIssueRequestProc();
+			}
+
 			sendBooleanResultMessage(client, command, result);
 
 			break;
@@ -328,6 +333,11 @@ public class Server extends AbstractServer {
 				result *= db.insertFile(file);
 			}
 
+			// if the request was issued
+			if (result == 1) {
+				initIssueRequestProc();
+			}
+
 			sendBooleanResultMessage(client, command, result);
 
 			break;
@@ -336,10 +346,10 @@ public class Server extends AbstractServer {
 
 			// TODO: fix in my requests list
 			PhaseType phaseType = (PhaseType) srMsg.getAttachedData()[0];
-			
+
 			switch (phaseType) {
 			case Supervision:
-				
+
 				ArrayList<ChangeRequest> requestsWithCurrentPhase = db.getChangeRequestWithCurrentPhase();
 
 				sendMessageToClient(client, command, phaseType, requestsWithCurrentPhase);
@@ -348,10 +358,8 @@ public class Server extends AbstractServer {
 			case Evaluation:
 			case Examination:
 			case Execution:
-			
 
 				long empNum = (long) srMsg.getAttachedData()[1];
-
 
 				ArrayList<ChangeRequest> crSupervision = db.getChangeRequestPhaseByEmployee(empNum, phaseType);
 
@@ -377,15 +385,66 @@ public class Server extends AbstractServer {
 
 	}
 
+	private void initIssueRequestProc() {
+
+		// Send a message to the supervisor
+		sendNewRequestIssuedMessageToSupervisor();
+
+		// add the request to the supervisor requests list
+		createPhase();
+
+		// Add notification to the supervisor connection if he is on
+		notifyUser();
+
+	}
+
+	private void notifyUser() {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void createPhase() {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void sendNewRequestIssuedMessageToSupervisor() {
+		
+		String subject = "Assign an evaluator";
+		String toUsername = db.getUsernameOfSupervisor();
+		String content = "Please confirm or assign an evalutor to the request";
+		sendUserMessage(subject, toUsername, content);
+	}
+
+	private void sendUserMessage(String subject, String toUsername, String content) {
+
+		Timestamp TimeOfNow = Timestamp.valueOf(LocalDateTime.now());
+		String from = "System"; // this should not be a normal employee, this is made for the server
+		Message msg = new Message(-1, subject, from, toUsername, content, false, TimeOfNow, false, false, false);
+
+		db.insertMessage(msg);
+		
+		
+		notifyUserNewMessages(toUsername);
+	}
+
+	private void notifyUserNewMessages(String toUsername) {
+		sendMessageToAllClients(Command.receivedNewMessage, toUsername);
+	}
+
 	private void sendMessageToClient(ConnectionToClient client, Command cmd, Object... objs) {
 		try {
 			client.sendToClient(new SRMessage(cmd, objs));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	private void sendMessageToAllClients(Command cmd, Object... objs) {
+		sendToAllClients(new SRMessage(cmd, objs));
+	}
+
+	
 	private void sendBooleanResultMessage(ConnectionToClient client, Command cmd, int result) {
 
 		if (result == 1) {

@@ -151,7 +151,7 @@ public class ListOfRequestsController implements Initializable {
 
 	private void getMyIssuedRequestsCount() {
 		Client.getInstance().requestWithListener(Command.GetMyIssuedRequestsCount, onGettingMyIssuedRequestsCount,
-				GET_COUNT_OF_REQUESTS, "`username`='" + ClientGUI.userName + "'");
+				GET_COUNT_OF_REQUESTS, "`username`='" + ClientGUI.systemUser.getUserName() + "'");
 	}
 
 	private SRMessageFunc onGettingMyIssuedRequestsCount = srMsg -> {
@@ -179,7 +179,7 @@ public class ListOfRequestsController implements Initializable {
 
 	private void getMyIssuedRequests() {
 		Client.getInstance().requestWithListener(Command.GetMyIssuedRequests, onGettingMyRequests,
-				GET_MY_ISSUED_REQUESTS, ClientGUI.userName, currentRowIndex, rowCountLimit);
+				GET_MY_ISSUED_REQUESTS, ClientGUI.systemUser.getUserName(), currentRowIndex, rowCountLimit);
 	}
 
 	private SRMessageFunc onGettingMyRequests = srMsg -> {
@@ -215,7 +215,7 @@ public class ListOfRequestsController implements Initializable {
 		switch (rType) {
 		case myRequests:
 
-			Client.getInstance().request(Command.GetMyRequests, new Object[] { ClientGUI.userName, rType });
+			Client.getInstance().request(Command.GetMyRequests, new Object[] { ClientGUI.systemUser.getUserName(), rType });
 			break;
 
 		default:

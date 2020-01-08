@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import Entities.*;
@@ -513,7 +515,7 @@ public class MySQL extends MySqlConnBase {
 
 		String query = "UPDATE `icm`.`message` SET `subject` = ?, `from` = ?, `to` = ?,"
 				+ " `messageContentLT` = ?, `hasBeenViewed` = ?, `sentAt` = ?,"
-				+ " `isStarred` = ?, `isRead` = ?, `isArchived` = ? WHERE (`messageID` = ?);";
+				+ " `isStarred` = ?, `isRead` = ?, `isArchived` = ?, `requestId` = ? WHERE (`messageID` = ?);";
 
 		IPreparedStatement prepS = ps -> {
 			try {
@@ -527,7 +529,8 @@ public class MySQL extends MySqlConnBase {
 				ps.setBoolean(7, msg.isStarred());
 				ps.setBoolean(8, msg.isRead());
 				ps.setBoolean(9, msg.isArchived());
-				ps.setLong(10, msg.getMessageID());
+				ps.setLong(10, msg.getRequestId());
+				ps.setLong(11, msg.getMessageID());
 
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -550,7 +553,7 @@ public class MySQL extends MySqlConnBase {
 
 					Message msg = new Message(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getString(4),
 							rs.getString(5), rs.getBoolean(6), rs.getTimestamp(7), rs.getBoolean(8), rs.getBoolean(9),
-							rs.getBoolean(10));
+							rs.getBoolean(10), rs.getLong(11));
 
 					res.add(msg);
 				}
@@ -583,7 +586,7 @@ public class MySQL extends MySqlConnBase {
 
 					Message cr = new Message(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getString(4),
 							rs.getString(5), rs.getBoolean(6), rs.getTimestamp(7), rs.getBoolean(8), rs.getBoolean(9),
-							rs.getBoolean(10));
+							rs.getBoolean(10), rs.getLong(11));
 
 					results.add(cr);
 				}
@@ -737,7 +740,7 @@ public class MySQL extends MySqlConnBase {
 			try {
 
 				if (rs.next()) {
-					
+
 					results.add(rs.getString(1));
 					results.add(rs.getString(2));
 				}
@@ -862,4 +865,65 @@ public class MySQL extends MySqlConnBase {
 		return results;
 	}
 
+	
+	public void insertMessage(Message msg) {
+
+		String query = "INSERT INTO `icm`.`message` (`subject`, `from`, `to`, `messageContentLT`, "
+				+ "`hasBeenViewed`, `sentAt`, `isStarred`, `isRead`, `isArchived`, `requestId`)"
+				+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);\r\n";
+		try {
+
+			PreparedStatement ps = conn.prepareStatement(query);
+
+			ps.setString(1, msg.getSubject());
+			ps.setString(2, msg.getFrom());
+			ps.setString(3, msg.getTo());
+			ps.setString(4, msg.getMessageContentLT());
+
+			ps.setBoolean(5, msg.isHasBeenViewed());
+
+			ps.setTimestamp(6, msg.getSentAt());
+
+			ps.setBoolean(7, msg.isStarred());
+			ps.setBoolean(8, msg.isRead());
+			ps.setBoolean(9, msg.isArchived());
+			ps.setLong(10, msg.getRequestId());
+
+			ps.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String getUsernameOfSupervisor() {
+		String query = "SELECT su.userName FROM icm.supervisor as s\r\n"
+				+ "inner join icm.employee as e on e.empNumber = s.empNumber\r\n"
+				+ "inner join icm.systemuser as su on su.userName = e.userName;";
+
+		ArrayList<String> results = new ArrayList<String>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(rs.getString(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() == 1 ? results.get(0) : "Supervisor not assigned";
+	}
+
+	public static void main(String[] args) {
+
+		MySQL db = new MySQL("root", "Aa123456", "icm", null);
+
+		System.out.println(db.getUsernameOfSupervisor());
+
+	}
 }

@@ -14,150 +14,134 @@
 <AnchorPane prefHeight="876.0" prefWidth="1348.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.RequestDetailsExaminerGUIController">
    <children>
       <TextArea layoutX="-150.0" layoutY="26.0" prefHeight="0.0" prefWidth="0.0" />
-      <Text fill="#6f6f6f" layoutX="522.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Examine" textAlignment="CENTER" wrappingWidth="323.13671875">
-         <font>
-            <Font size="35.0" />
-         </font>
-      </Text>
-      <VBox layoutX="336.0" layoutY="99.41796875" spacing="35.0">
+      <HBox alignment="TOP_CENTER" layoutY="9.0">
          <children>
-            <VBox fx:id="vbLoadRequestDetails" spacing="15.0">
+            <Canvas fx:id="canvasRight" height="865.0" width="325.0" />
+            <VBox alignment="TOP_CENTER" spacing="20.0" HBox.hgrow="NEVER">
                <children>
-                  <Text fill="#515050" strokeType="OUTSIDE" strokeWidth="0.0" text="Request Details">
+                  <Text fill="#6f6f6f" strokeType="OUTSIDE" strokeWidth="0.0" text="Examine" textAlignment="CENTER" wrappingWidth="323.13671875">
                      <font>
-                        <Font size="20.0" />
+                        <Font size="35.0" />
                      </font>
                   </Text>
-                  <HBox id="container" prefHeight="197.0" prefWidth="696.0" stylesheets="@blueBorder.css">
+                  <VBox spacing="35.0">
                      <children>
-                        <VBox prefHeight="120.0" prefWidth="145.0" spacing="15.0">
+                        <VBox fx:id="vbLoadRequestDetails" spacing="15.0">
                            <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Request ID:" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Relate information system:" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Issued by: " />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Issue date: " />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description:" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Comments: " />
+                              <HBox fx:id="hbPressToConfirm1" alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="330.0" spacing="10.0">
+                                 <children>
+                                    <HBox fx:id="hbPressRequestDetails" alignment="CENTER" spacing="10.0">
+                                       <children>
+                                          <ImageView fitHeight="30.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../Images/Table/icons8_view_details_50px.png" />
+                                             </image>
+                                          </ImageView>
+                                          <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="See Request Details" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="5.0" />
+                                       </padding>
+                                    </HBox>
+                                 </children>
+                              </HBox>
                            </children>
-                           <padding>
-                              <Insets top="5.0" />
-                           </padding>
                         </VBox>
-                        <VBox prefHeight="120.0" prefWidth="256.0" spacing="15.0">
+                        <VBox spacing="15.0">
                            <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="77" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Moodle" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Dwayne (You)" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="5/5/2020" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The request is regarding the missleading info..." />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="This is an example comment." />
+                              <Text fill="#515050" strokeType="OUTSIDE" strokeWidth="0.0" text="Execution Details">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Text>
+                              <HBox id="container" prefHeight="78.0" spacing="15.0" stylesheets="@blueBorder.css">
+                                 <children>
+                                    <VBox prefHeight="233.0" prefWidth="186.0" spacing="15.0">
+                                       <children>
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Execution location" />
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Execution Description" />
+                                       </children>
+                                       <padding>
+                                          <Insets top="5.0" />
+                                       </padding>
+                                    </VBox>
+                                    <VBox prefHeight="79.0" prefWidth="199.0" spacing="15.0">
+                                       <children>
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The colleage database center" />
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The execution has been made in sec..." />
+                                       </children>
+                                       <padding>
+                                          <Insets top="5.0" />
+                                       </padding>
+                                    </VBox>
+                                    <VBox prefHeight="214.0" prefWidth="81.0" spacing="15.0">
+                                       <children>
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" />
+                                          <Text fill="#3076ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Click here to view more." underline="true" />
+                                       </children>
+                                       <padding>
+                                          <Insets top="5.0" />
+                                       </padding>
+                                    </VBox>
+                                 </children>
+                                 <padding>
+                                    <Insets left="5.0" top="5.0" />
+                                 </padding>
+                              </HBox>
                            </children>
-                           <padding>
-                              <Insets top="5.0" />
-                           </padding>
                         </VBox>
-                        <VBox prefHeight="120.0" prefWidth="256.0" spacing="15.0">
+                        <VBox spacing="15.0">
                            <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
-                              <Text fill="#3076ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Click here to view more." underline="true" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
+                              <Text fill="#515050" strokeType="OUTSIDE" strokeWidth="0.0" text="Examination">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Text>
+                              <AnchorPane id="container" stylesheets="@blueBorder.css">
+                                 <children>
+                                    <HBox alignment="CENTER" layoutX="14.0" layoutY="9.0" spacing="15.0">
+                                       <children>
+                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Does the execution answers the request requirements?" />
+                                          <HBox fx:id="hbPressToConfirm" alignment="CENTER_LEFT" prefHeight="27.0" prefWidth="145.0" spacing="10.0">
+                                             <children>
+                                                <ImageView fitHeight="30.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../Images/Request%20Details/icons8_checked_checkbox_50px.png" />
+                                                   </image>
+                                                </ImageView>
+                                                <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Yes, Press to confirm" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </HBox>
+                                    <Text layoutX="14.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No, Send failure details instead:" />
+                                    <TextArea fx:id="taFailureDetails" layoutX="14.0" layoutY="84.0" prefHeight="69.0" prefWidth="672.0" promptText="Enter failure details here..." />
+                                    <HBox fx:id="hbPressToSendFailureDetails" alignment="CENTER_LEFT" layoutX="611.0" layoutY="159.0" prefHeight="30.0" prefWidth="73.0" spacing="10.0">
+                                       <children>
+                                          <ImageView fitHeight="30.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../Images/Request%20Details/icons8_upload_mail_50px.png" />
+                                             </image>
+                                          </ImageView>
+                                          <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Send" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </AnchorPane>
                            </children>
-                           <padding>
-                              <Insets top="5.0" />
-                           </padding>
                         </VBox>
                      </children>
-                     <padding>
-                        <Insets left="5.0" />
-                     </padding>
-                  </HBox>
+                  </VBox>
                </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets top="15.0" />
+               </padding>
             </VBox>
-            <VBox spacing="15.0">
-               <children>
-                  <Text fill="#515050" strokeType="OUTSIDE" strokeWidth="0.0" text="Execution Details">
-                     <font>
-                        <Font size="20.0" />
-                     </font>
-                  </Text>
-                  <HBox id="container" prefHeight="78.0" prefWidth="696.0" spacing="15.0" stylesheets="@blueBorder.css">
-                     <children>
-                        <VBox prefHeight="233.0" prefWidth="186.0" spacing="15.0">
-                           <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Execution location" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Execution Description" />
-                           </children>
-                           <padding>
-                              <Insets top="5.0" />
-                           </padding>
-                        </VBox>
-                        <VBox prefHeight="79.0" prefWidth="199.0" spacing="15.0">
-                           <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The colleage database center" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The execution has been made in sec..." />
-                           </children>
-                           <padding>
-                              <Insets top="5.0" />
-                           </padding>
-                        </VBox>
-                        <VBox prefHeight="214.0" prefWidth="81.0" spacing="15.0">
-                           <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" />
-                              <Text fill="#3076ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Click here to view more." underline="true" />
-                           </children>
-                           <padding>
-                              <Insets top="5.0" />
-                           </padding>
-                        </VBox>
-                     </children>
-                     <padding>
-                        <Insets left="5.0" top="5.0" />
-                     </padding>
-                  </HBox>
-               </children>
-            </VBox>
-            <VBox spacing="15.0">
-               <children>
-                  <Text fill="#515050" strokeType="OUTSIDE" strokeWidth="0.0" text="Examination">
-                     <font>
-                        <Font size="20.0" />
-                     </font>
-                  </Text>
-                  <AnchorPane id="container" prefHeight="200.0" prefWidth="696.0" stylesheets="@blueBorder.css">
-                     <children>
-                        <Text layoutX="14.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Does the execution answers the request requirements?" />
-                        <HBox fx:id="hbPressToConfirm" alignment="CENTER_LEFT" layoutX="316.0" layoutY="9.0" prefHeight="27.0" prefWidth="145.0" spacing="10.0">
-                           <children>
-                              <ImageView fitHeight="30.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../Images/Request%20Details/icons8_checked_checkbox_50px.png" />
-                                 </image>
-                              </ImageView>
-                              <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Yes, Press to confirm" />
-                           </children>
-                        </HBox>
-                        <Text layoutX="14.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No, Send failure details instead:" />
-                        <TextArea fx:id="taFailureDetails" layoutX="14.0" layoutY="84.0" prefHeight="69.0" prefWidth="672.0" promptText="Enter failure details here..." />
-                        <HBox fx:id="hbPressToSendFailureDetails" alignment="CENTER_LEFT" layoutX="611.0" layoutY="159.0" prefHeight="30.0" prefWidth="73.0" spacing="10.0">
-                           <children>
-                              <ImageView fitHeight="30.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../Images/Request%20Details/icons8_upload_mail_50px.png" />
-                                 </image>
-                              </ImageView>
-                              <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Send" />
-                           </children>
-                        </HBox>
-                     </children>
-                  </AnchorPane>
-               </children>
-            </VBox>
+            <Canvas fx:id="canvasLeft" height="865.0" width="325.0" />
          </children>
-      </VBox>
-      <Canvas fx:id="canvasRight" height="865.0" layoutY="10.0" width="305.0" />
-      <Canvas fx:id="canvasLeft" height="865.0" layoutX="1067.0" layoutY="9.0" width="281.0" />
+      </HBox>
    </children>
 </AnchorPane>

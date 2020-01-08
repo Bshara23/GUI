@@ -20,7 +20,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-public class RequestDetailsExaminerGUIController implements Initializable {
+public class RequestDetailsGUIControllerV2 implements Initializable {
 
 	@FXML
 	private Canvas canvasRight;
@@ -84,7 +84,7 @@ public class RequestDetailsExaminerGUIController implements Initializable {
 		hbPressRequestDetails.setOnMousePressed(event -> {
 
 			System.out.println("hbPressRequestDetails");
-			NavigationBar.next("Request Details", FxmlNames.REQUEST_DETAILS);
+			NavigationBar.next("Request Details", FxmlNames.EMPLOYEES);
 		});
 
 	}

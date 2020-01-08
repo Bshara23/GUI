@@ -279,7 +279,7 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 			if (currentRowIndex + rowCountLimit < countOfRequests) {
 				currentRowIndex += rowCountLimit;
-				Client.getInstance().request(Command.GetMyRequests, ClientGUI.userName, PhaseType.myRequests,
+				Client.getInstance().request(Command.GetMyRequests, ClientGUI.systemUser.getUserName(), PhaseType.myRequests,
 						currentRowIndex, rowCountLimit);
 				txtRequestsCount.setText(
 						(currentRowIndex + 1) + "-" + (currentRowIndex + rowCountLimit) + " of " + countOfRequests);
@@ -291,7 +291,7 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 			if (currentRowIndex - rowCountLimit >= 0) {
 				currentRowIndex -= rowCountLimit;
-				Client.getInstance().request(Command.GetMyRequests, ClientGUI.userName, PhaseType.myRequests,
+				Client.getInstance().request(Command.GetMyRequests, ClientGUI.systemUser.getUserName(), PhaseType.myRequests,
 						currentRowIndex, rowCountLimit);
 
 				txtRequestsCount.setText(
@@ -312,8 +312,6 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 		Client.addMessageRecievedFromServer(GET_COUNT_OF_PHASES_TYPES, srMsg -> {
 
 			if (srMsg.getCommand() == Command.getCountOfPhasesTypes) {
-
-				System.out.println("dsadasd");
 
 				int cntSupervision = (int) srMsg.getAttachedData()[0];
 				int cntEvaluation = (int) srMsg.getAttachedData()[1];

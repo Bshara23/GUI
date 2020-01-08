@@ -8,12 +8,15 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
+import javafx.scene.shape.Circle;
 
 import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
+import Entities.Employee;
+import Entities.SystemUser;
 import Protocol.Command;
 import Protocol.PhaseType;
 import Utility.Func;
@@ -87,6 +90,9 @@ public class ClientGUI extends Application implements Initializable {
 	@FXML
 	private HBox hbNavigator;
 
+	@FXML
+	private Circle cNewMessageMark;
+
 	private AnchorPane selectedMenuElement;
 
 	private ArrayList<Node> apList;
@@ -103,8 +109,14 @@ public class ClientGUI extends Application implements Initializable {
 	// TODO: make this dynamic
 	public static long myID = 5;
 
-	public static String userName = "username10";
+	public static SystemUser systemUser = new SystemUser("userName10", "123", "eee", "Dwayne", "Johnson", "052-2862671",
+			true);
+
 	public static long empNumber = 10;
+	public static boolean isManager = true;
+	public static boolean isSupervisor = true;
+	public static boolean isCommitteeMember = true;
+	public static boolean isComitteeHead = true;
 
 	private static HashMap<String, VoidFunc> onMenuBtnClickedEvents;
 	static {
@@ -156,9 +168,6 @@ public class ClientGUI extends Application implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		System.out.println("Init: ClientGUI");
-
-		
-		
 		NavigationBar.imgNavigationBarArrow = imgNavigationBarArrow;
 		NavigationBar.navigationBar = hbNavigator;
 		NavigationBar.apMainContent = apMainContent;
@@ -220,7 +229,27 @@ public class ClientGUI extends Application implements Initializable {
 			}
 		});
 
-		 allowMenuButtonsByPermissions();
+		Client.addMessageRecievedFromServer("NewMessageReceived", srMsg -> {
+			if (srMsg.getCommand() == Command.receivedNewMessage) {
+				String username = (String) srMsg.getAttachedData()[0];
+
+				// If this user got this message then
+				if (username.toLowerCase().compareTo(systemUser.getUserName().toLowerCase()) == 0) {
+					addNewMessageMark();
+				}
+			}
+		});
+		removeNewMessageMark();
+
+		allowMenuButtonsByPermissions();
+	}
+
+	private void addNewMessageMark() {
+		cNewMessageMark.setOpacity(1);
+	}
+
+	private void removeNewMessageMark() {
+		cNewMessageMark.setOpacity(0);
 	}
 
 	private void allowMenuButtonsByPermissions() {
@@ -263,14 +292,14 @@ public class ClientGUI extends Application implements Initializable {
 								if (isManager) {
 									newNodesForMenu.add(node);
 								}
-								
+
 								break;
 							case "Employees":
 								// Add only if the user is the manager
 								if (isManager) {
 									newNodesForMenu.add(node);
 								}
-								
+
 								break;
 							case "Messages":
 								newNodesForMenu.add(node);
@@ -281,10 +310,11 @@ public class ClientGUI extends Application implements Initializable {
 
 								break;
 							default:
-								System.err.println("Error, case not defined! [allowMenuButtonsByPermissions] at " + getClass().getName());
+								System.err.println("Error, case not defined! [allowMenuButtonsByPermissions] at "
+										+ getClass().getName());
 								break;
 							}
-						}else {
+						} else {
 							// Add the home button to all users
 							newNodesForMenu.add(node);
 						}
@@ -297,11 +327,10 @@ public class ClientGUI extends Application implements Initializable {
 				// Auto delete after first use
 				Client.removeMessageRecievedFromServer(ALLOW_EXISTING_TABS_ONLY_F_MAIN_MENU);
 			}
-
 		};
 
 		Client.getInstance().requestWithListener(Command.getPermissionsData, allowExistingTabsOnlyF,
-				ALLOW_EXISTING_TABS_ONLY_F_MAIN_MENU, ClientGUI.userName);
+				ALLOW_EXISTING_TABS_ONLY_F_MAIN_MENU, ClientGUI.systemUser.getUserName());
 
 	}
 
@@ -317,14 +346,13 @@ public class ClientGUI extends Application implements Initializable {
 
 	@FXML
 	void onMessagesPress(MouseEvent event) {
-
+		removeNewMessageMark();
 		commondMenuBehavior(apBtnMessages, "Messages", FxmlNames.MESSAGES);
 	}
 
 	@FXML
 	void onMyRequestsPress(MouseEvent event) {
 
-		
 		commondMenuBehavior(apBtnMyRequests, "My Requests", FxmlNames.REQUESTS_LIST);
 	}
 

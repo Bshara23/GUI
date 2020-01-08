@@ -19,6 +19,7 @@ public class Message extends SqlObject implements Serializable {
 	public boolean hasBeenViewed;
 	public Timestamp sentAt;
 	public boolean isStarred, isRead, isArchived;
+	public long requestId;
 
 	public Message(long messageID, String subject, String from, String to, String messageContentLT,
 			boolean hasBeenViewed, Timestamp sentAt, boolean isStarred, boolean isRead, boolean isArchived) {
@@ -36,6 +37,37 @@ public class Message extends SqlObject implements Serializable {
 	}
 
 	
+
+	public Message(long messageID, String subject, String from, String to, String messageContentLT,
+			boolean hasBeenViewed, Timestamp sentAt, boolean isStarred, boolean isRead, boolean isArchived,
+			long requestId) {
+		super();
+		this.messageID = messageID;
+		this.subject = subject;
+		this.from = from;
+		this.to = to;
+		this.messageContentLT = messageContentLT;
+		this.hasBeenViewed = hasBeenViewed;
+		this.sentAt = sentAt;
+		this.isStarred = isStarred;
+		this.isRead = isRead;
+		this.isArchived = isArchived;
+		this.requestId = requestId;
+	}
+
+
+
+	public long getRequestId() {
+		return requestId;
+	}
+
+
+
+	public void setRequestId(long requestId) {
+		this.requestId = requestId;
+	}
+
+
 
 	public boolean isStarred() {
 		return isStarred;

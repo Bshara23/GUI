@@ -195,7 +195,7 @@ public class ListOfMessagesController implements Initializable {
 			if (currentRowIndex + rowCountLimit < countOfMessages) {
 				currentRowIndex += rowCountLimit;
 				Client.getInstance().requestWithListener(Command.getMessagesPrimary, getMessagesPrimaryFunc,
-						GET_MESSAGES_PRIMARY_LIST_OF_MESSAGES, ClientGUI.userName, currentRowIndex, rowCountLimit);
+						GET_MESSAGES_PRIMARY_LIST_OF_MESSAGES, ClientGUI.systemUser.getUserName(), currentRowIndex, rowCountLimit);
 				txtMessagesCount.setText(
 						(currentRowIndex + 1) + "-" + (currentRowIndex + rowCountLimit) + " of " + countOfMessages);
 
@@ -207,7 +207,7 @@ public class ListOfMessagesController implements Initializable {
 			if (currentRowIndex - rowCountLimit >= 0) {
 				currentRowIndex -= rowCountLimit;
 				Client.getInstance().requestWithListener(Command.getMessagesPrimary, getMessagesPrimaryFunc,
-						GET_MESSAGES_PRIMARY_LIST_OF_MESSAGES, ClientGUI.userName, currentRowIndex, rowCountLimit);
+						GET_MESSAGES_PRIMARY_LIST_OF_MESSAGES, ClientGUI.systemUser.getUserName(), currentRowIndex, rowCountLimit);
 
 				txtMessagesCount.setText(
 						(currentRowIndex + 1) + "-" + (currentRowIndex + rowCountLimit) + " of " + countOfMessages);
@@ -216,7 +216,7 @@ public class ListOfMessagesController implements Initializable {
 		});
 
 		Client.getInstance().requestWithListener(Command.countOfObjects, countOfObjectsFunc, GET_COUNT_OF_MESSAGES,
-				"`to`='" + ClientGUI.userName + "'", Message.getEmptyInstance());
+				"`to`='" + ClientGUI.systemUser.getUserName() + "'", Message.getEmptyInstance());
 
 	}
 
@@ -244,7 +244,7 @@ public class ListOfMessagesController implements Initializable {
 
 			if (countOfMessages > 0) {
 				Client.getInstance().requestWithListener(Command.getMessagesPrimary, getMessagesPrimaryFunc,
-						GET_MESSAGES_PRIMARY_LIST_OF_MESSAGES, ClientGUI.userName, currentRowIndex, rowCountLimit);
+						GET_MESSAGES_PRIMARY_LIST_OF_MESSAGES, ClientGUI.systemUser.getUserName(), currentRowIndex, rowCountLimit);
 			} else {
 				loadEmptyMessagesWindow();
 			}
@@ -268,7 +268,7 @@ public class ListOfMessagesController implements Initializable {
 							"Server was not able to delete the message!", null);
 				}
 				Client.getInstance().requestWithListener(Command.countOfObjects, countOfObjectsFunc,
-						GET_COUNT_OF_MESSAGES, "`to`='" + ClientGUI.userName + "'", Message.getEmptyInstance());
+						GET_COUNT_OF_MESSAGES, "`to`='" + ClientGUI.systemUser.getUserName() + "'", Message.getEmptyInstance());
 
 				Client.removeMessageRecievedFromServer(MESSAGES_DELETED_LIST_OF_MESSAGES_RESPONSE);
 			}

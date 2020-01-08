@@ -32,6 +32,6 @@ public enum Command {
 
 	debug_simulateBigCalculations, getCountOfPhasesTypes, getPhasesOfRequestWithTimeExtensionsIfPossible,
 	getSystemUserByRequest, getEmployeeByEmployeeNumber, getFirstLastName, getFullNameByUsername, getPermissionsData,
-	GetMyIssuedRequestsCount, GetMyIssuedRequests,
+	GetMyIssuedRequestsCount, GetMyIssuedRequests, SendExaminerReportOfFailures, receivedNewMessage,
 
 }
