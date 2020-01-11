@@ -7,30 +7,22 @@ import java.time.LocalDate;
 
 public class PhaseTimeExtensionRequest extends SqlObject implements Serializable {
 
-	private static PhaseTimeExtensionRequest emptyInstance = new PhaseTimeExtensionRequest(0, null, null);
+	private static PhaseTimeExtensionRequest emptyInstance = new PhaseTimeExtensionRequest(0, 0, 0, null);
 
 	public static PhaseTimeExtensionRequest getEmptyInstance() {
 		return emptyInstance;
 	}
 
 	public long phaseID;
-	public Timestamp requestedTime;
+	public int requestedTimeInDays, requestedTimeInHours;
 	public String description;
 
-	
-
-	public PhaseTimeExtensionRequest(long phaseID, Timestamp requestedTime, String description) {
+	public PhaseTimeExtensionRequest(long phaseID, int requestedTimeInDays, int requestedTimeInHours,
+			String description) {
 		super();
 		this.phaseID = phaseID;
-		this.requestedTime = requestedTime;
-		this.description = description;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
+		this.requestedTimeInDays = requestedTimeInDays;
+		this.requestedTimeInHours = requestedTimeInHours;
 		this.description = description;
 	}
 
@@ -42,12 +34,32 @@ public class PhaseTimeExtensionRequest extends SqlObject implements Serializable
 		this.phaseID = phaseID;
 	}
 
-	public Timestamp getRequestedTime() {
-		return requestedTime;
+	public int getRequestedTimeInDays() {
+		return requestedTimeInDays;
 	}
 
-	public void setRequestedTime(Timestamp requestedTime) {
-		this.requestedTime = requestedTime;
+	public void setRequestedTimeInDays(int requestedTimeInDays) {
+		this.requestedTimeInDays = requestedTimeInDays;
+	}
+
+	public int getRequestedTimeInHours() {
+		return requestedTimeInHours;
+	}
+
+	public void setRequestedTimeInHours(int requestedTimeInHours) {
+		this.requestedTimeInHours = requestedTimeInHours;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public static void setEmptyInstance(PhaseTimeExtensionRequest emptyInstance) {
+		PhaseTimeExtensionRequest.emptyInstance = emptyInstance;
 	}
 
 	@Override
@@ -88,11 +100,11 @@ public class PhaseTimeExtensionRequest extends SqlObject implements Serializable
 
 	@Override
 	public String toString() {
-		return "PhaseTimeExtensionRequest [phaseID=" + phaseID + ", requestedTime=" + requestedTime + ", description="
-				+ description + "]";
+		return "PhaseTimeExtensionRequest [phaseID=" + phaseID + ", requestedTimeInDays=" + requestedTimeInDays
+				+ ", requestedTimeInHours=" + requestedTimeInHours + ", description=" + description + "]";
 	}
-	
-	
-	
+
+
+
 
 }

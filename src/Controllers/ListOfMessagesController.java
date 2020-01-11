@@ -53,6 +53,8 @@ public class ListOfMessagesController implements Initializable {
 
 	private static final String GET_MESSAGES_PRIMARY_LIST_OF_MESSAGES = "getMessagesPrimaryListOfMessages";
 
+	public static Message selectedMessage;
+
 	@FXML
 	private ImageView imgSearch;
 

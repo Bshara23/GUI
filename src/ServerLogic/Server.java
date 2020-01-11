@@ -20,12 +20,14 @@ import Entities.Phase;
 
 import Protocol.Command;
 import Protocol.MsgReturnType;
+import Protocol.PhaseStatus;
 import Protocol.PhaseType;
 import Protocol.SRMessage;
 import ServerLogic.UtilityInterfaces.ClientFunc;
 import ServerLogic.UtilityInterfaces.ClientThrowableFunc;
 import ServerLogic.UtilityInterfaces.ObjectClientFunc;
 import ServerLogic.UtilityInterfaces.ThrowableFunc;
+import Utility.DateUtil;
 import Utility.VoidFunc;
 import javafx.application.Platform;
 import ocsf.server.AbstractServer;
@@ -34,6 +36,7 @@ import Protocol.SeriObject;
 
 public class Server extends AbstractServer {
 
+	private static final int DEFAULT_EVALUATOR_EMP_NUMBER = 10;
 	private boolean sqlException;
 	public static final int DEFAULT_PORT = 5555;
 	private static Server instance;
@@ -144,6 +147,83 @@ public class Server extends AbstractServer {
 
 		Command command = srMsg.getCommand();
 		switch (command) {
+
+		case rejectPhaseTimeExtensionSupervisor:
+			
+			Phase phaseRTE2 = (Phase) srMsg.getAttachedData()[0];
+
+			// delete the time extension from the database
+			db.deleteObject(phaseRTE2.getPhaseTimeExtensionRequest());
+
+			// send a message of confirmation to the time extension requester
+			String subject1 = "Time extension rejected";
+			String toUsername1 = db.getEmployeeByEmpNumber(phaseRTE2.getEmpNumber()).getUserName();
+			String content1 = "Your time extension for the request [id:" + phaseRTE2.getRequestID()
+					+ "] has been rejected!";
+			sendUserMessage(subject1, toUsername1, content1, -1, -1);
+
+			// Notify the requester for a new treatment requests update
+			notifyEmployeeTreatmentRequestsUpdated(phaseRTE2.getEmpNumber());
+
+			// send a confirmation message
+			sendMessageToClient(client, command, true);
+
+			break;
+
+		case acceptPhaseTimeExtensionSupervisor:
+
+			Phase phaseRTE = (Phase) srMsg.getAttachedData()[0];
+
+			int addedDays = phaseRTE.getPhaseTimeExtensionRequest().getRequestedTimeInDays();
+			int addedHours = phaseRTE.getPhaseTimeExtensionRequest().getRequestedTimeInDays();
+
+			// add the time to the request
+			Timestamp newDeadline = DateUtil.add(phaseRTE.getDeadline(), addedDays, addedHours);
+			phaseRTE.setDeadline(newDeadline);
+
+			// update the request time
+			db.updateByObject(phaseRTE);
+
+//			// delete the time extension from the database
+//			db.deleteObject(phaseRTE.getPhaseTimeExtensionRequest());
+
+			// send a message of confirmation to the time extension requester
+			String subject = "Time extension accepted";
+			String toUsername = db.getEmployeeByEmpNumber(phaseRTE.getEmpNumber()).getUserName();
+			String content = "Your time extension for the request [id:" + phaseRTE.getRequestID()
+					+ "] has been accepted!";
+			
+			sendUserMessage(subject, toUsername, content, -1, -1);
+
+			// Notify the requester for a new treatment requests update
+			notifyEmployeeTreatmentRequestsUpdated(phaseRTE.getEmpNumber());
+
+			// send a confirmation message
+			sendMessageToClient(client, command, true);
+
+			break;
+
+		case getChangeRequestFromMessagePage:
+
+			long requestID = (long) srMsg.getAttachedData()[0];
+
+			System.out.println(requestID);
+
+			ChangeRequest cr2222 = db.getChangeRequestById(requestID);
+
+			sendMessageToClient(client, command, cr2222);
+
+			break;
+
+		case checkIfPhaseIsWaiting:
+
+			long phaseID = (long) srMsg.getAttachedData()[0];
+
+			boolean isWaiting = db.isPhaseStatus(phaseID, PhaseStatus.Waiting);
+
+			sendMessageToClient(client, command, isWaiting);
+
+			break;
 
 		case GetMyIssuedRequests:
 
@@ -310,7 +390,7 @@ public class Server extends AbstractServer {
 
 			// if the request was issued
 			if (result == 1) {
-				initIssueRequestProc();
+				initIssueRequestProc(changeRequest);
 			}
 
 			sendBooleanResultMessage(client, command, result);
@@ -335,7 +415,7 @@ public class Server extends AbstractServer {
 
 			// if the request was issued
 			if (result == 1) {
-				initIssueRequestProc();
+				initIssueRequestProc(changeRequestWithFiles);
 			}
 
 			sendBooleanResultMessage(client, command, result);
@@ -385,51 +465,46 @@ public class Server extends AbstractServer {
 
 	}
 
-	private void initIssueRequestProc() {
+	private void initIssueRequestProc(ChangeRequest cr) {
+
+		long nextPhaseId = db.getNewMaxID(Phase.getEmptyInstance());
+		long empNumber = DEFAULT_EVALUATOR_EMP_NUMBER;
+		Phase phase = new Phase(nextPhaseId, cr.getRequestID(), PhaseType.Evaluation.name(), PhaseStatus.Waiting_To_Set_Evaluator.name(),
+				empNumber, DateUtil.NA, DateUtil.NA, DateUtil.NA, DateUtil.now(), false);
+		db.insertObject(phase);
 
 		// Send a message to the supervisor
-		sendNewRequestIssuedMessageToSupervisor();
-
-		// add the request to the supervisor requests list
-		createPhase();
-
-		// Add notification to the supervisor connection if he is on
-		notifyUser();
+		sendNewRequestIssuedMessageToSupervisor(cr.getRequestID(), nextPhaseId);
 
 	}
 
-	private void notifyUser() {
-		// TODO Auto-generated method stub
+	private void sendNewRequestIssuedMessageToSupervisor(long reqId, long phaseId) {
 
-	}
-
-	private void createPhase() {
-		// TODO Auto-generated method stub
-
-	}
-
-	private void sendNewRequestIssuedMessageToSupervisor() {
-		
 		String subject = "Assign an evaluator";
 		String toUsername = db.getUsernameOfSupervisor();
 		String content = "Please confirm or assign an evalutor to the request";
-		sendUserMessage(subject, toUsername, content);
+		sendUserMessage(subject, toUsername, content, reqId, phaseId);
 	}
 
-	private void sendUserMessage(String subject, String toUsername, String content) {
+	private void sendUserMessage(String subject, String toUsername, String content, long reqId, long phaseId) {
 
-		Timestamp TimeOfNow = Timestamp.valueOf(LocalDateTime.now());
 		String from = "System"; // this should not be a normal employee, this is made for the server
-		Message msg = new Message(-1, subject, from, toUsername, content, false, TimeOfNow, false, false, false);
+		Message msg = new Message(-1, subject, from, toUsername, content, false, DateUtil.now(), false, false, false,
+				reqId, phaseId);
 
+		System.out.println("Send this message: ");
+		System.out.println(msg);
 		db.insertMessage(msg);
-		
-		
+
 		notifyUserNewMessages(toUsername);
 	}
 
 	private void notifyUserNewMessages(String toUsername) {
 		sendMessageToAllClients(Command.receivedNewMessage, toUsername);
+	}
+
+	private void notifyEmployeeTreatmentRequestsUpdated(long toEmpNum) {
+		sendMessageToAllClients(Command.receivedNewOrUpdateRequests, toEmpNum);
 	}
 
 	private void sendMessageToClient(ConnectionToClient client, Command cmd, Object... objs) {
@@ -444,7 +519,6 @@ public class Server extends AbstractServer {
 		sendToAllClients(new SRMessage(cmd, objs));
 	}
 
-	
 	private void sendBooleanResultMessage(ConnectionToClient client, Command cmd, int result) {
 
 		if (result == 1) {

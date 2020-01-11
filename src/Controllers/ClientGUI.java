@@ -93,6 +93,9 @@ public class ClientGUI extends Application implements Initializable {
 	@FXML
 	private Circle cNewMessageMark;
 
+	@FXML
+	private Circle cNewOrUpdateRequestsMark;
+
 	private AnchorPane selectedMenuElement;
 
 	private ArrayList<Node> apList;
@@ -239,9 +242,32 @@ public class ClientGUI extends Application implements Initializable {
 				}
 			}
 		});
+
+		Client.addMessageRecievedFromServer("receivedNewOrUpdateRequests", srMsg -> {
+			if (srMsg.getCommand() == Command.receivedNewOrUpdateRequests) {
+				String username = (String) srMsg.getAttachedData()[0];
+
+				// If this user got this message then
+				if (username.toLowerCase().compareTo(systemUser.getUserName().toLowerCase()) == 0) {
+					addNewOrUpdateRequestsMark();
+				}
+			}
+		});
+
+		removeNewOrUpdateRequestsMark();
+
 		removeNewMessageMark();
 
 		allowMenuButtonsByPermissions();
+	}
+
+	private void addNewOrUpdateRequestsMark() {
+		cNewOrUpdateRequestsMark.setOpacity(1);
+	}
+
+	private void removeNewOrUpdateRequestsMark() {
+		cNewOrUpdateRequestsMark.setOpacity(0);
+
 	}
 
 	private void addNewMessageMark() {
@@ -382,7 +408,7 @@ public class ClientGUI extends Application implements Initializable {
 
 	@FXML
 	void onRequestTreatmentPress(MouseEvent event) {
-
+		removeNewOrUpdateRequestsMark();
 		commondMenuBehavior(apBtnMyRequests, "Requests Treatment", FxmlNames.LIST_OF_REQUESTS_FOR_TREATMENT);
 
 	}

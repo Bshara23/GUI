@@ -1,6 +1,9 @@
 package Entities;
 
 import java.lang.reflect.Field;
+import java.sql.Timestamp;
+
+import Utility.DateUtil;
 
 public abstract class SqlObject {
 
@@ -252,9 +255,24 @@ public abstract class SqlObject {
 
 	private String fieldValueDecoder(Field f) {
 
-		if (f.getType().toString().compareTo("boolean") == 0) {
+		String type = f.getType().toString();
+		if (type.compareTo("boolean") == 0) {
 			try {
 				return f.getBoolean(this) ? "1" : "0";
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else if (type.compareTo("class java.sql.Timestamp") == 0) {
+			try {
+
+				Timestamp timeStamp = (Timestamp) f.get(this);
+
+				timeStamp = DateUtil.add(timeStamp, 0, 3, 30);
+
+				String ts = timeStamp.toString();
+
+				return ts.substring(0, ts.lastIndexOf('.'));
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

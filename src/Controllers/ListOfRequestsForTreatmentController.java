@@ -22,6 +22,7 @@ import Entities.SystemUser;
 import Protocol.Command;
 import Protocol.PhaseType;
 import Utility.AppManager;
+import Utility.DateUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -279,8 +280,8 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 			if (currentRowIndex + rowCountLimit < countOfRequests) {
 				currentRowIndex += rowCountLimit;
-				Client.getInstance().request(Command.GetMyRequests, ClientGUI.systemUser.getUserName(), PhaseType.myRequests,
-						currentRowIndex, rowCountLimit);
+				Client.getInstance().request(Command.GetMyRequests, ClientGUI.systemUser.getUserName(),
+						PhaseType.myRequests, currentRowIndex, rowCountLimit);
 				txtRequestsCount.setText(
 						(currentRowIndex + 1) + "-" + (currentRowIndex + rowCountLimit) + " of " + countOfRequests);
 
@@ -291,8 +292,8 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 			if (currentRowIndex - rowCountLimit >= 0) {
 				currentRowIndex -= rowCountLimit;
-				Client.getInstance().request(Command.GetMyRequests, ClientGUI.systemUser.getUserName(), PhaseType.myRequests,
-						currentRowIndex, rowCountLimit);
+				Client.getInstance().request(Command.GetMyRequests, ClientGUI.systemUser.getUserName(),
+						PhaseType.myRequests, currentRowIndex, rowCountLimit);
 
 				txtRequestsCount.setText(
 						(currentRowIndex + 1) + "-" + (currentRowIndex + rowCountLimit) + " of " + countOfRequests);
@@ -392,9 +393,9 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 			String issuedBy = cr.getUsername();
 			String phaseStatus = ph.getStatus();
-			String phaseStartingDate = ControllerManager.getDateTime(ph.getStartingDate());
-			String phaseDeadline = ControllerManager.getDateTime(ph.getDeadline());
-			String phaseTimeLeft = ControllerManager.getDateTimeDiff(ph.getStartingDate(), ph.getDeadline());
+			String phaseStartingDate = ControllerManager.getDateTime(ph.getStartingDate());//DateUtil.toString(ph.getStartingDate());
+			String phaseDeadline = ph.getDeadline().equals(DateUtil.NA) ? "N/A" : DateUtil.toString(ph.getDeadline());
+			String phaseTimeLeft = ph.getDeadline().equals(DateUtil.NA) ? "N/A" : DateUtil.difference(ph.getStartingDate(), ph.getDeadline());
 			String hasBeenTimeExtended = ph.isHasBeenTimeExtended() ? "Yes" : "No";
 
 			TableDataRequests tableRow = new TableDataRequests(issuedBy, phaseStatus, phaseStartingDate, phaseDeadline,

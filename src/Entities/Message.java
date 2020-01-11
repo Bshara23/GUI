@@ -19,7 +19,7 @@ public class Message extends SqlObject implements Serializable {
 	public boolean hasBeenViewed;
 	public Timestamp sentAt;
 	public boolean isStarred, isRead, isArchived;
-	public long requestId;
+	public long requestId, phaseId;
 
 	public Message(long messageID, String subject, String from, String to, String messageContentLT,
 			boolean hasBeenViewed, Timestamp sentAt, boolean isStarred, boolean isRead, boolean isArchived) {
@@ -34,13 +34,13 @@ public class Message extends SqlObject implements Serializable {
 		this.isStarred = isStarred;
 		this.isRead = isRead;
 		this.isArchived = isArchived;
+		this.requestId = -1;
+		this.phaseId = -1;
 	}
-
-	
 
 	public Message(long messageID, String subject, String from, String to, String messageContentLT,
 			boolean hasBeenViewed, Timestamp sentAt, boolean isStarred, boolean isRead, boolean isArchived,
-			long requestId) {
+			long requestId, long phaseId) {
 		super();
 		this.messageID = messageID;
 		this.subject = subject;
@@ -53,21 +53,30 @@ public class Message extends SqlObject implements Serializable {
 		this.isRead = isRead;
 		this.isArchived = isArchived;
 		this.requestId = requestId;
+		this.phaseId = phaseId;
+	}
+	
+	
+
+	public long getPhaseId() {
+		return phaseId;
 	}
 
+	public void setPhaseId(long phaseId) {
+		this.phaseId = phaseId;
+	}
 
+	public static void setEmptyInstance(Message emptyInstance) {
+		Message.emptyInstance = emptyInstance;
+	}
 
 	public long getRequestId() {
 		return requestId;
 	}
 
-
-
 	public void setRequestId(long requestId) {
 		this.requestId = requestId;
 	}
-
-
 
 	public boolean isStarred() {
 		return isStarred;
@@ -185,15 +194,14 @@ public class Message extends SqlObject implements Serializable {
 		return 0;
 	}
 
-
-
 	@Override
 	public String toString() {
 		return "Message [messageID=" + messageID + ", subject=" + subject + ", from=" + from + ", to=" + to
 				+ ", messageContentLT=" + messageContentLT + ", hasBeenViewed=" + hasBeenViewed + ", sentAt=" + sentAt
-				+ ", isStarred=" + isStarred + ", isRead=" + isRead + ", isArchived=" + isArchived + "]";
+				+ ", isStarred=" + isStarred + ", isRead=" + isRead + ", isArchived=" + isArchived + ", requestId="
+				+ requestId + ", phaseId=" + phaseId + "]";
 	}
-	
-	
+
+
 
 }

@@ -33,5 +33,7 @@ public enum Command {
 	debug_simulateBigCalculations, getCountOfPhasesTypes, getPhasesOfRequestWithTimeExtensionsIfPossible,
 	getSystemUserByRequest, getEmployeeByEmployeeNumber, getFirstLastName, getFullNameByUsername, getPermissionsData,
 	GetMyIssuedRequestsCount, GetMyIssuedRequests, SendExaminerReportOfFailures, receivedNewMessage,
+	checkIfPhaseIsWaiting, getChangeRequestFromMessagePage, acceptPhaseTimeExtensionSupervisor,
+	rejectPhaseTimeExtensionSupervisor, receivedNewOrUpdateRequests, getEmployeesListSimple,
 
 }

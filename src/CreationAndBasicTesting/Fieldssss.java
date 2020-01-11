@@ -9,8 +9,10 @@ import Entities.ChangeRequest;
 import Entities.Employee;
 import Entities.Phase;
 import Entities.Student;
+import Protocol.PhaseStatus;
 import Protocol.PhaseType;
 import ServerLogic.MySQL;
+import Utility.DateUtil;
 
 public class Fieldssss {
 	private static MySQL db = new MySQL("root", "Aa123456", "ICM", null);
@@ -19,11 +21,14 @@ public class Fieldssss {
 
 
 
-		Employee emp = db.getEmployeeByEmpNumber(10);
-		
-		System.out.println(db.isUserManager("username12"));
-		
+//		Employee emp = db.getEmployeeByEmpNumber(10);
+//		
+//		System.out.println(db.isUserManager("username12"));
+//		Phase phase = new Phase(-1, -1, PhaseType.Evaluation.name(), PhaseStatus.Waiting.name(), -1, DateUtil.NA, DateUtil.NA, DateUtil.NA, DateUtil.now(), false);
+//		db.insertObject(phase);
 
+		
+		System.out.println(db.getChangeRequestById(-1));
 	}
 	
 	

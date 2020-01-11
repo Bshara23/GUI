@@ -20,6 +20,7 @@ import Protocol.Command;
 import Protocol.MsgReturnType;
 import Utility.AppManager;
 import Utility.ControllerSwapper;
+import Utility.DateUtil;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -144,9 +145,8 @@ public class IssueRequestController implements Initializable {
 			if (areAllFieldsFilled) {
 				long reqestID = 9996; // TODO: if id = -1, the server should know that he has to find a fitting id
 
-				Timestamp ts = Timestamp.valueOf(LocalDateTime.now());
 
-				ChangeRequest changeRequest = new ChangeRequest(reqestID, ClientGUI.systemUser.getUserName(), ts, ts, ts, comments,
+				ChangeRequest changeRequest = new ChangeRequest(reqestID, ClientGUI.systemUser.getUserName(), DateUtil.now(), DateUtil.NA, DateUtil.NA, comments,
 						reqDesc, descReqChange, descCurrState, relateInfoSys);
 
 				if (filesPaths.size() == 0) {

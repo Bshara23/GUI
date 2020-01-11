@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -15,7 +16,7 @@
       <HBox layoutY="7.0">
          <children>
             <Canvas fx:id="canvasRight" height="870.0" width="245.0" />
-            <VBox alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="805.0">
+            <VBox alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="805.0" spacing="20.0">
                <children>
                   <Text fill="#6f6f6f" strokeType="OUTSIDE" strokeWidth="0.0" text="Supervise" textAlignment="CENTER" wrappingWidth="323.13671875">
                      <font>
@@ -24,61 +25,6 @@
                   </Text>
                   <VBox spacing="35.0">
                      <children>
-                        <VBox fx:id="vbLoadRequestDetails" maxWidth="-Infinity" minWidth="-Infinity" spacing="15.0">
-                           <children>
-                              <Text fill="#515050" strokeType="OUTSIDE" strokeWidth="0.0" text="Request Details">
-                                 <font>
-                                    <Font size="20.0" />
-                                 </font>
-                              </Text>
-                              <HBox id="container" prefHeight="197.0" prefWidth="696.0" stylesheets="@blueBorder.css">
-                                 <children>
-                                    <VBox prefHeight="120.0" prefWidth="145.0" spacing="15.0">
-                                       <children>
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Request ID:" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Relate information system:" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Issued by: " />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Issue date: " />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description:" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Comments: " />
-                                       </children>
-                                       <padding>
-                                          <Insets top="5.0" />
-                                       </padding>
-                                    </VBox>
-                                    <VBox prefHeight="120.0" prefWidth="256.0" spacing="15.0">
-                                       <children>
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="77" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Moodle" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Bshara" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="5/5/2020" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The request is regarding the missleading info..." />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="This is an example comment." />
-                                       </children>
-                                       <padding>
-                                          <Insets top="5.0" />
-                                       </padding>
-                                    </VBox>
-                                    <VBox prefHeight="120.0" prefWidth="256.0" spacing="15.0">
-                                       <children>
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
-                                          <Text fill="#3076ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Click here to view more." underline="true" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
-                                       </children>
-                                       <padding>
-                                          <Insets top="5.0" />
-                                       </padding>
-                                    </VBox>
-                                 </children>
-                                 <padding>
-                                    <Insets left="5.0" />
-                                 </padding>
-                              </HBox>
-                           </children>
-                        </VBox>
                         <AnchorPane>
                            <children>
                               <VBox spacing="15.0">
@@ -328,7 +274,7 @@
                                                       <Insets left="5.0" />
                                                    </padding>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="30.0">
+                                                <HBox fx:id="hbAssignEvaluatiorContainer" alignment="CENTER_LEFT" spacing="30.0">
                                                    <children>
                                                       <ImageView fx:id="imgWarningAutoAssign" fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
@@ -348,6 +294,9 @@
                                                                </font>
                                                             </Text>
                                                          </children>
+                                                         <cursor>
+                                                            <Cursor fx:constant="HAND" />
+                                                         </cursor>
                                                       </HBox>
                                                       <HBox fx:id="hbAssignOtherEmp" alignment="CENTER" spacing="5.0">
                                                          <children>
@@ -362,6 +311,9 @@
                                                                </font>
                                                             </Text>
                                                          </children>
+                                                         <cursor>
+                                                            <Cursor fx:constant="HAND" />
+                                                         </cursor>
                                                       </HBox>
                                                    </children>
                                                    <padding>
@@ -500,7 +452,7 @@
                                                       <Insets left="5.0" />
                                                    </padding>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="30.0">
+                                                <HBox fx:id="hbRequestedTimeExtenContainer" alignment="CENTER_LEFT" spacing="30.0">
                                                    <children>
                                                       <ImageView fx:id="imgWarningRequestedTimeExtension" fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
@@ -520,6 +472,9 @@
                                                                </font>
                                                             </Text>
                                                          </children>
+                                                         <cursor>
+                                                            <Cursor fx:constant="HAND" />
+                                                         </cursor>
                                                       </HBox>
                                                       <HBox fx:id="hbDeclineRequestTimeExtension" alignment="CENTER" spacing="5.0">
                                                          <children>
@@ -534,6 +489,9 @@
                                                                </font>
                                                             </Text>
                                                          </children>
+                                                         <cursor>
+                                                            <Cursor fx:constant="HAND" />
+                                                         </cursor>
                                                       </HBox>
                                                    </children>
                                                    <padding>
@@ -553,6 +511,27 @@
                         </AnchorPane>
                      </children>
                   </VBox>
+                  <HBox alignment="CENTER_LEFT" spacing="30.0">
+                     <children>
+                        <HBox fx:id="hbFullRequestDetails" alignment="CENTER" spacing="5.0">
+                           <children>
+                              <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../Images/Table/icons8_view_details_50px.png" />
+                                 </image>
+                              </ImageView>
+                              <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Press to see full request details">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </HBox>
                </children>
             </VBox>
             <Canvas fx:id="canvasLeft" height="870.0" width="245.0" />

@@ -1,5 +1,6 @@
 package Controllers;
 
+import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -9,9 +10,12 @@ import java.util.TimeZone;
 
 import ClientLogic.Client;
 import Controllers.Logic.ControllerManager;
+import Controllers.Logic.FxmlNames;
+import Controllers.Logic.NavigationBar;
 import Entities.Message;
 import Protocol.Command;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.image.Image;
@@ -69,7 +73,9 @@ public class MessageEntryController implements Initializable {
 		
 		hbContainer.setOnMousePressed(event -> {
 
-			//load new fxml
+			ListOfMessagesController.selectedMessage = message;
+			NavigationBar.next("Message Details", FxmlNames.MESSAGE_SINGLE_PAGE);
+			
 		});
 		
 		

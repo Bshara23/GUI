@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import Entities.*;
+import Protocol.PhaseStatus;
 import Protocol.PhaseType;
 import ServerLogic.UtilityInterfaces.IPreparedStatement;
 import ServerLogic.UtilityInterfaces.IStatement;
@@ -473,7 +474,7 @@ public class MySQL extends MySqlConnBase {
 		String query = "SELECT * FROM icm.employee as emp "
 				+ "INNER JOIN icm.phase as ph ON ph.empNumber = emp.empNumber "
 				+ "INNER JOIN icm.changerequest as cr ON cr.requestID = ph.requestID " + "WHERE ph.empNumber = '"
-				+ empNum + "' AND ph.phaseName = '" + phaseType.name() + "' ORDER BY ph.deadline ASC";
+				+ empNum + "' AND ph.status != 'Waiting To Set Evaluator' AND ph.phaseName = '" + phaseType.name() + "' ORDER BY ph.deadline ASC";
 
 		ArrayList<ChangeRequest> results = new ArrayList<ChangeRequest>();
 
@@ -515,7 +516,7 @@ public class MySQL extends MySqlConnBase {
 
 		String query = "UPDATE `icm`.`message` SET `subject` = ?, `from` = ?, `to` = ?,"
 				+ " `messageContentLT` = ?, `hasBeenViewed` = ?, `sentAt` = ?,"
-				+ " `isStarred` = ?, `isRead` = ?, `isArchived` = ?, `requestId` = ? WHERE (`messageID` = ?);";
+				+ " `isStarred` = ?, `isRead` = ?, `isArchived` = ?, `requestId` = ?, `phaseId` = ? WHERE (`messageID` = ?);";
 
 		IPreparedStatement prepS = ps -> {
 			try {
@@ -530,7 +531,8 @@ public class MySQL extends MySqlConnBase {
 				ps.setBoolean(8, msg.isRead());
 				ps.setBoolean(9, msg.isArchived());
 				ps.setLong(10, msg.getRequestId());
-				ps.setLong(11, msg.getMessageID());
+				ps.setLong(11, msg.getPhaseId());
+				ps.setLong(12, msg.getMessageID());
 
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -553,7 +555,7 @@ public class MySQL extends MySqlConnBase {
 
 					Message msg = new Message(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getString(4),
 							rs.getString(5), rs.getBoolean(6), rs.getTimestamp(7), rs.getBoolean(8), rs.getBoolean(9),
-							rs.getBoolean(10), rs.getLong(11));
+							rs.getBoolean(10), rs.getLong(11), rs.getLong(12));
 
 					res.add(msg);
 				}
@@ -586,7 +588,7 @@ public class MySQL extends MySqlConnBase {
 
 					Message cr = new Message(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getString(4),
 							rs.getString(5), rs.getBoolean(6), rs.getTimestamp(7), rs.getBoolean(8), rs.getBoolean(9),
-							rs.getBoolean(10), rs.getLong(11));
+							rs.getBoolean(10), rs.getLong(11), rs.getLong(12));
 
 					results.add(cr);
 				}
@@ -651,7 +653,7 @@ public class MySQL extends MySqlConnBase {
 						System.out.println(
 								rs.getLong(offset + 1) + " is found, adding PhaseTimeExtensionRequest to the phase");
 						PhaseTimeExtensionRequest pter = new PhaseTimeExtensionRequest(rs.getLong(offset + 1),
-								rs.getTimestamp(offset + 2), rs.getString(offset + 2));
+								rs.getInt(offset + 2), rs.getInt(offset + 3), rs.getString(offset + 4));
 						phase.setPhaseTimeExtensionRequest(pter);
 					}
 
@@ -827,7 +829,7 @@ public class MySQL extends MySqlConnBase {
 
 	public ArrayList<ChangeRequest> getChangeRequestWithCurrentPhase() {
 		String query = "SELECT * FROM icm.phase AS ph "
-				+ "INNER JOIN icm.changeRequest as cr ON cr.requestID = ph.requestID WHERE ph.status = 'Active';";
+				+ "INNER JOIN icm.changeRequest as cr ON cr.requestID = ph.requestID order by cr.startDateOfRequest;";
 
 		ArrayList<ChangeRequest> results = new ArrayList<ChangeRequest>();
 
@@ -865,12 +867,11 @@ public class MySQL extends MySqlConnBase {
 		return results;
 	}
 
-	
 	public void insertMessage(Message msg) {
 
 		String query = "INSERT INTO `icm`.`message` (`subject`, `from`, `to`, `messageContentLT`, "
-				+ "`hasBeenViewed`, `sentAt`, `isStarred`, `isRead`, `isArchived`, `requestId`)"
-				+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);\r\n";
+				+ "`hasBeenViewed`, `sentAt`, `isStarred`, `isRead`, `isArchived`, `requestId`, `phaseId`)"
+				+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);\r\n";
 		try {
 
 			PreparedStatement ps = conn.prepareStatement(query);
@@ -888,6 +889,7 @@ public class MySQL extends MySqlConnBase {
 			ps.setBoolean(8, msg.isRead());
 			ps.setBoolean(9, msg.isArchived());
 			ps.setLong(10, msg.getRequestId());
+			ps.setLong(11, msg.getPhaseId());
 
 			ps.executeUpdate();
 
@@ -926,4 +928,56 @@ public class MySQL extends MySqlConnBase {
 		System.out.println(db.getUsernameOfSupervisor());
 
 	}
+
+	public boolean isPhaseStatus(long phaseId, PhaseStatus status) {
+		String query = "SELECT COUNT(*) FROM icm.phase as ph where ph.phaseID = '" + phaseId + "' and ph.status = '"
+				+ status.name() + "';";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(rs.getInt(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() == 1 ? results.get(0) == 1 : false;
+	}
+
+	public ChangeRequest getChangeRequestById(long requestID) {
+		
+		String query = "SELECT * FROM icm.changerequest as cr where cr.requestID = '" + requestID + "';";
+
+		ArrayList<ChangeRequest> results = new ArrayList<ChangeRequest>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+
+					int o = 0;
+					ChangeRequest changeRequest = new ChangeRequest(rs.getLong(o + 1), rs.getString(o + 2),
+							rs.getTimestamp(o + 3), rs.getTimestamp(o + 4), rs.getTimestamp(o + 5), rs.getString(o + 6),
+							rs.getString(o + 7), rs.getString(o + 8), rs.getString(o + 9), rs.getString(o + 10));
+
+					results.add(changeRequest);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() == 1 ? results.get(0) : null;
+	}
+
+	
 }
