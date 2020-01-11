@@ -1,51 +1,172 @@
 package Controllers;
 
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ResourceBundle;
 
+import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
 import Controllers.Logic.FxmlNames;
+import Controllers.Logic.NavigationBar;
+import Entities.ChangeRequest;
+import Entities.EvaluationReport;
+import Entities.Phase;
+import Protocol.Command;
+import Protocol.PhaseStatus;
 import Utility.ControllerSwapper;
+import Utility.DateUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 public class RequestDetailsEvaluatorGUIController implements Initializable {
 
+	private static final String INSERT_EVALUATION_REPORT = "InsertEvaluationReport";
+
 	@FXML
-    private Canvas canvasRight;
+	private VBox vbEvaluationReport;
 
-    @FXML
-    private Canvas canvasLeft;
+	@FXML
+	private TextField tfPlace;
 
-    @FXML
-    private VBox vbLoadRequestDetails;
+	@FXML
+	private TextArea taDescriptionOfRequiredChange;
 
-    @FXML
-    private HBox hbSendExecutionDetails;
+	@FXML
+	private TextArea taAcceptedResults;
 
-    @FXML
-    private VBox vbEvaluationReport;
+	@FXML
+	private TextArea taConstraints;
 
+	@FXML
+	private TextArea taRisks;
+
+	@FXML
+	private DatePicker dpEstimatedExecTime;
+
+	@FXML
+	private HBox hbSendExecutionDetails;
+
+	@FXML
+	private HBox hbFullRequestDetails;
+
+	@FXML
+	private Canvas canvasRight;
+
+	@FXML
+	private Canvas canvasLeft;
+
+	private ChangeRequest lastRequest;
+
+	private Phase lastPhase;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
+
 		// Apply the effects for the canvas
 		RequestDetailsUserController.applyCanvasEffects(canvasRight, canvasLeft);
-		ControllerSwapper.loadAnchorContent(vbLoadRequestDetails, FxmlNames.REQUEST_DETAILS);
-		ControllerSwapper.loadAnchorContent(vbEvaluationReport, FxmlNames.EVALUATION_REPORT_PAGE_1);
+		// ControllerSwapper.loadAnchorContent(vbEvaluationReport,
 
-		hbSendExecutionDetails.setCursor(Cursor.HAND);
-		ControllerManager.setEffect(hbSendExecutionDetails, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
-		ControllerManager.setOnHoverEffect(hbSendExecutionDetails, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
+		// FxmlNames.REQUEST_DETAILS_EVALUATE);
+
+		hbFullRequestDetails.setCursor(Cursor.HAND);
+		ControllerManager.setEffect(hbFullRequestDetails, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		ControllerManager.setOnHoverEffect(hbFullRequestDetails, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
 				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+
+		lastRequest = ListOfRequestsForTreatmentController.lastSelectedRequest;
+		lastPhase = lastRequest.getPhases().get(0);
+
+		PhaseStatus phaseStatus = PhaseStatus.valueOfAdvanced(lastPhase.getStatus());
+		switch (phaseStatus) {
+
+		case Waiting_To_Confirm_Time_Required_For_Phase:
+
+			WaitingForPhaseEstimatedTimeConfirmationGUI controller2 = (WaitingForPhaseEstimatedTimeConfirmationGUI) ControllerSwapper
+					.loadContentWithController(vbEvaluationReport,
+							FxmlNames.WAITING_FOR_PHASE_ESTIMATED_TIME_CONFIRMATION);
+			controller2.setPhase(lastPhase);
+
+			break;
+
+		case Waiting_To_Set_Time_Required_For_Evaluation:
+//
+//			requestTimeExtensionController controller = (requestTimeExtensionController) ControllerSwapper
+//					.loadContentWithController(vbEvaluationReport, FxmlNames.REQUEST_TIME_EXTENSION);
+//
+//			controller.setPhase(lastPhase);
+			SetEstimatedTimeForPhaseController controller = (SetEstimatedTimeForPhaseController) ControllerSwapper
+					.loadContentWithController(vbEvaluationReport, FxmlNames.SET_ESTIMATED_TIME_FOR_PHASE);
+			controller.setPhase(lastPhase);
+
+			break;
+
+		case Active:
+
+			hbSendExecutionDetails.setCursor(Cursor.HAND);
+			ControllerManager.setEffect(hbSendExecutionDetails, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+			ControllerManager.setOnHoverEffect(hbSendExecutionDetails, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
+					CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+
+			hbSendExecutionDetails.setOnMousePressed(event -> {
+
+				boolean areAllNotEmpty = ControllerManager.areAllStringsNotEmpty(tfPlace.getText(),
+						taAcceptedResults.getText(), taConstraints.getText(), taDescriptionOfRequiredChange.getText(),
+						taRisks.getText());
+
+				if (!areAllNotEmpty) {
+
+					ControllerManager.showErrorMessage("Error", "Missing Fields", "Please fill all of fields!", null);
+					return;
+				}
+
+				if (dpEstimatedExecTime.getValue() == null) {
+					ControllerManager.showErrorMessage("Error", "Missing Date",
+							"Please set an estimated execution time", null);
+					return;
+				}
+
+				EvaluationReport evaluationReport = new EvaluationReport(-1, lastPhase.getRequestID(),
+						taDescriptionOfRequiredChange.getText(), tfPlace.getText(), taAcceptedResults.getText(),
+						taConstraints.getText(), taRisks.getText(), DateUtil.get(dpEstimatedExecTime.getValue()));
+
+				Client.getInstance().requestWithListener(Command.insertEvaluationReport, srMsg -> {
+
+					if (srMsg.getCommand() == Command.insertEvaluationReport) {
+
+						ControllerManager.showInformationMessage("Success", "Evaluation Report",
+								"The evaluation reported has been successfully puplished", null);
+
+						Client.removeMessageRecievedFromServer(INSERT_EVALUATION_REPORT);
+						NavigationBar.back(true);
+
+					}
+
+				}, INSERT_EVALUATION_REPORT, evaluationReport, lastPhase.getPhaseID());
+
+			});
+
+			break;
+
+		default:
+
+			System.err.println("Error, phase " + lastPhase.getStatus() + " is undefined!");
+			break;
+		}
+
+		hbFullRequestDetails.setOnMousePressed(event -> {
+
+			NavigationBar.next("Request Full Details", FxmlNames.REQUEST_DETAILS);
+
+		});
 
 	}
 

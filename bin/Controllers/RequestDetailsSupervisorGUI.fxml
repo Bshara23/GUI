@@ -202,7 +202,7 @@
                                                       <Insets left="5.0" />
                                                    </padding>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" opacity="0.0" spacing="5.0">
+                                                <HBox alignment="CENTER_LEFT" opacity="0.0" prefHeight="52.0" prefWidth="404.0" spacing="5.0">
                                                    <children>
                                                       <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
@@ -226,49 +226,47 @@
                                                       <Insets left="5.0" />
                                                    </padding>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" opacity="0.0" spacing="5.0">
+                                                <HBox fx:id="hbDeadline" alignment="CENTER_LEFT" spacing="30.0">
                                                    <children>
-                                                      <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                                      <ImageView fx:id="imgWarningRequestedTimeExtension2" fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
                                                             <Image url="@../Images/icons8_brake_warning_100px_2.png" />
                                                          </image>
                                                       </ImageView>
-                                                      <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../Images/icons8_checkmark_100px.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm" />
-                                                      <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../Images/icons8_workers_100px_1.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Choose other employee" />
-                                                   </children>
-                                                   <padding>
-                                                      <Insets left="5.0" />
-                                                   </padding>
-                                                </HBox>
-                                                <HBox alignment="CENTER_LEFT" opacity="0.0" spacing="5.0">
-                                                   <children>
-                                                      <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../Images/icons8_brake_warning_100px_2.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                      <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../Images/icons8_checkmark_100px.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm" />
-                                                      <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../Images/icons8_workers_100px_1.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Choose other employee" />
+                                                      <HBox fx:id="hbConfirmDeadline" alignment="CENTER" spacing="5.0">
+                                                         <children>
+                                                            <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../Images/Different%20Colors/icons8_checkmark_100px_2.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                            <Text fill="#0090ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm" underline="true">
+                                                               <font>
+                                                                  <Font size="18.0" />
+                                                               </font>
+                                                            </Text>
+                                                         </children>
+                                                         <cursor>
+                                                            <Cursor fx:constant="HAND" />
+                                                         </cursor>
+                                                      </HBox>
+                                                      <HBox fx:id="hbRejectDeadline" alignment="CENTER" spacing="5.0">
+                                                         <children>
+                                                            <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../Images/login/icons8_delete_50px_1.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                            <Text fill="#0090ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Decline">
+                                                               <font>
+                                                                  <Font size="18.0" />
+                                                               </font>
+                                                            </Text>
+                                                         </children>
+                                                         <cursor>
+                                                            <Cursor fx:constant="HAND" />
+                                                         </cursor>
+                                                      </HBox>
                                                    </children>
                                                    <padding>
                                                       <Insets left="5.0" />
@@ -320,30 +318,6 @@
                                                       <Insets left="5.0" />
                                                    </padding>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" opacity="0.0" spacing="5.0">
-                                                   <children>
-                                                      <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../Images/icons8_brake_warning_100px_2.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                      <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../Images/icons8_checkmark_100px.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm" />
-                                                      <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../Images/icons8_workers_100px_1.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Choose other employee" />
-                                                   </children>
-                                                   <padding>
-                                                      <Insets left="5.0" />
-                                                   </padding>
-                                                </HBox>
                                                 <HBox alignment="CENTER_LEFT" opacity="0.0" prefHeight="38.0" prefWidth="404.0" spacing="5.0">
                                                    <children>
                                                       <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
@@ -368,7 +342,7 @@
                                                       <Insets left="5.0" />
                                                    </padding>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" opacity="0.0" spacing="5.0">
+                                                <HBox alignment="CENTER_LEFT" opacity="0.0" prefHeight="41.0" prefWidth="404.0" spacing="5.0">
                                                    <children>
                                                       <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>

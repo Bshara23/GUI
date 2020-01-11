@@ -20,6 +20,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import Entities.Employee;
 
 public class ListOfEmployeesSimpleController implements Initializable {
 
@@ -45,6 +46,7 @@ public class ListOfEmployeesSimpleController implements Initializable {
 
 	@FXML
 	private Canvas canvasLeft;
+	ArrayList<Employee> employees;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -53,9 +55,9 @@ public class ListOfEmployeesSimpleController implements Initializable {
 
 			if (srMsg.getCommand() == Command.getEmployeesListSimple) {
 
-				ArrayList<ArrayList<String>> data = (ArrayList<ArrayList<String>>) srMsg.getAttachedData()[0];
+				employees = (ArrayList<Employee>) srMsg.getAttachedData()[0];
 
-				loadDataIntoTable(data);
+				loadDataIntoTable(employees);
 
 				Client.removeMessageRecievedFromServer(GET_E_MPLOYEES_SIMPLE);
 
@@ -66,14 +68,15 @@ public class ListOfEmployeesSimpleController implements Initializable {
 
 	}
 
-	private void loadDataIntoTable(ArrayList<ArrayList<String>> data) {
+	private void loadDataIntoTable(ArrayList<Employee> data) {
 		initTable();
 
 		ArrayList<TableEmps> tableContent = new ArrayList<TableEmps>();
 
-		for (ArrayList<String> row : data) {
+		for (Employee emp : data) {
 
-			TableEmps tableRow = new TableEmps(row.get(0), row.get(1), row.get(2), row.get(3));
+			TableEmps tableRow = new TableEmps(emp.getEmpNumber() + "", emp.getUserName(), emp.getFirstName(),
+					emp.getLastName());
 			tableContent.add(tableRow);
 
 		}
@@ -82,17 +85,26 @@ public class ListOfEmployeesSimpleController implements Initializable {
 
 	}
 
-	private static Func f;
-	public static void setOnRowClicked(Func func) {
+	private static EmpFunc f;
+
+	public interface EmpFunc {
+		public void call(Employee emp);
+	}
+
+	public static void setOnRowDoubleClicked(EmpFunc func) {
 		f = func;
 	};
-	
+
 	@FXML
 	public void clickItem(MouseEvent event) {
 		if (event.getClickCount() == 2) // Checking double click
 		{
-			if(f != null)
-				f.execute();
+			int selectedIndex = tblEmployees.getSelectionModel().getSelectedIndex();
+			if (selectedIndex != -1) {
+				if (f != null)
+					f.call(employees.get(selectedIndex));
+			}
+
 		}
 	}
 
@@ -106,7 +118,7 @@ public class ListOfEmployeesSimpleController implements Initializable {
 	}
 
 	public class TableEmps {
-		
+
 		public String employeeNumber, username, firstName, lastName;
 
 		public TableEmps(String employeeNumber, String username, String firstName, String lastName) {

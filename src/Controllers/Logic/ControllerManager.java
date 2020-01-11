@@ -7,6 +7,8 @@ import java.util.TimeZone;
 
 import Utility.VoidFunc;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -24,28 +26,26 @@ import javafx.scene.text.Text;
 import javafx.scene.control.Alert.AlertType;
 
 public class ControllerManager {
-	
+
 	public static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 	static {
 		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 		sdf.setTimeZone(TimeZone.getTimeZone("Asia/Jerusalem"));
 	}
-	
-	
-	
+
 	public static void installTooltip(Node node, String content) {
 		Tooltip tooltip = new Tooltip();
 		tooltip.textProperty().set(content);
 		Tooltip.install(node, tooltip);
 	}
-	
-	
+
 	/**
 	 * Displays an alert message
 	 * 
 	 * @param func The function to call after the "OK" button has been pressed.
 	 */
-	public static void showOkCancelMessage(String title, String header, String content, VoidFunc okFunc, VoidFunc cancelFunc) {
+	public static void showOkCancelMessage(String title, String header, String content, VoidFunc okFunc,
+			VoidFunc cancelFunc) {
 		Alert alertSuccess = new Alert(AlertType.CONFIRMATION);
 		alertSuccess.setTitle(title);
 		alertSuccess.setHeaderText(header);
@@ -57,7 +57,7 @@ public class ControllerManager {
 						okFunc.call();
 				});
 			}
-			if(rs == ButtonType.CANCEL) {
+			if (rs == ButtonType.CANCEL) {
 				Platform.runLater(() -> {
 					if (cancelFunc != null)
 						cancelFunc.call();
@@ -65,6 +65,7 @@ public class ControllerManager {
 			}
 		});
 	}
+
 	public static void showInformationMessage(String title, String header, String content, VoidFunc okFunc) {
 		showMessage(title, header, content, okFunc, AlertType.INFORMATION);
 
@@ -73,7 +74,7 @@ public class ControllerManager {
 	public static void showErrorMessage(String title, String header, String content, VoidFunc okFunc) {
 		showMessage(title, header, content, okFunc, AlertType.ERROR);
 	}
-	
+
 	public static void showMessage(String title, String header, String content, VoidFunc okFunc, AlertType alertType) {
 		Alert alertSuccess = new Alert(alertType);
 		alertSuccess.setTitle(title);
@@ -88,9 +89,10 @@ public class ControllerManager {
 
 				});
 			}
-			
+
 		});
 	}
+
 	public static void setEffect(ArrayList<Node> nodes, Effect effect) {
 		for (Node node : nodes) {
 			node.setEffect(effect);
@@ -158,10 +160,8 @@ public class ControllerManager {
 		setMouseHoverEffects(node, onEntered, onExited, condition, Cursor.HAND);
 	}
 
-
-	
 	public static void setMouseHoverPressEffects(Node node, Effect onEntered, Effect onExited, Effect onPressed,
-			 ArrayList<Node> nodesToReset, Cursor value) {
+			ArrayList<Node> nodesToReset, Cursor value) {
 
 		node.setCursor(Cursor.HAND);
 		setEffect(node, onExited);
@@ -171,9 +171,9 @@ public class ControllerManager {
 			ControllerManager.setEffect(node, onPressed);
 		});
 	}
-	
+
 	public static void setMouseHoverPressEffects(Node node, Effect onEntered, Effect onExited, Effect onPressed,
-			 Cursor value) {
+			Cursor value) {
 
 		node.setCursor(Cursor.HAND);
 		setEffect(node, onExited);
@@ -182,27 +182,38 @@ public class ControllerManager {
 			ControllerManager.setEffect(node, onPressed);
 		});
 	}
-	
+
 	public static boolean areAllStringsNotEmpty(String... strings) {
 		for (String str : strings) {
-			if(str.compareTo("") == 0)
+			if (str.compareTo("") == 0)
 				return false;
 		}
 		return true;
 	}
-	
-	
+
 	public static String getDateTime(Timestamp ts) {
 		return sdf.format(ts);
 	}
-	
-	
+
 	/**
 	 * Returns the difference between a and b, meaning a - b.
-	 * */
+	 */
 	public static String getDateTimeDiff(Timestamp a, Timestamp b) {
 		Timestamp diff = new Timestamp(a.getTime() - b.getTime());
 		return sdf.format(diff);
+	}
+
+	public static void setTextFieldToNumbersOnly(TextField textField) {
+		// force the field to be numeric only
+		textField.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				if (!newValue.matches("\\d*")) {
+					textField.setText(newValue.replaceAll("[^\\d]", ""));
+				}
+			}
+		});
+
 	}
 
 }

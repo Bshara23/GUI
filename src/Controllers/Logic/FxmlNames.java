@@ -40,4 +40,10 @@ public class FxmlNames {
 
 	public static final String MESSAGE_SINGLE_PAGE = "MessageGUI.fxml";
 
+	public static final String REQUEST_TIME_EXTENSION = "requestTimeExtensionGUI.fxml";
+	
+	public static final String SET_ESTIMATED_TIME_FOR_PHASE = "SetEstimatedTimeForPhaseGUI.fxml";
+	
+	public static final String WAITING_FOR_PHASE_ESTIMATED_TIME_CONFIRMATION = "WaitingForPhaseEstimatedTimeConfirmationGUI.fxml";
+
 }

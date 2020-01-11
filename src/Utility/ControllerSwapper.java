@@ -5,11 +5,14 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import Controllers.ClientGUI;
+import Controllers.MessageEntryController;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
+import Controllers.Logic.FxmlNames;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -97,5 +100,26 @@ public class ControllerSwapper {
 
 		destination.getChildren().setAll(loader);
 	}
+	
+	
+	public static Initializable loadContentWithController(Pane destination, String fxmlFileName) {
+		
+		URL url = ClientGUI.class.getResource(fxmlFileName);
+
+		FXMLLoader loader = new FXMLLoader(url);
+		
+		Pane pane = null;
+		try {
+			pane = loader.load();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		Initializable controller = (Initializable) loader.getController();
+		destination.getChildren().setAll(pane);
+		
+		return controller;
+	}
+	
 
 }

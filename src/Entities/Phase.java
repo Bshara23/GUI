@@ -24,6 +24,7 @@ public class Phase extends SqlObject implements Serializable {
 
 	private PhaseTimeExtensionRequest phaseTimeExtensionRequest;
 
+
 	private ArrayList<File> files;
 	private EvaluationReport evaluationReport;
 

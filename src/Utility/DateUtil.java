@@ -2,6 +2,7 @@ package Utility;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.TimeZone;
 
@@ -58,6 +59,16 @@ public class DateUtil {
 
 		System.out.println(add(now(), 1, 3));
 
+	}
+	
+	public static Timestamp get(LocalDate date) {
+		return Timestamp.valueOf(date.atStartOfDay());
+	}
+
+	public static Timestamp daysFromNow(int days) {
+		LocalDateTime now = LocalDateTime.now();
+		now = now.plusDays(days);
+		return Timestamp.valueOf(now);
 	}
 
 	

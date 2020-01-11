@@ -356,8 +356,7 @@ public class MySQL extends MySqlConnBase {
 				while (rs.next()) {
 
 					EvaluationReport evalRep = new EvaluationReport(rs.getLong(5), rs.getLong(6), rs.getString(7),
-							rs.getString(8), rs.getString(1), rs.getString(2), rs.getString(3),
-							rs.getDate(4).toLocalDate());
+							rs.getString(8), rs.getString(1), rs.getString(2), rs.getString(3), rs.getTimestamp(4));
 
 					results.add(evalRep);
 
@@ -474,7 +473,8 @@ public class MySQL extends MySqlConnBase {
 		String query = "SELECT * FROM icm.employee as emp "
 				+ "INNER JOIN icm.phase as ph ON ph.empNumber = emp.empNumber "
 				+ "INNER JOIN icm.changerequest as cr ON cr.requestID = ph.requestID " + "WHERE ph.empNumber = '"
-				+ empNum + "' AND ph.status != 'Waiting To Set Evaluator' AND ph.phaseName = '" + phaseType.name() + "' ORDER BY ph.deadline ASC";
+				+ empNum + "' AND ph.status != 'Waiting To Set Evaluator' AND ph.phaseName = '" + phaseType.name()
+				+ "' ORDER BY ph.deadline ASC";
 
 		ArrayList<ChangeRequest> results = new ArrayList<ChangeRequest>();
 
@@ -952,7 +952,7 @@ public class MySQL extends MySqlConnBase {
 	}
 
 	public ChangeRequest getChangeRequestById(long requestID) {
-		
+
 		String query = "SELECT * FROM icm.changerequest as cr where cr.requestID = '" + requestID + "';";
 
 		ArrayList<ChangeRequest> results = new ArrayList<ChangeRequest>();
@@ -979,5 +979,174 @@ public class MySQL extends MySqlConnBase {
 		return results.size() == 1 ? results.get(0) : null;
 	}
 
-	
+	public ArrayList<Employee> getEmployees() {
+
+		String query = "SELECT * FROM icm.systemUser as su\r\n"
+				+ "inner join icm.employee as e on e.userName=su.userName;";
+
+		ArrayList<Employee> results = new ArrayList<Employee>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				while (rs.next()) {
+
+					Employee emp = new Employee(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4),
+							rs.getString(5), rs.getString(6), rs.getBoolean(7), rs.getLong(8), rs.getString(9),
+							rs.getString(10));
+
+					results.add(emp);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results;
+	}
+
+	public String getUsernameByEmpNumber(long empNumber) {
+
+		String query = "SELECT su.userName FROM icm.systemUser as su "
+				+ "inner join icm.employee as e on e.userName=su.userName where e.empNumber = '" + empNumber + "';";
+
+		ArrayList<String> results = new ArrayList<String>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+
+					results.add(rs.getString(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() == 1 ? results.get(0) : "";
+
+	}
+
+	public boolean insertTimeExtension(PhaseTimeExtensionRequest pter) {
+
+		String query = "INSERT INTO `icm`.`phasetimeextensionrequest` (`phaseID`, `requestedTimeInDays`, `requestedTimeInHours`, `description`) VALUES (?, ?, ?, ?);";
+
+		IPreparedStatement prepS = ps -> {
+			try {
+
+				ps.setLong(1, pter.getPhaseID());
+				ps.setInt(2, pter.getRequestedTimeInDays());
+				ps.setInt(3, pter.getRequestedTimeInHours());
+				ps.setString(4, pter.getDescription());
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		return executePreparedStatement(query, prepS) == 1;
+
+	}
+
+	public boolean updatePhaseStatus(long phaseId, PhaseStatus status) {
+
+		String statusName = status.nameNo_();
+
+		String query = "UPDATE `icm`.`phase` SET `status` = ? WHERE (`phaseID` = ?);";
+
+		IPreparedStatement prepS = ps -> {
+			try {
+
+				ps.setString(1, statusName);
+				ps.setLong(2, phaseId);
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		return executePreparedStatement(query, prepS) == 1;
+
+	}
+
+	public long getRequestIdByPhaseId(long phId) {
+
+		String query = "SELECT p.requestID FROM icm.phase as p where p.phaseID = '" + phId + "';";
+
+		ArrayList<Long> results = new ArrayList<Long>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(rs.getLong(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() == 1 ? results.get(0) : -1;
+
+	}
+
+	public String getFullNameByPhaseId(long phId) {
+
+		String query = "SELECT s.firstName, s.lastName FROM icm.phase as p\r\n"
+				+ "inner join icm.employee as e on p.empNumber = e.empNumber\r\n"
+				+ "inner join icm.systemUser as s on s.userName = e.userName where p.phaseID = '" + phId + "';";
+
+		ArrayList<String> results = new ArrayList<String>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(rs.getString(1));
+					results.add(rs.getString(2));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		};
+
+		executeStatement(query, prepS);
+		return results.size() == 0 ? "" : results.get(0) + " " + results.get(1);
+	}
+
+	public long getComHeadEmpNum() {
+		
+		String query = "SELECT e.empNumber FROM icm.employee as e\r\n"
+				+ "inner join icm.executionchangescommitteemember as c on c.empNumber = e.empNumber\r\n"
+				+ "where c.isManager = '1'";
+
+		ArrayList<Long> results = new ArrayList<Long>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(rs.getLong(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() == 1 ? results.get(0) : -1;
+
+	}
+
 }

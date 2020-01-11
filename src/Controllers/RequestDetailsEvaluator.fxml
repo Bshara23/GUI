@@ -13,94 +13,39 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="876.0" prefWidth="1348.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.RequestDetailsEvaluatorGUIController">
+<AnchorPane prefHeight="876.0" prefWidth="1348.0" stylesheets="@blueBorder.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.RequestDetailsEvaluatorGUIController">
    <children>
       <TextArea layoutX="-150.0" layoutY="26.0" prefHeight="0.0" prefWidth="0.0" />
-      <Text fill="#6f6f6f" layoutX="522.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Evaluation" textAlignment="CENTER" wrappingWidth="323.13671875">
+      <Text id="pageTitle" fill="#6f6f6f" layoutX="522.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Evaluation" textAlignment="CENTER" wrappingWidth="323.13671875">
          <font>
             <Font size="35.0" />
          </font>
       </Text>
       <VBox layoutX="336.0" layoutY="67.0" prefHeight="810.0" prefWidth="682.0" spacing="20.0">
          <children>
-            <VBox fx:id="vbLoadRequestDetails" prefWidth="682.0" spacing="15.0">
-               <children>
-                  <Text fill="#515050" strokeType="OUTSIDE" strokeWidth="0.0" text="Request Details">
-                     <font>
-                        <Font size="20.0" />
-                     </font>
-                  </Text>
-                  <HBox id="container" prefHeight="197.0" prefWidth="696.0" stylesheets="@blueBorder.css">
-                     <children>
-                        <VBox prefHeight="120.0" prefWidth="145.0" spacing="15.0">
-                           <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Request ID:" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Relate information system:" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Issued by: " />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Issue date: " />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description:" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Comments: " />
-                           </children>
-                           <padding>
-                              <Insets top="5.0" />
-                           </padding>
-                        </VBox>
-                        <VBox prefHeight="120.0" prefWidth="256.0" spacing="15.0">
-                           <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="77" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Moodle" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Dwayne (You)" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="5/5/2020" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="The request is regarding the missleading info..." />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="This is an example comment." />
-                           </children>
-                           <padding>
-                              <Insets top="5.0" />
-                           </padding>
-                        </VBox>
-                        <VBox prefHeight="120.0" prefWidth="256.0" spacing="15.0">
-                           <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
-                              <Text fill="#3076ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Click here to view more." underline="true" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" " />
-                           </children>
-                           <padding>
-                              <Insets top="5.0" />
-                           </padding>
-                        </VBox>
-                     </children>
-                     <padding>
-                        <Insets left="5.0" />
-                     </padding>
-                  </HBox>
-               </children>
-            </VBox>
             <VBox fx:id="vbEvaluationReport" spacing="15.0">
                <children>
-                  <Text fill="#515050" strokeType="OUTSIDE" strokeWidth="0.0" text="Evaluation Report">
+                  <Text id="containerTitle" fill="#515050" strokeType="OUTSIDE" strokeWidth="0.0" text="Evaluation Report">
                      <font>
                         <Font size="20.0" />
                      </font>
                   </Text>
-                  <VBox id="container" prefHeight="153.0" prefWidth="483.0" spacing="15.0" stylesheets="@blueBorder.css">
+                  <VBox id="container" prefHeight="589.0" prefWidth="682.0" spacing="15.0" stylesheets="@blueBorder.css">
                      <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Place:" />
-                        <TextField />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description of required change:" />
-                        <TextArea prefHeight="200.0" prefWidth="200.0" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Accepted results (benefit):" />
-                        <TextArea prefHeight="200.0" prefWidth="200.0" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Constraints:" />
-                        <TextArea prefHeight="200.0" prefWidth="200.0" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Risks:" />
-                        <TextArea prefHeight="200.0" prefWidth="200.0" />
+                        <Text id="text" strokeType="OUTSIDE" strokeWidth="0.0" text="Place:" />
+                        <TextField fx:id="tfPlace" />
+                        <Text id="text" strokeType="OUTSIDE" strokeWidth="0.0" text="Description of required change:" />
+                        <TextArea fx:id="taDescriptionOfRequiredChange" prefHeight="200.0" prefWidth="200.0" />
+                        <Text id="text" strokeType="OUTSIDE" strokeWidth="0.0" text="Accepted results (benefit):" />
+                        <TextArea fx:id="taAcceptedResults" prefHeight="200.0" prefWidth="200.0" />
+                        <Text id="text" strokeType="OUTSIDE" strokeWidth="0.0" text="Constraints:" />
+                        <TextArea fx:id="taConstraints" prefHeight="200.0" prefWidth="200.0" />
+                        <Text id="text" strokeType="OUTSIDE" strokeWidth="0.0" text="Risks:" />
+                        <TextArea fx:id="taRisks" prefHeight="200.0" prefWidth="200.0" />
                         <HBox alignment="CENTER_LEFT" spacing="15.0">
                            <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Estimated execution time:" />
-                              <DatePicker />
+                              <Text id="text" strokeType="OUTSIDE" strokeWidth="0.0" text="Estimated execution time:" />
+                              <DatePicker fx:id="dpEstimatedExecTime" />
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_RIGHT">
@@ -112,7 +57,7 @@
                                           <Image url="@../Images/Request%20Details/icons8_upload_mail_50px.png" />
                                        </image>
                                     </ImageView>
-                                    <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Send" />
+                                    <Text id="text" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Send" />
                                  </children>
                               </HBox>
                            </children>
@@ -124,6 +69,27 @@
                   </VBox>
                </children>
             </VBox>
+            <HBox alignment="CENTER_LEFT" spacing="30.0">
+               <children>
+                  <HBox fx:id="hbFullRequestDetails" alignment="CENTER" spacing="5.0">
+                     <children>
+                        <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/Table/icons8_view_details_50px.png" />
+                           </image>
+                        </ImageView>
+                        <Text id="text" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Press to see full request details">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets left="5.0" />
+               </padding>
+            </HBox>
          </children>
       </VBox>
       <Canvas fx:id="canvasRight" height="865.0" layoutY="10.0" width="305.0" />

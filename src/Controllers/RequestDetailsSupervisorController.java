@@ -33,9 +33,20 @@ import javafx.scene.text.Text;
 
 public class RequestDetailsSupervisorController implements Initializable {
 
+	private static final String REJECT_PHASE_DEADLINE = "RejectPhaseDeadline";
+
+	private static final String CONFIRM_PHASE_DEADLINE = "ConfirmPhaseDeadline";
+
+	private static final String ACTIVATE_EVALUATION_PHASE = "ActivateEvaluationPhase";
+
+	private static final String UPDATE_PHASE_OWNER_FROM_REQUEST_DETAILS_SUPERVISOR = "UpdatePhaseOwnerFromRequestDetailsSupervisor9879";
+
 	private static final String GET_EMPLOYEE_BY_EMPLOYEE_NUMBER = "GetEmployeeByEmployeeNumber";
 
 	private static final String GET_PHASES_OF_REQUEST_WITH_TIME_EXTENSIONS_IF_POSSIBLE = "getPhasesOfRequestWithTimeExtensionsIfPossible";
+
+	@FXML
+	private Canvas canvasRight;
 
 	@FXML
 	private HBox hbEditPhaseDetails;
@@ -44,7 +55,13 @@ public class RequestDetailsSupervisorController implements Initializable {
 	private HBox hbBrowsePhases;
 
 	@FXML
+	private Text txtPhaseOwner;
+
+	@FXML
 	private Text txtPhaseName;
+
+	@FXML
+	private Text txtPhaseStatus;
 
 	@FXML
 	private Text txtEstimateTimeOfCompletion;
@@ -68,6 +85,9 @@ public class RequestDetailsSupervisorController implements Initializable {
 	private Text txtRequestedTimeExtension;
 
 	@FXML
+	private HBox hbAssignEvaluatiorContainer;
+
+	@FXML
 	private ImageView imgWarningAutoAssign;
 
 	@FXML
@@ -75,6 +95,30 @@ public class RequestDetailsSupervisorController implements Initializable {
 
 	@FXML
 	private HBox hbAssignOtherEmp;
+
+	@FXML
+	private HBox hbDeadline;
+
+	@FXML
+	private ImageView imgWarningRequestedTimeExtension2;
+
+	@FXML
+	private HBox hbConfirmDeadline;
+
+	@FXML
+	private HBox hbRejectDeadline;
+
+	@FXML
+	private ImageView imgWarningRequestedTimeExtension1;
+
+	@FXML
+	private HBox hbConfirmTimeRequestExtension1;
+
+	@FXML
+	private HBox hbDeclineRequestTimeExtension1;
+
+	@FXML
+	private HBox hbRequestedTimeExtenContainer;
 
 	@FXML
 	private ImageView imgWarningRequestedTimeExtension;
@@ -86,31 +130,18 @@ public class RequestDetailsSupervisorController implements Initializable {
 	private HBox hbDeclineRequestTimeExtension;
 
 	@FXML
-	private Canvas canvasRight;
-
-	@FXML
-	private Canvas canvasLeft;
-
-	@FXML
-	private Text txtPhaseOwner;
-
-	@FXML
-	private Text txtPhaseStatus;
-
-	@FXML
 	private HBox hbFullRequestDetails;
 
 	@FXML
-	private HBox hbAssignEvaluatiorContainer;
-
-	@FXML
-	private HBox hbRequestedTimeExtenContainer;
+	private Canvas canvasLeft;
 
 	private ChangeRequest changeRequest;
 
 	private ArrayList<Phase> requestedPhases;
 	private int currentPhaseIndex = 0;
 	private Employee currentEmployeeOfSelectedPhase;
+
+	private boolean reload = false;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -120,14 +151,6 @@ public class RequestDetailsSupervisorController implements Initializable {
 		RequestDetailsUserController.applyCanvasEffects(canvasRight, canvasLeft);
 
 		setButtonsBehaviors();
-
-		// Get current phase
-
-//		AppManager.safeUpdate("awdawfwa4234", ()->{
-//			// TODO: intorpelate effect
-//			//imgWarningRequestedTimeExtension.setEffect(C);
-//		});
-//
 
 		setClientObservers();
 
@@ -160,6 +183,87 @@ public class RequestDetailsSupervisorController implements Initializable {
 			loadPageDetails();
 
 		});
+
+		hbAssignOtherEmp.setOnMousePressed(event -> {
+			NavigationBar.next("Select Employee", FxmlNames.LIST_OF_EMPLOYEES_SIMPLE);
+		});
+
+		ListOfEmployeesSimpleController.setOnRowDoubleClicked(emp -> {
+			txtAssignedByName.setText(emp.getFirstName() + " " + emp.getLastName());
+
+			Client.getInstance().requestWithListener(Command.updatePhaseOwner, srMsg -> {
+				if (srMsg.getCommand() == Command.updatePhaseOwner) {
+
+					NavigationBar.back(true);
+
+					ControllerManager.showInformationMessage("Success", "Employee Selected",
+							"The employee has been set to the current phase, press the confirm button to confirm your selection",
+							null);
+					// OK, so now the confirm button will change the phase status to active and send
+					// the manager of the phase a message.
+					Client.removeMessageRecievedFromServer(UPDATE_PHASE_OWNER_FROM_REQUEST_DETAILS_SUPERVISOR);
+				}
+			}, UPDATE_PHASE_OWNER_FROM_REQUEST_DETAILS_SUPERVISOR, requestedPhases.get(currentPhaseIndex),
+					emp.getEmpNumber());
+
+		});
+
+		hbConfirmAutoAssign.setOnMousePressed(event -> {
+			requestedPhases.get(currentPhaseIndex)
+					.setStatus(PhaseStatus.Waiting_To_Set_Time_Required_For_Evaluation.nameNo_());
+
+			Client.getInstance().requestWithListener(Command.setEvaluationPhaseToWaitingToSetTime, srMsg -> {
+				if (srMsg.getCommand() == Command.setEvaluationPhaseToWaitingToSetTime) {
+
+					hbAssignEvaluatiorContainer.setVisible(false);
+
+					ControllerManager.showInformationMessage("Success", "Evaluator has been confirmed",
+							"A message has been sent to the evaluator to choose a time to evaluate this request.",
+							null);
+
+					Client.removeMessageRecievedFromServer(ACTIVATE_EVALUATION_PHASE);
+				}
+			}, ACTIVATE_EVALUATION_PHASE, requestedPhases.get(currentPhaseIndex));
+		});
+
+		hbConfirmDeadline.setOnMousePressed(event -> {
+			requestedPhases.get(currentPhaseIndex)
+					.setDeadline(requestedPhases.get(currentPhaseIndex).getEstimatedTimeOfCompletion());
+
+			requestedPhases.get(currentPhaseIndex).setStatus(PhaseStatus.Active.name());
+
+			Client.getInstance().requestWithListener(Command.confirmPhaseDeadline, srMsg -> {
+				if (srMsg.getCommand() == Command.confirmPhaseDeadline) {
+
+					hbDeadline.setVisible(false);
+
+					ControllerManager.showInformationMessage("Success", "Deadline confirmed",
+							"The deadline for this request has been confirmed!", null);
+
+					Client.removeMessageRecievedFromServer(CONFIRM_PHASE_DEADLINE);
+				}
+			}, CONFIRM_PHASE_DEADLINE, requestedPhases.get(currentPhaseIndex));
+		});
+
+		hbRejectDeadline.setOnMousePressed(event -> {
+			Client.getInstance().requestWithListener(Command.rejectPhaseDeadline, srMsg -> {
+				if (srMsg.getCommand() == Command.rejectPhaseDeadline) {
+
+					requestedPhases.get(currentPhaseIndex).setEstimatedTimeOfCompletion(DateUtil.NA);
+
+					requestedPhases.get(currentPhaseIndex)
+							.setStatus(PhaseStatus.Waiting_To_Set_Time_Required_For_Phase.nameNo_());
+
+					hbDeadline.setVisible(false);
+
+					ControllerManager.showInformationMessage("Success", "Deadline rejected",
+							"The deadline for this request has been rejected!", null);
+
+					Client.removeMessageRecievedFromServer(REJECT_PHASE_DEADLINE);
+				}
+			}, REJECT_PHASE_DEADLINE, requestedPhases.get(currentPhaseIndex));
+		});
+
 	}
 
 	private void setClientObservers() {
@@ -241,6 +345,21 @@ public class RequestDetailsSupervisorController implements Initializable {
 		Phase currentPhase = requestedPhases.get(currentPhaseIndex);
 		txtPhaseName.setText(currentPhase.getPhaseName());
 
+		// if the estimated time of completion has been set
+		if (!currentPhase.getEstimatedTimeOfCompletion().equals(DateUtil.NA)) {
+
+			if (currentPhase.getStatus()
+					.compareTo(PhaseStatus.Waiting_To_Confirm_Time_Required_For_Phase.nameNo_()) == 0) {
+				hbDeadline.setVisible(true);
+
+			} else {
+				hbDeadline.setVisible(false);
+			}
+
+		} else {
+			hbDeadline.setVisible(false);
+		}
+
 		Client.getInstance().requestWithListener(Command.getEmployeeByEmployeeNumber, srMsg -> {
 			if (srMsg.getCommand() == Command.getEmployeeByEmployeeNumber) {
 				// Casting error even tho it works and prints the content
@@ -294,7 +413,7 @@ public class RequestDetailsSupervisorController implements Initializable {
 
 		if (currentPhase.phaseName.equals(PhaseType.Evaluation.name())) {
 
-			if (currentPhase.getStatus().equals(PhaseStatus.Waiting.name())) {
+			if (currentPhase.getStatus().equals(PhaseStatus.Waiting_To_Set_Evaluator.nameNo_())) {
 
 				System.out.println("is evaluation and is waiting");
 

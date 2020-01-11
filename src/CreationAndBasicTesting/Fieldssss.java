@@ -28,7 +28,16 @@ public class Fieldssss {
 //		db.insertObject(phase);
 
 		
-		System.out.println(db.getChangeRequestById(-1));
+		//System.out.println(db.getEmployees().size());
+		
+		Phase decisionPhase = new Phase(-1, -1, PhaseType.Evaluation.name(), PhaseStatus.Active.name(),
+				db.getComHeadEmpNum(), DateUtil.daysFromNow(7), DateUtil.daysFromNow(7), DateUtil.NA,
+				DateUtil.now(), false);
+		
+		db.insertObject(decisionPhase);
+	
+	
+	
 	}
 	
 	

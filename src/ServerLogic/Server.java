@@ -12,12 +12,13 @@ import java.util.concurrent.TimeUnit;
 
 import Entities.ChangeRequest;
 import Entities.Employee;
+import Entities.EvaluationReport;
 import Entities.File;
 import Entities.Message;
 import Entities.SqlObject;
 import Entities.SystemUser;
 import Entities.Phase;
-
+import Entities.PhaseTimeExtensionRequest;
 import Protocol.Command;
 import Protocol.MsgReturnType;
 import Protocol.PhaseStatus;
@@ -148,8 +149,149 @@ public class Server extends AbstractServer {
 		Command command = srMsg.getCommand();
 		switch (command) {
 
-		case rejectPhaseTimeExtensionSupervisor:
+		case insertEvaluationReport:
+
+			EvaluationReport evaluationReport = (EvaluationReport) srMsg.getAttachedData()[0];
+			long phaseId63 = (long) srMsg.getAttachedData()[1];
+
+			evaluationReport.setReportID(db.getNewMaxID(EvaluationReport.getEmptyInstance()));
+			db.insertObject(evaluationReport);
+			db.updatePhaseStatus(phaseId63, PhaseStatus.Closed);
+
+			long reqId2 = evaluationReport.getRequestID();
 			
+			// init decision phase
+			Phase decisionPhase = new Phase(db.getNewMaxID(Phase.getEmptyInstance()), reqId2, PhaseType.Evaluation.name(), PhaseStatus.Active.name(),
+					db.getComHeadEmpNum(), DateUtil.daysFromNow(7), DateUtil.daysFromNow(7), DateUtil.NA,
+					DateUtil.now(), false);
+			
+			db.insertObject(decisionPhase);
+			
+			// send message to all com
+			
+			sendUserMessage("Deadline Time Rejected", db.getUsernameByEmpNumber(rPhase.getEmpNumber()),
+					"The deadline that you choosed for phase [" + rPhase.getPhaseID() + "] has been rejected!",
+					rPhase.getRequestID(), rPhase.getPhaseID());
+			
+			
+			
+
+			sendMessageToClient(client, command);
+
+			break;
+
+		case updatePhaseEstimatedTime:
+
+			Phase updatePhaseEst = (Phase) srMsg.getAttachedData()[0];
+
+			db.updateByObject(updatePhaseEst);
+
+			sendUserMessage("A phase is pending on deadline confirmation", db.getUsernameOfSupervisor(),
+					"The phase [" + updatePhaseEst.getPhaseID() + "] is waiting for a confirmation for the deadline!",
+					updatePhaseEst.getRequestID(), updatePhaseEst.getPhaseID());
+
+			sendMessageToClient(client, command);
+
+			break;
+
+		case rejectPhaseDeadline:
+
+			Phase rPhase = (Phase) srMsg.getAttachedData()[0];
+			db.updateByObject(rPhase);
+
+			sendUserMessage("Deadline Time Rejected", db.getUsernameByEmpNumber(rPhase.getEmpNumber()),
+					"The deadline that you choosed for phase [" + rPhase.getPhaseID() + "] has been rejected!",
+					rPhase.getRequestID(), rPhase.getPhaseID());
+
+			sendMessageToClient(client, command);
+
+			break;
+
+		case confirmPhaseDeadline:
+
+			Phase cPhase = (Phase) srMsg.getAttachedData()[0];
+			db.updateByObject(cPhase);
+
+			sendUserMessage("Deadline Time accepted", db.getUsernameByEmpNumber(cPhase.getEmpNumber()),
+					"The deadline that you choosed for phase [" + cPhase.getPhaseID() + "] has been accepted!",
+					cPhase.getRequestID(), cPhase.getPhaseID());
+
+			// Notify the requester for a new treatment requests update
+			notifyEmployeeTreatmentRequestsUpdated(cPhase.getEmpNumber());
+
+			sendMessageToClient(client, command);
+
+			break;
+
+		case insertTimeExtension:
+
+			PhaseTimeExtensionRequest pter = (PhaseTimeExtensionRequest) srMsg.getAttachedData()[0];
+
+			// insert time extension and update phase status to wait for time extension
+			// confirmation
+			boolean result33 = db.insertTimeExtension(pter);
+			long phId = pter.getPhaseID();
+			long reqId = db.getRequestIdByPhaseId(phId);
+
+			// insert request to database
+			PhaseStatus status = PhaseStatus.Active_And_Waiting_For_Time_Extension;
+			result33 &= db.updatePhaseStatus(phId, status);
+
+			// notify the supervisor about the time extension
+			String evalName = db.getFullNameByPhaseId(phId);
+			sendUserMessage("Confirm time extension", db.getUsernameOfSupervisor(),
+					"The evaluator " + evalName + " of request " + reqId + " has requested a time extension", reqId,
+					phId);
+
+			if (result33 == false) {
+				System.err.println("Error, command insertTimeExtension has failed!");
+			}
+
+			// Send back the results
+			sendMessageToClient(client, command, result33, pter.getRequestedTimeInDays(),
+					pter.getRequestedTimeInHours());
+
+			break;
+
+		case setEvaluationPhaseToWaitingToSetTime:
+
+			Phase ph2424 = (Phase) srMsg.getAttachedData()[0];
+			ph2424.setStatus(PhaseStatus.Waiting_To_Set_Time_Required_For_Evaluation.nameNo_());
+			db.updateByObject(ph2424);
+
+			String username42424 = db.getUsernameByEmpNumber(ph2424.getEmpNumber());
+
+			sendUserMessage("Set required time to evaluate a request", username42424,
+					"You have been assigned to evaluate the request[" + ph2424.getRequestID()
+							+ "].\nPlease choose the required time to evaluate the request",
+					ph2424.getRequestID(), ph2424.getPhaseID());
+
+			sendMessageToClient(client, command);
+
+			break;
+
+		case updatePhaseOwner:
+
+			Phase ph = (Phase) srMsg.getAttachedData()[0];
+			long empNumber = (long) srMsg.getAttachedData()[1];
+
+			ph.setEmpNumber(empNumber);
+
+			db.updateByObject(ph);
+
+			sendMessageToClient(client, command);
+
+			break;
+
+		case getEmployeesListSimple:
+
+			ArrayList<Employee> emps = db.getEmployees();
+			sendMessageToClient(client, command, emps);
+
+			break;
+
+		case rejectPhaseTimeExtensionSupervisor:
+
 			Phase phaseRTE2 = (Phase) srMsg.getAttachedData()[0];
 
 			// delete the time extension from the database
@@ -192,7 +334,7 @@ public class Server extends AbstractServer {
 			String toUsername = db.getEmployeeByEmpNumber(phaseRTE.getEmpNumber()).getUserName();
 			String content = "Your time extension for the request [id:" + phaseRTE.getRequestID()
 					+ "] has been accepted!";
-			
+
 			sendUserMessage(subject, toUsername, content, -1, -1);
 
 			// Notify the requester for a new treatment requests update
@@ -469,8 +611,9 @@ public class Server extends AbstractServer {
 
 		long nextPhaseId = db.getNewMaxID(Phase.getEmptyInstance());
 		long empNumber = DEFAULT_EVALUATOR_EMP_NUMBER;
-		Phase phase = new Phase(nextPhaseId, cr.getRequestID(), PhaseType.Evaluation.name(), PhaseStatus.Waiting_To_Set_Evaluator.name(),
-				empNumber, DateUtil.NA, DateUtil.NA, DateUtil.NA, DateUtil.now(), false);
+		Phase phase = new Phase(nextPhaseId, cr.getRequestID(), PhaseType.Evaluation.name(),
+				PhaseStatus.Waiting_To_Set_Evaluator.nameNo_(), empNumber, DateUtil.NA, DateUtil.NA, DateUtil.NA,
+				DateUtil.now(), false);
 		db.insertObject(phase);
 
 		// Send a message to the supervisor

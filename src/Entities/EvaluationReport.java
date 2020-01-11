@@ -2,6 +2,7 @@ package Entities;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 
 public class EvaluationReport extends Report implements Serializable{
@@ -12,10 +13,10 @@ public class EvaluationReport extends Report implements Serializable{
 	}
 	
 	public String result, constraints, risks;
-	public LocalDate estimatedExecutionTime;
+	public Timestamp estimatedExecutionTime;
 	
 	public EvaluationReport(long reportID, long requestID, String contentLT, String place, String result,
-			String constraints, String risks, LocalDate estimatedExecutionTime) {
+			String constraints, String risks, Timestamp estimatedExecutionTime) {
 		super(reportID, requestID, contentLT, place);
 		this.result = result;
 		this.constraints = constraints;
@@ -54,12 +55,12 @@ public class EvaluationReport extends Report implements Serializable{
 	}
 
 
-	public LocalDate getEstimatedExecutionTime() {
+	public Timestamp getEstimatedExecutionTime() {
 		return estimatedExecutionTime;
 	}
 
 
-	public void setEstimatedExecutionTime(LocalDate estimatedExecutionTime) {
+	public void setEstimatedExecutionTime(Timestamp estimatedExecutionTime) {
 		this.estimatedExecutionTime = estimatedExecutionTime;
 	}
 

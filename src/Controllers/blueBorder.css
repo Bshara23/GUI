@@ -3,3 +3,14 @@
 	-fx-border-width: 2;
 	-fx-border-radius: 4;
 }
+#text{
+	-fx-font-size: 20;
+}
+
+#containerTitle{
+	-fx-font-size: 24;
+}
+
+#pageTitle{
+	-fx-font-size: 50;
+}

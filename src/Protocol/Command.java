@@ -12,7 +12,7 @@ public enum Command {
 
 	GetMyRequests,
 
-	updateRequest, updatePhase, insertFile, getFile,
+	updateRequest, updatePhaseEstimatedTime, insertFile, getFile,
 
 	insertComitteeMember, insertSupervisor, updateCommitteeMember, updateSupervisor,
 
@@ -34,6 +34,7 @@ public enum Command {
 	getSystemUserByRequest, getEmployeeByEmployeeNumber, getFirstLastName, getFullNameByUsername, getPermissionsData,
 	GetMyIssuedRequestsCount, GetMyIssuedRequests, SendExaminerReportOfFailures, receivedNewMessage,
 	checkIfPhaseIsWaiting, getChangeRequestFromMessagePage, acceptPhaseTimeExtensionSupervisor,
-	rejectPhaseTimeExtensionSupervisor, receivedNewOrUpdateRequests, getEmployeesListSimple,
+	rejectPhaseTimeExtensionSupervisor, receivedNewOrUpdateRequests, getEmployeesListSimple, updatePhaseOwner,
+	setEvaluationPhaseToWaitingToSetTime, insertTimeExtension, confirmPhaseDeadline, rejectPhaseDeadline,
 
 }
