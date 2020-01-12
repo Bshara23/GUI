@@ -74,19 +74,19 @@ public class Phase extends SqlObject implements Serializable {
 		this.requestID = requestID;
 	}
 
-	EvaluationReport getEvaluationReport() {
+	public EvaluationReport getEvaluationReport() {
 		return evaluationReport;
 	}
 
-	void setEvaluationReport(EvaluationReport evaluationReport) {
+	public void setEvaluationReport(EvaluationReport evaluationReport) {
 		this.evaluationReport = evaluationReport;
 	}
 
-	ArrayList<File> getFiles() {
+	public ArrayList<File> getFiles() {
 		return files;
 	}
 
-	void setFiles(ArrayList<File> files) {
+	public void setFiles(ArrayList<File> files) {
 		this.files = files;
 	}
 

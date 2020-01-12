@@ -10,6 +10,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+
 <VBox fx:id="vbEvaluationReport" spacing="15.0" stylesheets="@blueBorder.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.requestTimeExtensionController">
    <children>
       <Text id="containerTitle" fill="#515050" strokeType="OUTSIDE" strokeWidth="0.0" text="Time Extension">
@@ -54,9 +55,19 @@
                   <Text id="text" fx:id="txtNewDeadline1" strokeType="OUTSIDE" strokeWidth="0.0" text="199/89/78" />
                </children>
             </HBox>
-            <HBox alignment="CENTER_RIGHT">
+            <HBox alignment="CENTER_RIGHT" spacing="20.0">
                <children>
-                  <HBox fx:id="hbSendTimeExtensionRequest" alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="73.0" spacing="10.0">
+                  <HBox fx:id="hbCancle" alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="73.0" spacing="10.0">
+                     <children>
+                        <ImageView fitHeight="30.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/login/icons8_delete_50px_1.png" />
+                           </image>
+                        </ImageView>
+                        <Text id="text" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Cancle" />
+                     </children>
+                  </HBox>
+                  <HBox fx:id="hbSendTimeExtensionRequest1" alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="73.0" spacing="10.0">
                      <children>
                         <ImageView fitHeight="30.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
                            <image>

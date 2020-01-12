@@ -33,6 +33,8 @@ import javafx.scene.text.Text;
 
 public class RequestDetailsSupervisorController implements Initializable {
 
+	private static final String ACCE = "dawdawfw53252365435435435435t5th5463453";
+
 	private static final String REJECT_PHASE_DEADLINE = "RejectPhaseDeadline";
 
 	private static final String CONFIRM_PHASE_DEADLINE = "ConfirmPhaseDeadline";
@@ -246,13 +248,12 @@ public class RequestDetailsSupervisorController implements Initializable {
 		});
 
 		hbRejectDeadline.setOnMousePressed(event -> {
+			requestedPhases.get(currentPhaseIndex).setEstimatedTimeOfCompletion(DateUtil.NA);
+			requestedPhases.get(currentPhaseIndex)
+					.setStatus(PhaseStatus.Waiting_To_Set_Time_Required_For_Phase.nameNo_());
+			
 			Client.getInstance().requestWithListener(Command.rejectPhaseDeadline, srMsg -> {
 				if (srMsg.getCommand() == Command.rejectPhaseDeadline) {
-
-					requestedPhases.get(currentPhaseIndex).setEstimatedTimeOfCompletion(DateUtil.NA);
-
-					requestedPhases.get(currentPhaseIndex)
-							.setStatus(PhaseStatus.Waiting_To_Set_Time_Required_For_Phase.nameNo_());
 
 					hbDeadline.setVisible(false);
 
@@ -267,7 +268,7 @@ public class RequestDetailsSupervisorController implements Initializable {
 	}
 
 	private void setClientObservers() {
-		Client.addMessageRecievedFromServer("dawdawfw5325236543t5th5463453", srMsg -> {
+		Client.addMessageRecievedFromServer(ACCE, srMsg -> {
 			if (srMsg.getCommand() == Command.acceptPhaseTimeExtensionSupervisor) {
 
 				boolean isSuccess = (boolean) srMsg.getAttachedData()[0];
@@ -277,11 +278,12 @@ public class RequestDetailsSupervisorController implements Initializable {
 					ControllerManager.showInformationMessage("Success", "Time extension confirmed",
 							"The time extension for request with id " + requestId + " has been successfuly applied!",
 							null);
-					hbRequestedTimeExtenContainer.setVisible(false);
 
 					// remove the phase time extension
 					Phase currentPhase = requestedPhases.get(currentPhaseIndex);
 					currentPhase.setPhaseTimeExtensionRequest(null);
+
+					NavigationBar.reload();
 
 				} else {
 					ControllerManager.showErrorMessage("Error", "An error has occured",
@@ -306,6 +308,8 @@ public class RequestDetailsSupervisorController implements Initializable {
 					// remove the phase time extension
 					Phase currentPhase = requestedPhases.get(currentPhaseIndex);
 					currentPhase.setPhaseTimeExtensionRequest(null);
+					currentPhase.setStatus(PhaseStatus.Active.name());
+
 
 				} else {
 					ControllerManager.showErrorMessage("Error", "An error has occured",

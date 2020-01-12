@@ -12,6 +12,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -64,6 +65,32 @@ public class ControllerManager {
 				});
 			}
 		});
+	}
+	
+	public static void showYesNoMessage(String title, String header, String content, VoidFunc yesFunc,
+			VoidFunc noFunc) {
+		Alert alertSuccess = new Alert(AlertType.CONFIRMATION);
+		alertSuccess.setTitle(title);
+		alertSuccess.setHeaderText(header);
+		alertSuccess.setContentText(content);
+		((Button) alertSuccess.getDialogPane().lookupButton(ButtonType.OK)).setText("Yes");
+		((Button) alertSuccess.getDialogPane().lookupButton(ButtonType.CANCEL)).setText("No");
+
+		alertSuccess.showAndWait().ifPresent(rs -> {
+			if (rs == ButtonType.OK) {
+				Platform.runLater(() -> {
+					if (yesFunc != null)
+						yesFunc.call();
+				});
+			}
+			if (rs == ButtonType.CANCEL) {
+				Platform.runLater(() -> {
+					if (noFunc != null)
+						noFunc.call();
+				});
+			}
+		});
+		
 	}
 
 	public static void showInformationMessage(String title, String header, String content, VoidFunc okFunc) {
@@ -215,5 +242,7 @@ public class ControllerManager {
 		});
 
 	}
+
+	
 
 }

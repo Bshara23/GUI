@@ -2,6 +2,7 @@ package Controllers;
 
 import java.net.URL;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 import ClientLogic.Client;
@@ -59,10 +60,16 @@ public class RequestDetailsEvaluatorGUIController implements Initializable {
 	private HBox hbFullRequestDetails;
 
 	@FXML
+	private HBox hbTimeExtension;
+
+	@FXML
 	private Canvas canvasRight;
 
 	@FXML
 	private Canvas canvasLeft;
+
+	@FXML
+	private VBox vbContainerAll;
 
 	private ChangeRequest lastRequest;
 
@@ -81,9 +88,17 @@ public class RequestDetailsEvaluatorGUIController implements Initializable {
 		ControllerManager.setEffect(hbFullRequestDetails, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 		ControllerManager.setOnHoverEffect(hbFullRequestDetails, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
 				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		
+		hbFullRequestDetails.setOnMousePressed(event -> {
 
+			NavigationBar.next("Request Full Details", FxmlNames.REQUEST_DETAILS);
+
+		});
+		
 		lastRequest = ListOfRequestsForTreatmentController.lastSelectedRequest;
 		lastPhase = lastRequest.getPhases().get(0);
+
+		hbTimeExtension.setVisible(false);
 
 		PhaseStatus phaseStatus = PhaseStatus.valueOfAdvanced(lastPhase.getStatus());
 		switch (phaseStatus) {
@@ -97,18 +112,16 @@ public class RequestDetailsEvaluatorGUIController implements Initializable {
 
 			break;
 
+		case Waiting_To_Set_Time_Required_For_Phase:
 		case Waiting_To_Set_Time_Required_For_Evaluation:
-//
-//			requestTimeExtensionController controller = (requestTimeExtensionController) ControllerSwapper
-//					.loadContentWithController(vbEvaluationReport, FxmlNames.REQUEST_TIME_EXTENSION);
-//
-//			controller.setPhase(lastPhase);
+
 			SetEstimatedTimeForPhaseController controller = (SetEstimatedTimeForPhaseController) ControllerSwapper
 					.loadContentWithController(vbEvaluationReport, FxmlNames.SET_ESTIMATED_TIME_FOR_PHASE);
 			controller.setPhase(lastPhase);
 
 			break;
 
+		case Active_And_Waiting_For_Time_Extension:
 		case Active:
 
 			hbSendExecutionDetails.setCursor(Cursor.HAND);
@@ -116,8 +129,24 @@ public class RequestDetailsEvaluatorGUIController implements Initializable {
 			ControllerManager.setOnHoverEffect(hbSendExecutionDetails, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
 					CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 
-			hbSendExecutionDetails.setOnMousePressed(event -> {
+			if (phaseStatus != PhaseStatus.Active_And_Waiting_For_Time_Extension) {
+				hbTimeExtension.setVisible(true);
+				hbTimeExtension.setCursor(Cursor.HAND);
+				ControllerManager.setEffect(hbTimeExtension, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+				ControllerManager.setOnHoverEffect(hbTimeExtension, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
+						CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 
+				hbTimeExtension.setOnMousePressed(event -> {
+
+					requestTimeExtensionController r = (requestTimeExtensionController) ControllerSwapper
+							.loadContentWithController(vbContainerAll, FxmlNames.REQUEST_TIME_EXTENSION);
+					r.setPhase(lastPhase);
+
+				});
+
+			}
+
+			hbSendExecutionDetails.setOnMousePressed(event -> {
 				boolean areAllNotEmpty = ControllerManager.areAllStringsNotEmpty(tfPlace.getText(),
 						taAcceptedResults.getText(), taConstraints.getText(), taDescriptionOfRequiredChange.getText(),
 						taRisks.getText());
@@ -134,23 +163,35 @@ public class RequestDetailsEvaluatorGUIController implements Initializable {
 					return;
 				}
 
-				EvaluationReport evaluationReport = new EvaluationReport(-1, lastPhase.getRequestID(),
-						taDescriptionOfRequiredChange.getText(), tfPlace.getText(), taAcceptedResults.getText(),
-						taConstraints.getText(), taRisks.getText(), DateUtil.get(dpEstimatedExecTime.getValue()));
+				if (dpEstimatedExecTime.getValue().isBefore(LocalDate.now())) {
+					ControllerManager.showErrorMessage("Error", "Invalid Date",
+							"Please set an estimated execution time that is after the date of today!", null);
+					return;
+				}
 
-				Client.getInstance().requestWithListener(Command.insertEvaluationReport, srMsg -> {
+				ControllerManager.showYesNoMessage("Send Report", "Evaluation Report",
+						"Are you sure you want to send the evaluation report?", () -> {
 
-					if (srMsg.getCommand() == Command.insertEvaluationReport) {
+							EvaluationReport evaluationReport = new EvaluationReport(-1, lastPhase.getRequestID(),
+									taDescriptionOfRequiredChange.getText(), tfPlace.getText(),
+									taAcceptedResults.getText(), taConstraints.getText(), taRisks.getText(),
+									DateUtil.get(dpEstimatedExecTime.getValue()));
 
-						ControllerManager.showInformationMessage("Success", "Evaluation Report",
-								"The evaluation reported has been successfully puplished", null);
+							Client.getInstance().requestWithListener(Command.insertEvaluationReport, srMsg -> {
 
-						Client.removeMessageRecievedFromServer(INSERT_EVALUATION_REPORT);
-						NavigationBar.back(true);
+								if (srMsg.getCommand() == Command.insertEvaluationReport) {
 
-					}
+									ControllerManager.showInformationMessage("Success", "Evaluation Report",
+											"The evaluation reported has been successfully puplished", null);
 
-				}, INSERT_EVALUATION_REPORT, evaluationReport, lastPhase.getPhaseID());
+									Client.removeMessageRecievedFromServer(INSERT_EVALUATION_REPORT);
+									NavigationBar.back(true);
+
+								}
+
+							}, INSERT_EVALUATION_REPORT, evaluationReport, lastPhase.getPhaseID());
+
+						}, null);
 
 			});
 
@@ -162,11 +203,7 @@ public class RequestDetailsEvaluatorGUIController implements Initializable {
 			break;
 		}
 
-		hbFullRequestDetails.setOnMousePressed(event -> {
-
-			NavigationBar.next("Request Full Details", FxmlNames.REQUEST_DETAILS);
-
-		});
+		
 
 	}
 

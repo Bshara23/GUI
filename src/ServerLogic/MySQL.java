@@ -473,8 +473,9 @@ public class MySQL extends MySqlConnBase {
 		String query = "SELECT * FROM icm.employee as emp "
 				+ "INNER JOIN icm.phase as ph ON ph.empNumber = emp.empNumber "
 				+ "INNER JOIN icm.changerequest as cr ON cr.requestID = ph.requestID " + "WHERE ph.empNumber = '"
-				+ empNum + "' AND ph.status != 'Waiting To Set Evaluator' AND ph.phaseName = '" + phaseType.name()
-				+ "' ORDER BY ph.deadline ASC";
+				+ empNum
+				+ "' AND ph.status != 'Waiting To Set Evaluator' AND ph.status != 'closed' AND ph.phaseName = '"
+				+ phaseType.name() + "' ORDER BY ph.deadline ASC";
 
 		ArrayList<ChangeRequest> results = new ArrayList<ChangeRequest>();
 
@@ -606,7 +607,28 @@ public class MySQL extends MySqlConnBase {
 
 	public int getCountOfPhasesByType(long empNumberForPhases, PhaseType phaseType) {
 		String query = "SELECT COUNT(*) FROM icm.phase as ph WHERE ph.empNumber = '" + empNumberForPhases
-				+ "' AND ph.phaseName = '" + phaseType.name() + "'";
+				+ "' AND ph.phaseName = '" + phaseType.name() + "' AND ph.status != 'closed'";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(rs.getInt(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.get(0);
+	}
+
+	public int getCountOfPhasesByType(PhaseType phaseType) {
+		String query = "SELECT COUNT(*) FROM icm.phase as ph where ph.phaseName = '" + phaseType.name()
+				+ "' AND ph.status != 'closed'";
 
 		ArrayList<Integer> results = new ArrayList<Integer>();
 		IStatement prepS = rs -> {
@@ -762,7 +784,8 @@ public class MySQL extends MySqlConnBase {
 
 		String query = "SELECT COUNT(ph.phaseName) FROM icm.employee as emp "
 				+ "INNER JOIN icm.systemUser as su ON su.userName = emp.userName "
-				+ "INNER JOIN icm.phase as ph ON ph.empNumber = emp.empNumber WHERE su.userName = '" + username23 + "'";
+				+ "INNER JOIN icm.phase as ph ON ph.empNumber = emp.empNumber "
+				+ "WHERE ph.status != 'Closed' AND su.userName = '" + username23 + "'";
 
 		ArrayList<Integer> results = new ArrayList<Integer>();
 		IStatement prepS = rs -> {
@@ -1125,7 +1148,7 @@ public class MySQL extends MySqlConnBase {
 	}
 
 	public long getComHeadEmpNum() {
-		
+
 		String query = "SELECT e.empNumber FROM icm.employee as e\r\n"
 				+ "inner join icm.executionchangescommitteemember as c on c.empNumber = e.empNumber\r\n"
 				+ "where c.isManager = '1'";
@@ -1147,6 +1170,175 @@ public class MySQL extends MySqlConnBase {
 		executeStatement(query, prepS);
 		return results.size() == 1 ? results.get(0) : -1;
 
+	}
+
+	public ArrayList<String> getComsUsernames() {
+		String query = "SELECT su.userName FROM icm.systemUser as su\r\n"
+				+ "inner join icm.employee as e on e.userName=su.userName\r\n"
+				+ "inner join icm.executionchangescommitteemember as c on c.empNumber = e.empNumber";
+
+		ArrayList<String> results = new ArrayList<String>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				while (rs.next()) {
+					results.add(rs.getString(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() > 0 ? results : null;
+	}
+
+	public ArrayList<Long> getComsEmpNums() {
+		String query = "SELECT e.empNumber FROM icm.systemUser as su\r\n"
+				+ "inner join icm.employee as e on e.userName=su.userName\r\n"
+				+ "inner join icm.executionchangescommitteemember as c on c.empNumber = e.empNumber";
+
+		ArrayList<Long> results = new ArrayList<Long>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				while (rs.next()) {
+					results.add(rs.getLong(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() > 0 ? results : null;
+	}
+
+	public ArrayList<ChangeRequest> getChangeRequestPhaseForCom() {
+		String query = "SELECT * FROM icm.phase p\r\n"
+				+ "inner join icm.changerequest as c on c.requestID = p.requestID\r\n"
+				+ "left join icm.evaluationreport as e on e.requestID = p.requestID\r\n"
+				+ "where p.phaseName = 'decision' and p.status != 'Closed' ORDER BY p.startingDate ASC";
+
+		ArrayList<ChangeRequest> results = new ArrayList<ChangeRequest>();
+
+		IStatement prepS = rs -> {
+
+			// o = offset
+			try {
+
+				while (rs.next()) {
+					int o = 0;
+
+					Phase phase = new Phase(rs.getLong(o + 1), rs.getLong(o + 2), rs.getString(o + 3),
+							rs.getString(o + 4), rs.getLong(o + 5), rs.getTimestamp(o + 6), rs.getTimestamp(o + 7),
+							rs.getTimestamp(o + 8), rs.getTimestamp(o + 9), rs.getBoolean(o + 10));
+
+					o += 10;
+
+					ChangeRequest changeRequest = new ChangeRequest(rs.getLong(o + 1), rs.getString(o + 2),
+							rs.getTimestamp(o + 3), rs.getTimestamp(o + 4), rs.getTimestamp(o + 5), rs.getString(o + 6),
+							rs.getString(o + 7), rs.getString(o + 8), rs.getString(o + 9), rs.getString(o + 10));
+
+					o += 10;
+
+					if (rs.getLong(o + 1) != 0) {
+						EvaluationReport evalRep = new EvaluationReport(rs.getLong(o + 5), rs.getLong(o + 6),
+								rs.getString(o + 7), rs.getString(o + 8), rs.getString(o + 1), rs.getString(o + 2),
+								rs.getString(o + 3), rs.getTimestamp(o + 4));
+
+						phase.setEvaluationReport(evalRep);
+					}
+
+					changeRequest.getPhases().add(phase);
+
+					results.add(changeRequest);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		executeStatement(query, prepS);
+
+		return results;
+	}
+
+	public boolean isEmployeeComMember(long empNum) {
+		String query = "SELECT * FROM icm.employee as e\r\n"
+				+ "inner join icm.executionchangescommitteemember t on t.empNumber = e.empNumber\r\n"
+				+ "where e.empNumber = '" + empNum + "'";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(10); // just add, doesn't matter what...
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() == 1;
+	}
+
+	public String getRequestOwnerUsername(long requestID) {
+
+		String query = "SELECT s.userName FROM icm.systemUser as s\r\n"
+				+ "inner join icm.changerequest as c on c.username = s.username where c.requestID = '" + requestID
+				+ "';";
+
+		ArrayList<String> results = new ArrayList<String>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				while (rs.next()) {
+					results.add(rs.getString(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() > 0 ? results.get(0) : "";
+	}
+
+	public Long getLatestEvaluatorEmpNumber(long requestID) {
+		String query = "SELECT p.empNumber FROM icm.systemUser as s\r\n"
+				+ "inner join icm.changerequest as c on c.username = s.username\r\n"
+				+ "inner join icm.phase as p on p.requestID = c.requestID\r\n" + "where c.requestID = '" + requestID
+				+ "' and p.phaseName = 'evaluation' and p.status = 'Closed' \r\n" + "ORDER BY p.startingDate DESC;";
+
+		ArrayList<Long> results = new ArrayList<Long>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				while (rs.next()) {
+					results.add(rs.getLong(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() == 1 ? results.get(0) : -1;
 	}
 
 }

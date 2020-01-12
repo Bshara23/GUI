@@ -16,11 +16,11 @@ public abstract class Report extends SqlObject implements Serializable {
 		this.place = place;
 	}
 
-	String getPlace() {
+	public String getPlace() {
 		return place;
 	}
 
-	void setPlace(String place) {
+	public void setPlace(String place) {
 		this.place = place;
 	}
 

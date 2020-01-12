@@ -6,10 +6,12 @@ import java.util.ResourceBundle;
 import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
+import Controllers.Logic.NavigationBar;
 import Entities.ChangeRequest;
 import Entities.Phase;
 import Entities.PhaseTimeExtensionRequest;
 import Protocol.Command;
+import Protocol.PhaseStatus;
 import Utility.ControllerSwapper;
 import Utility.DateUtil;
 import javafx.beans.value.ChangeListener;
@@ -40,28 +42,39 @@ public class requestTimeExtensionController implements Initializable {
 	private TextField tfNumberOfHours;
 
 	@FXML
-	private Text txtNewDeadline;
+	private TextArea txtDescription;
 
 	@FXML
 	private Text txtOldDeadline;
 
 	@FXML
-	private HBox hbSendTimeExtensionRequest;
+	private Text txtNewDeadline1;
 
 	@FXML
-	private TextArea txtDescription;
+	private HBox hbCancle;
+
+	@FXML
+	private HBox hbSendTimeExtensionRequest1;
 
 	private Phase phase;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		hbSendTimeExtensionRequest.setCursor(Cursor.HAND);
-		ControllerManager.setEffect(hbSendTimeExtensionRequest, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
-		ControllerManager.setOnHoverEffect(hbSendTimeExtensionRequest, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
+		hbSendTimeExtensionRequest1.setCursor(Cursor.HAND);
+		ControllerManager.setEffect(hbSendTimeExtensionRequest1, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		ControllerManager.setOnHoverEffect(hbSendTimeExtensionRequest1, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
 				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 
-		hbSendTimeExtensionRequest.setOnMousePressed(event -> {
+		hbCancle.setCursor(Cursor.HAND);
+		ControllerManager.setEffect(hbCancle, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		ControllerManager.setOnHoverEffect(hbCancle, CommonEffects.REQUEST_DETAILS_BUTTON_RED,
+				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		hbCancle.setOnMousePressed(event -> {
+			NavigationBar.reload();
+		});
+
+		hbSendTimeExtensionRequest1.setOnMousePressed(event -> {
 
 			if (tfNumberOfDays.getText().length() == 0) {
 				ControllerManager.showErrorMessage("Error", "Number of days not set", "Please select a number of days",
@@ -114,7 +127,10 @@ public class requestTimeExtensionController implements Initializable {
 								"Your request time extension of " + days + " days and " + hours
 										+ " hours has been send to the supervisor, please wait for a resonse in the coming days",
 								null);
+						
+						phase.setStatus(PhaseStatus.Active_And_Waiting_For_Time_Extension.nameNo_());
 
+						NavigationBar.reload();
 					} else {
 						System.err.println("returned false from Command.insertTimeExtension");
 					}
@@ -134,7 +150,7 @@ public class requestTimeExtensionController implements Initializable {
 		phase = lastPhase;
 		txtRequestID.setText("[" + phase.getRequestID() + "]");
 		txtOldDeadline.setText(DateUtil.toString(phase.getDeadline()));
-		txtNewDeadline.setText("Please select a date");
+		txtNewDeadline1.setText("Please select a date");
 	}
 
 }

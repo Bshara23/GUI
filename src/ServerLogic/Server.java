@@ -37,6 +37,7 @@ import Protocol.SeriObject;
 
 public class Server extends AbstractServer {
 
+	private static final int SYSTEM_EMPLOYEE_NUMBER = -1;
 	private static final int DEFAULT_EVALUATOR_EMP_NUMBER = 10;
 	private boolean sqlException;
 	public static final int DEFAULT_PORT = 5555;
@@ -149,6 +150,81 @@ public class Server extends AbstractServer {
 		Command command = srMsg.getCommand();
 		switch (command) {
 
+		case requestMoreDateForDecision:
+
+			Phase p3 = (Phase) srMsg.getAttachedData()[0];
+
+			// update phase status to closed of decision phase
+			db.updatePhaseStatus(p3.getPhaseID(), PhaseStatus.Waiting_For_More_Data);
+
+			// send message to the committee members that more data has been requested
+			ArrayList<String> comNames3 = db.getComsUsernames();
+
+			for (String comName : comNames3) {
+				sendUserMessage("More data requested", comName,
+						"More data has been request for the the requests [" + p3.getRequestID() + "].");
+			}
+
+			// init evaluation phase
+			initEvaluationPhase(p3.getRequestID());
+
+			long latestEvalEmpNum = db.getLatestEvaluatorEmpNumber(p3.getRequestID());
+			String latestEvalUsername = db.getUsernameByEmpNumber(latestEvalEmpNum);
+
+			// Send a message to the previous evaluator of the requested data
+			sendUserMessage("More data requested", latestEvalUsername,
+					"More data has been request for the the requests [" + p3.getRequestID() + "].");
+
+			// send a message to the supervisor of the requested data
+
+			sendMessageToClient(client, command);
+
+			break;
+
+		case acceptDecisionPhase:
+
+			Phase p2 = (Phase) srMsg.getAttachedData()[0];
+
+			// update phase status to closed of decision phase
+			db.updatePhaseStatus(p2.getPhaseID(), PhaseStatus.Closed);
+
+			// send message to the committee members that his request was accepted
+			ArrayList<String> comNames3 = db.getComsUsernames();
+
+			for (String comName : comNames3) {
+				sendUserMessage("Request Accepted", comName,
+						"The requests [" + p2.getRequestID() + "] has been declined!");
+			}
+
+			// init execution phase
+			initExecutionPhase(p2);
+
+			sendMessageToClient(client, command);
+
+			break;
+
+		case declineDecisionPhase:
+
+			Phase p1 = (Phase) srMsg.getAttachedData()[0];
+
+			// update phase status to closed of decision phase
+			db.updatePhaseStatus(p1.getPhaseID(), PhaseStatus.Closed);
+
+			// send message to the committee members that his request was declined
+			ArrayList<String> comNames = db.getComsUsernames();
+
+			for (String comName : comNames) {
+				sendUserMessage("Request Declined", comName,
+						"The requests [" + p1.getRequestID() + "] has been declined!");
+			}
+
+			// init closing phase
+			initClosingPhase(p1);
+
+			sendMessageToClient(client, command);
+
+			break;
+
 		case insertEvaluationReport:
 
 			EvaluationReport evaluationReport = (EvaluationReport) srMsg.getAttachedData()[0];
@@ -159,22 +235,30 @@ public class Server extends AbstractServer {
 			db.updatePhaseStatus(phaseId63, PhaseStatus.Closed);
 
 			long reqId2 = evaluationReport.getRequestID();
-			
+
 			// init decision phase
-			Phase decisionPhase = new Phase(db.getNewMaxID(Phase.getEmptyInstance()), reqId2, PhaseType.Evaluation.name(), PhaseStatus.Active.name(),
+			long decPhaseId = db.getNewMaxID(Phase.getEmptyInstance());
+			Phase decisionPhase = new Phase(decPhaseId, reqId2, PhaseType.Decision.name(), PhaseStatus.Active.name(),
 					db.getComHeadEmpNum(), DateUtil.daysFromNow(7), DateUtil.daysFromNow(7), DateUtil.NA,
 					DateUtil.now(), false);
-			
+
 			db.insertObject(decisionPhase);
-			
+
+			ArrayList<String> comNames2 = db.getComsUsernames();
+
 			// send message to all com
-			
-			sendUserMessage("Deadline Time Rejected", db.getUsernameByEmpNumber(rPhase.getEmpNumber()),
-					"The deadline that you choosed for phase [" + rPhase.getPhaseID() + "] has been rejected!",
-					rPhase.getRequestID(), rPhase.getPhaseID());
-			
-			
-			
+			for (String comName : comNames2) {
+				sendUserMessage("A request is waiting for decision", comName,
+						"The requests [" + reqId2 + "] is waiting for a decision. you have 7 days to decide!", reqId2,
+						decPhaseId);
+			}
+
+			ArrayList<Long> comEmpNums = db.getComsEmpNums();
+
+			for (Long empNum : comEmpNums) {
+				// Notify the com member for a new treatment requests update
+				notifyEmployeeTreatmentRequestsUpdated(empNum);
+			}
 
 			sendMessageToClient(client, command);
 
@@ -239,9 +323,10 @@ public class Server extends AbstractServer {
 
 			// notify the supervisor about the time extension
 			String evalName = db.getFullNameByPhaseId(phId);
-			sendUserMessage("Confirm time extension", db.getUsernameOfSupervisor(),
-					"The evaluator " + evalName + " of request " + reqId + " has requested a time extension", reqId,
-					phId);
+			sendUserMessage(
+					"Confirm time extension", db.getUsernameOfSupervisor(), "The evaluator " + evalName + " of request "
+							+ reqId + " has requested a time extension\n" + "Reason: " + pter.getDescription(),
+					reqId, phId);
 
 			if (result33 == false) {
 				System.err.println("Error, command insertTimeExtension has failed!");
@@ -293,6 +378,8 @@ public class Server extends AbstractServer {
 		case rejectPhaseTimeExtensionSupervisor:
 
 			Phase phaseRTE2 = (Phase) srMsg.getAttachedData()[0];
+			phaseRTE2.setStatus(PhaseStatus.Active.name());
+			db.updateByObject(phaseRTE2);
 
 			// delete the time extension from the database
 			db.deleteObject(phaseRTE2.getPhaseTimeExtensionRequest());
@@ -302,13 +389,13 @@ public class Server extends AbstractServer {
 			String toUsername1 = db.getEmployeeByEmpNumber(phaseRTE2.getEmpNumber()).getUserName();
 			String content1 = "Your time extension for the request [id:" + phaseRTE2.getRequestID()
 					+ "] has been rejected!";
-			sendUserMessage(subject1, toUsername1, content1, -1, -1);
+			sendUserMessage(subject1, toUsername1, content1, SYSTEM_EMPLOYEE_NUMBER, SYSTEM_EMPLOYEE_NUMBER);
 
 			// Notify the requester for a new treatment requests update
 			notifyEmployeeTreatmentRequestsUpdated(phaseRTE2.getEmpNumber());
 
 			// send a confirmation message
-			sendMessageToClient(client, command, true);
+			sendMessageToClient(client, command, true, phaseRTE2.getRequestID());
 
 			break;
 
@@ -321,7 +408,10 @@ public class Server extends AbstractServer {
 
 			// add the time to the request
 			Timestamp newDeadline = DateUtil.add(phaseRTE.getDeadline(), addedDays, addedHours);
+
 			phaseRTE.setDeadline(newDeadline);
+			phaseRTE.setHasBeenTimeExtended(true);
+			phaseRTE.setStatus(PhaseStatus.Active.name());
 
 			// update the request time
 			db.updateByObject(phaseRTE);
@@ -335,13 +425,13 @@ public class Server extends AbstractServer {
 			String content = "Your time extension for the request [id:" + phaseRTE.getRequestID()
 					+ "] has been accepted!";
 
-			sendUserMessage(subject, toUsername, content, -1, -1);
+			sendUserMessage(subject, toUsername, content, SYSTEM_EMPLOYEE_NUMBER, SYSTEM_EMPLOYEE_NUMBER);
 
 			// Notify the requester for a new treatment requests update
 			notifyEmployeeTreatmentRequestsUpdated(phaseRTE.getEmpNumber());
 
 			// send a confirmation message
-			sendMessageToClient(client, command, true);
+			sendMessageToClient(client, command, true, phaseRTE.getRequestID());
 
 			break;
 
@@ -435,7 +525,11 @@ public class Server extends AbstractServer {
 
 			int cntSupervision = db.isEmployeeIsSupervisor(empNumberForPhases) ? 1 : 0;
 			int cntEvaluation = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Evaluation);
-			int cntDecision = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Decision);
+
+			int cntDecision = 0;
+			if (db.isEmployeeComMember(empNumberForPhases))
+				cntDecision = db.getCountOfPhasesByType(PhaseType.Decision);
+
 			int cntExecution = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Execution);
 			int cntExamination = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Examination);
 
@@ -532,7 +626,7 @@ public class Server extends AbstractServer {
 
 			// if the request was issued
 			if (result == 1) {
-				initIssueRequestProc(changeRequest);
+				initEvaluationPhase(changeRequest.getRequestID());
 			}
 
 			sendBooleanResultMessage(client, command, result);
@@ -557,7 +651,7 @@ public class Server extends AbstractServer {
 
 			// if the request was issued
 			if (result == 1) {
-				initIssueRequestProc(changeRequestWithFiles);
+				initEvaluationPhase(changeRequestWithFiles.getRequestID());
 			}
 
 			sendBooleanResultMessage(client, command, result);
@@ -577,6 +671,12 @@ public class Server extends AbstractServer {
 				sendMessageToClient(client, command, phaseType, requestsWithCurrentPhase);
 				break;
 			case Decision:
+
+				ArrayList<ChangeRequest> crDecision = db.getChangeRequestPhaseForCom();
+
+				sendMessageToClient(client, command, phaseType, crDecision);
+
+				break;
 			case Evaluation:
 			case Examination:
 			case Execution:
@@ -607,17 +707,52 @@ public class Server extends AbstractServer {
 
 	}
 
-	private void initIssueRequestProc(ChangeRequest cr) {
+	private void initExecutionPhase(Phase p1) {
+		long nextPhaseId = db.getNewMaxID(Phase.getEmptyInstance());
+		Phase phase = new Phase(nextPhaseId, p1.getRequestID(), PhaseType.Execution.name(),
+				PhaseStatus.Waiting_To_Set_Executer.nameNo_(), SYSTEM_EMPLOYEE_NUMBER, DateUtil.NA, DateUtil.NA,
+				DateUtil.NA, DateUtil.now(), false);
+
+		db.insertObject(phase);
+
+		String subject = "Assign an executer";
+		String toUsername = db.getUsernameOfSupervisor();
+		String content = "Please confirm or assign an executer to the request";
+		sendUserMessage(subject, toUsername, content, p1.getRequestID(), nextPhaseId);
+
+	}
+
+	private void initClosingPhase(Phase p1) {
+
+		long nextPhaseId = db.getNewMaxID(Phase.getEmptyInstance());
+		Phase phase = new Phase(nextPhaseId, p1.getRequestID(), PhaseType.Closing.name(), PhaseStatus.Active.name(),
+				SYSTEM_EMPLOYEE_NUMBER, DateUtil.NA, DateUtil.NA, DateUtil.NA, DateUtil.now(), false);
+
+		db.insertObject(phase);
+
+		// Send a message to the supervisor
+		String subject = "Closing Requst";
+		String supervisorUsername = db.getUsernameOfSupervisor();
+		String content = "Please confirm the closing of the request [" + p1.getRequestID() + "].";
+		sendUserMessage(subject, supervisorUsername, content, p1.getRequestID(), nextPhaseId);
+
+		// send message to the owner
+		String ownerUsername = db.getRequestOwnerUsername(p1.getRequestID());
+		sendUserMessage(subject, ownerUsername, content, p1.getRequestID(), nextPhaseId);
+
+	}
+
+	private void initEvaluationPhase(long requestId) {
 
 		long nextPhaseId = db.getNewMaxID(Phase.getEmptyInstance());
 		long empNumber = DEFAULT_EVALUATOR_EMP_NUMBER;
-		Phase phase = new Phase(nextPhaseId, cr.getRequestID(), PhaseType.Evaluation.name(),
+		Phase phase = new Phase(nextPhaseId, requestId, PhaseType.Evaluation.name(),
 				PhaseStatus.Waiting_To_Set_Evaluator.nameNo_(), empNumber, DateUtil.NA, DateUtil.NA, DateUtil.NA,
 				DateUtil.now(), false);
 		db.insertObject(phase);
 
 		// Send a message to the supervisor
-		sendNewRequestIssuedMessageToSupervisor(cr.getRequestID(), nextPhaseId);
+		sendNewRequestIssuedMessageToSupervisor(requestId, nextPhaseId);
 
 	}
 
@@ -632,14 +767,18 @@ public class Server extends AbstractServer {
 	private void sendUserMessage(String subject, String toUsername, String content, long reqId, long phaseId) {
 
 		String from = "System"; // this should not be a normal employee, this is made for the server
-		Message msg = new Message(-1, subject, from, toUsername, content, false, DateUtil.now(), false, false, false,
-				reqId, phaseId);
+		Message msg = new Message(SYSTEM_EMPLOYEE_NUMBER, subject, from, toUsername, content, false, DateUtil.now(),
+				false, false, false, reqId, phaseId);
 
 		System.out.println("Send this message: ");
 		System.out.println(msg);
 		db.insertMessage(msg);
 
 		notifyUserNewMessages(toUsername);
+	}
+
+	private void sendUserMessage(String subject, String toUsername, String content) {
+		sendUserMessage(subject, toUsername, content, SYSTEM_EMPLOYEE_NUMBER, SYSTEM_EMPLOYEE_NUMBER);
 	}
 
 	private void notifyUserNewMessages(String toUsername) {

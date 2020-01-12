@@ -161,5 +161,8 @@ public class NavigationBar {
 		}
 		loadLastPage();
 	}
+	public static void reload() {
+		loadLastPage();		
+	}
 
 }
