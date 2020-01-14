@@ -19,22 +19,16 @@ public class Fieldssss {
 
 	public static void main(String[] args) {
 
-
-
 //		Employee emp = db.getEmployeeByEmpNumber(10);
 //		
 //		System.out.println(db.isUserManager("username12"));
 //		Phase phase = new Phase(-1, -1, PhaseType.Evaluation.name(), PhaseStatus.Waiting.name(), -1, DateUtil.NA, DateUtil.NA, DateUtil.NA, DateUtil.now(), false);
 //		db.insertObject(phase);
 
-		
-		//System.out.println(db.getEmployees().size());
-		
+		// System.out.println(db.getEmployees().size());
 
-System.out.println(db.isEmployeeComMember(10));
-	
-	
+		System.out.println(db.getSupervisorEmpNum());
+
 	}
-	
-	
+
 }

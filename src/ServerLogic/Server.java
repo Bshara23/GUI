@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import Entities.ChangeRequest;
 import Entities.Employee;
 import Entities.EvaluationReport;
+import Entities.ExecutionReport;
 import Entities.File;
 import Entities.Message;
 import Entities.SqlObject;
@@ -38,7 +39,11 @@ import Protocol.SeriObject;
 public class Server extends AbstractServer {
 
 	private static final int SYSTEM_EMPLOYEE_NUMBER = -1;
-	private static final int DEFAULT_EVALUATOR_EMP_NUMBER = 10;
+
+	// TODO: change this to be dynamic and not constant
+	private static int DEFAULT_EVALUATOR_EMP_NUMBER = 10;
+	private static int DEFAULT_EXECUTER_EMP_NUMBER = 10;
+
 	private boolean sqlException;
 	public static final int DEFAULT_PORT = 5555;
 	private static Server instance;
@@ -150,18 +155,79 @@ public class Server extends AbstractServer {
 		Command command = srMsg.getCommand();
 		switch (command) {
 
-		
-		case getLatestEvalReport:
-			
-			long requestId6663 = (long) srMsg.getAttachedData()[0];
-			
-			EvaluationReport evalR3 = db.getLatestEvaluationReport(requestId6663);
-			
-			sendMessageToClient(client, command, evalR3);
+		case getExecutionReportForExaminationAndComsNames:
+
+			long reqId0909 = (long) srMsg.getAttachedData()[0];
 
 			
-			break;
+			ExecutionReport exeRep1 = db.getLatestExecutionReport(reqId0909);
+
+			ArrayList<Object> res3123 = db.getRegularCommitteeMemebersNamesAndNumbers();
 			
+			String mem1un = (String)res3123.get(0);
+			long mem1empNum = (long)res3123.get(1);
+			String mem2un = (String)res3123.get(2);
+			long mem2empNum = (long)res3123.get(3);
+
+			sendMessageToClient(client, command, exeRep1, mem1un, mem1empNum, mem2un, mem2empNum);
+
+			break;
+
+		case rejectExamination:
+
+			break;
+
+		case confirmExamination:
+
+			break;
+
+		case insertExecutionReport:
+
+			ExecutionReport exeRep = (ExecutionReport) srMsg.getAttachedData()[0];
+			long phaseId64 = (long) srMsg.getAttachedData()[1];
+
+			exeRep.setReportID(db.getNewMaxID(ExecutionReport.getEmptyInstance()));
+
+			db.insertObject(exeRep);
+			db.updatePhaseStatus(phaseId64, PhaseStatus.Closed);
+
+			long requestID533 = db.getRequestIdByPhaseId(phaseId64);
+			// init examination phase
+
+			long exaPhaseId = db.getNewMaxID(Phase.getEmptyInstance());
+			Phase examinationPhase = new Phase(exaPhaseId, requestID533, PhaseType.Examination.name(),
+					PhaseStatus.Active.name(), db.getComHeadEmpNum(), DateUtil.daysFromNow(7), DateUtil.daysFromNow(7),
+					DateUtil.NA, DateUtil.now(), false);
+
+			db.insertObject(examinationPhase);
+
+			// send message to com head
+			sendUserMessage("A request is waiting for examination", db.getUsernameOfComHead(),
+					"The requests [" + requestID533 + "] is waiting for an examination. you have 7 days to examine it!",
+					requestID533, exaPhaseId);
+
+			// Notify the com member for a new treatment requests update
+			notifyEmployeeTreatmentRequestsUpdated(db.getComHeadEmpNum());
+
+			// Notify the supervisor about the start of the examination
+			sendUserMessage("The request [" + requestID533 + "] is in examination", db.getUsernameOfSupervisor(),
+					"The requests [" + requestID533 + "] has finished execution and is now in examination phase",
+					requestID533, exaPhaseId);
+
+			sendMessageToClient(client, command);
+
+			break;
+
+		case getLatestEvalReport:
+
+			long requestId6663 = (long) srMsg.getAttachedData()[0];
+
+			EvaluationReport evalR3 = db.getLatestEvaluationReport(requestId6663);
+
+			sendMessageToClient(client, command, evalR3);
+
+			break;
+
 		case requestMoreDateForDecision:
 
 			Phase p3 = (Phase) srMsg.getAttachedData()[0];
@@ -358,7 +424,7 @@ public class Server extends AbstractServer {
 		case setEvaluationPhaseToWaitingToSetTime:
 
 			Phase ph2424 = (Phase) srMsg.getAttachedData()[0];
-			ph2424.setStatus(PhaseStatus.Waiting_To_Set_Time_Required_For_Evaluation.nameNo_());
+			ph2424.setStatus(PhaseStatus.Waiting_To_Set_Time_Required_For_Phase.nameNo_());
 			db.updateByObject(ph2424);
 
 			String username42424 = db.getUsernameByEmpNumber(ph2424.getEmpNumber());
@@ -727,7 +793,7 @@ public class Server extends AbstractServer {
 	private void initExecutionPhase(Phase p1) {
 		long nextPhaseId = db.getNewMaxID(Phase.getEmptyInstance());
 		Phase phase = new Phase(nextPhaseId, p1.getRequestID(), PhaseType.Execution.name(),
-				PhaseStatus.Waiting_To_Set_Executer.nameNo_(), SYSTEM_EMPLOYEE_NUMBER, DateUtil.NA, DateUtil.NA,
+				PhaseStatus.Waiting_To_Set_Executer.nameNo_(), DEFAULT_EXECUTER_EMP_NUMBER, DateUtil.NA, DateUtil.NA,
 				DateUtil.NA, DateUtil.now(), false);
 
 		db.insertObject(phase);
@@ -743,7 +809,7 @@ public class Server extends AbstractServer {
 
 		long nextPhaseId = db.getNewMaxID(Phase.getEmptyInstance());
 		Phase phase = new Phase(nextPhaseId, p1.getRequestID(), PhaseType.Closing.name(), PhaseStatus.Active.name(),
-				SYSTEM_EMPLOYEE_NUMBER, DateUtil.NA, DateUtil.NA, DateUtil.NA, DateUtil.now(), false);
+				db.getSupervisorEmpNum(), DateUtil.NA, DateUtil.NA, DateUtil.NA, DateUtil.now(), false);
 
 		db.insertObject(phase);
 

@@ -17,7 +17,7 @@ public class FxmlNames {
 	public static final String REQUEST_DETAILS = "RequestDetailsExaminerV2.fxml";
 	public static final String REQUEST_DETAILS_SUPERVISOR = "RequestDetailsSupervisorGUI.fxml";
 	public static final String REQUEST_DETAILS_EXAMINER = "RequestDetailsExaminer.fxml";
-	public static final String REQUEST_DETAILS_EXECUTIONER = "RequestDetailsExecutioner.fxml";
+	public static final String REQUEST_DETAILS_EXECUTER = "RequestDetailsExecuter.fxml";
 	public static final String REQUEST_DETAILS_EVALUATE = "RequestDetailsEvaluator.fxml";
 	public static final String REQUEST_DETAILS_DECISION = "RequestDetailsDecision.fxml";
 

@@ -36,6 +36,7 @@ public enum Command {
 	checkIfPhaseIsWaiting, getChangeRequestFromMessagePage, acceptPhaseTimeExtensionSupervisor,
 	rejectPhaseTimeExtensionSupervisor, receivedNewOrUpdateRequests, getEmployeesListSimple, updatePhaseOwner,
 	setEvaluationPhaseToWaitingToSetTime, insertTimeExtension, confirmPhaseDeadline, rejectPhaseDeadline,
-	declineDecisionPhase, acceptDecisionPhase, requestMoreDateForDecision, getLatestEvalReport,
+	declineDecisionPhase, acceptDecisionPhase, requestMoreDateForDecision, getLatestEvalReport, confirmExamination,
+	rejectExamination, getExecutionReportForExaminationAndComsNames, assignExaminerForRequest,
 
 }

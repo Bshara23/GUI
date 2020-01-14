@@ -2,7 +2,7 @@ package Protocol;
 
 public enum PhaseStatus {
 
-	Frozed, Waiting, Active, Closed, Waiting_To_Set_Evaluator, Waiting_To_Set_Time_Required_For_Evaluation,
+	Frozed, Waiting, Active, Closed, Waiting_To_Set_Evaluator,
 	Active_And_Waiting_For_Time_Extension, Waiting_To_Set_Time_Required_For_Phase,
 	Waiting_To_Confirm_Time_Required_For_Phase, Waiting_To_Set_Executer, Waiting_For_More_Data;
 	

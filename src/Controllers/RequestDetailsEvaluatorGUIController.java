@@ -113,7 +113,6 @@ public class RequestDetailsEvaluatorGUIController implements Initializable {
 			break;
 
 		case Waiting_To_Set_Time_Required_For_Phase:
-		case Waiting_To_Set_Time_Required_For_Evaluation:
 
 			SetEstimatedTimeForPhaseController controller = (SetEstimatedTimeForPhaseController) ControllerSwapper
 					.loadContentWithController(vbEvaluationReport, FxmlNames.SET_ESTIMATED_TIME_FOR_PHASE);

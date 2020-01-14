@@ -446,7 +446,7 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 			break;
 		case "Execute":
 			Client.getInstance().request(Command.GetMyRequests, PhaseType.Execution, ClientGUI.empNumber);
-			NavigationBar.setCurrentPage("Request Details (Executer View)", FxmlNames.REQUEST_DETAILS_EXECUTIONER);
+			NavigationBar.setCurrentPage("Request Details (Executer View)", FxmlNames.REQUEST_DETAILS_EXECUTER);
 
 			break;
 		case "Examine":

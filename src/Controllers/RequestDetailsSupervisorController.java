@@ -156,6 +156,8 @@ public class RequestDetailsSupervisorController implements Initializable {
 
 		setClientObservers();
 
+		loadPhase(changeRequest.getPhases().get(0));
+
 	}
 
 	private void setButtonsBehaviors() {
@@ -212,7 +214,7 @@ public class RequestDetailsSupervisorController implements Initializable {
 
 		hbConfirmAutoAssign.setOnMousePressed(event -> {
 			requestedPhases.get(currentPhaseIndex)
-					.setStatus(PhaseStatus.Waiting_To_Set_Time_Required_For_Evaluation.nameNo_());
+					.setStatus(PhaseStatus.Waiting_To_Set_Time_Required_For_Phase.nameNo_());
 
 			Client.getInstance().requestWithListener(Command.setEvaluationPhaseToWaitingToSetTime, srMsg -> {
 				if (srMsg.getCommand() == Command.setEvaluationPhaseToWaitingToSetTime) {
@@ -334,7 +336,16 @@ public class RequestDetailsSupervisorController implements Initializable {
 							System.out.println(phase.getPhaseTimeExtensionRequest());
 					}
 
-					loadPageDetails();
+					// set the current index to the selected id.
+					for (int i = 0; i < requestedPhases.size(); i++) {
+						long id = requestedPhases.get(i).getPhaseID();
+						if (id == changeRequest.getPhases().get(0).getPhaseID()) {
+							currentPhaseIndex = i;
+							break;
+						}
+					}
+
+					// loadPageDetails();
 
 				}
 			}
@@ -344,8 +355,12 @@ public class RequestDetailsSupervisorController implements Initializable {
 	}
 
 	private void loadPageDetails() {
-
 		Phase currentPhase = requestedPhases.get(currentPhaseIndex);
+		loadPhase(currentPhase);
+	}
+
+	private void loadPhase(Phase currentPhase) {
+
 		txtPhaseName.setText(currentPhase.getPhaseName());
 
 		// if the estimated time of completion has been set

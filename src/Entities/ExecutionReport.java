@@ -10,8 +10,8 @@ public class ExecutionReport extends Report implements Serializable {
 		return emptyInstance;
 	}
 
-	public ExecutionReport(long reportID, long requestID, String contentLT, String place) {
-		super(reportID, requestID, contentLT, place);
+	public ExecutionReport(long reportID, long phaseID, String contentLT, String place) {
+		super(reportID, phaseID, contentLT, place);
 	}
 
 	@Override

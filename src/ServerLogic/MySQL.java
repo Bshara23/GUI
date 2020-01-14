@@ -607,7 +607,8 @@ public class MySQL extends MySqlConnBase {
 
 	public int getCountOfPhasesByType(long empNumberForPhases, PhaseType phaseType) {
 		String query = "SELECT COUNT(*) FROM icm.phase as ph WHERE ph.empNumber = '" + empNumberForPhases
-				+ "' AND ph.phaseName = '" + phaseType.name() + "' AND ph.status != 'closed'";
+				+ "' AND ph.phaseName = '" + phaseType.name() + "' AND ph.status != 'closed'"
+				+ " AND ph.status != 'Waiting To Set Executer' AND ph.status != 'Waiting To Set Evaluator'";
 
 		ArrayList<Integer> results = new ArrayList<Integer>();
 		IStatement prepS = rs -> {
@@ -942,14 +943,6 @@ public class MySQL extends MySqlConnBase {
 		};
 		executeStatement(query, prepS);
 		return results.size() == 1 ? results.get(0) : "Supervisor not assigned";
-	}
-
-	public static void main(String[] args) {
-
-		MySQL db = new MySQL("root", "Aa123456", "icm", null);
-
-		System.out.println(db.getUsernameOfSupervisor());
-
 	}
 
 	public boolean isPhaseStatus(long phaseId, PhaseStatus status) {
@@ -1347,7 +1340,7 @@ public class MySQL extends MySqlConnBase {
 				+ "inner join icm.phase as p on p.phaseID = e.phaseID\r\n"
 				+ "where p.phaseName = 'Evaluation' and p.status = 'Closed' and p.phaseID = '" + requestId6663 + "'\r\n"
 				+ "order by p.startingDate desc;";
-		
+
 		ArrayList<EvaluationReport> results = new ArrayList<EvaluationReport>();
 
 		IStatement prepS = rs -> {
@@ -1367,6 +1360,110 @@ public class MySQL extends MySqlConnBase {
 		};
 		executeStatement(query, prepS);
 		return results.size() == 1 ? results.get(0) : null;
+	}
+
+	public long getSupervisorEmpNum() {
+		String query = "SELECT * FROM icm.supervisor;";
+
+		ArrayList<Long> results = new ArrayList<Long>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(rs.getLong(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() == 1 ? results.get(0) : -1;
+	}
+
+	public String getUsernameOfComHead() {
+
+		String query = "SELECT su.userName FROM icm.executionchangescommitteemember as s\r\n"
+				+ "inner join icm.employee as e on e.empNumber = s.empNumber\r\n"
+				+ "inner join icm.systemuser as su on su.userName = e.userName\r\n" + "where s.isManager = '1';";
+
+		ArrayList<String> results = new ArrayList<String>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(rs.getString(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() == 1 ? results.get(0) : "Supervisor not assigned";
+	}
+
+	public ExecutionReport getLatestExecutionReport(long requestId) {
+
+		String query = "SELECT e.reportID, e.phaseID, e.contentLT, e.place FROM icm.executionreport as e\r\n"
+				+ "inner join icm.phase as p on p.phaseID = e.phaseID\r\n"
+				+ "inner join icm.changerequest as c on c.requestID = p.requestID\r\n"
+				+ "where p.status = 'Closed' and c.requestID = '" + requestId + "'\r\n"
+				+ "order by p.startingDate desc";
+
+		ArrayList<ExecutionReport> results = new ArrayList<ExecutionReport>();
+
+		IStatement prepS = rs -> {
+			try {
+				if (rs.next()) {
+
+					ExecutionReport exeRep = new ExecutionReport(rs.getLong(1), rs.getLong(2), rs.getString(3),
+							rs.getString(4));
+
+					results.add(exeRep);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		executeStatement(query, prepS);
+
+		return results.size() == 1 ? results.get(0) : null;
+	}
+
+	public ArrayList<Object> getRegularCommitteeMemebersNamesAndNumbers() {
+
+		String query = "SELECT u.firstName, u.lastName, e.empNumber FROM icm.executionchangescommitteemember as t\r\n"
+				+ "inner join icm.employee as e on e.empNumber = t.empNumber\r\n"
+				+ "inner join icm.systemuser as u on u.username = e.userName\r\n" + "where t.isManager = '0'";
+
+		ArrayList<Object> results = new ArrayList<Object>();
+
+		IStatement prepS = rs -> {
+			
+			try {
+				while (rs.next()) {
+
+					results.add(rs.getString(1) + " " + rs.getString(2));
+					results.add(rs.getLong(3));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		};
+
+		executeStatement(query, prepS);
+
+		return results;
+
 	}
 
 }
