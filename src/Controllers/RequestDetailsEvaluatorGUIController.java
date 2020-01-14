@@ -172,7 +172,7 @@ public class RequestDetailsEvaluatorGUIController implements Initializable {
 				ControllerManager.showYesNoMessage("Send Report", "Evaluation Report",
 						"Are you sure you want to send the evaluation report?", () -> {
 
-							EvaluationReport evaluationReport = new EvaluationReport(-1, lastPhase.getRequestID(),
+							EvaluationReport evaluationReport = new EvaluationReport(-1, lastPhase.getPhaseID(),
 									taDescriptionOfRequiredChange.getText(), tfPlace.getText(),
 									taAcceptedResults.getText(), taConstraints.getText(), taRisks.getText(),
 									DateUtil.get(dpEstimatedExecTime.getValue()));

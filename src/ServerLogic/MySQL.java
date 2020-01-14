@@ -1221,7 +1221,7 @@ public class MySQL extends MySqlConnBase {
 	public ArrayList<ChangeRequest> getChangeRequestPhaseForCom() {
 		String query = "SELECT * FROM icm.phase p\r\n"
 				+ "inner join icm.changerequest as c on c.requestID = p.requestID\r\n"
-				+ "left join icm.evaluationreport as e on e.requestID = p.requestID\r\n"
+				+ "left join icm.evaluationreport as e on e.phaseID = p.phaseID\r\n"
 				+ "where p.phaseName = 'decision' and p.status != 'Closed' ORDER BY p.startingDate ASC";
 
 		ArrayList<ChangeRequest> results = new ArrayList<ChangeRequest>();
@@ -1339,6 +1339,34 @@ public class MySQL extends MySqlConnBase {
 		};
 		executeStatement(query, prepS);
 		return results.size() == 1 ? results.get(0) : -1;
+	}
+
+	public EvaluationReport getLatestEvaluationReport(long requestId6663) {
+
+		String query = "SELECT * FROM icm.evaluationreport as e\r\n"
+				+ "inner join icm.phase as p on p.phaseID = e.phaseID\r\n"
+				+ "where p.phaseName = 'Evaluation' and p.status = 'Closed' and p.phaseID = '" + requestId6663 + "'\r\n"
+				+ "order by p.startingDate desc;";
+		
+		ArrayList<EvaluationReport> results = new ArrayList<EvaluationReport>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					EvaluationReport evalRep = new EvaluationReport(rs.getLong(5), rs.getLong(6), rs.getString(7),
+							rs.getString(8), rs.getString(1), rs.getString(2), rs.getString(3), rs.getTimestamp(4));
+
+					results.add(evalRep);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() == 1 ? results.get(0) : null;
 	}
 
 }

@@ -5,13 +5,13 @@ import java.io.Serializable;
 public abstract class Report extends SqlObject implements Serializable {
 
 	public long reportID;
-	public long requestID;
+	public long phaseID;
 	public String contentLT, place;
 
-	public Report(long reportID, long requestID, String contentLT, String place) {
+	public Report(long reportID, long phaseID, String contentLT, String place) {
 		super();
 		this.reportID = reportID;
-		this.requestID = requestID;
+		this.phaseID = phaseID;
 		this.contentLT = contentLT;
 		this.place = place;
 	}
@@ -32,12 +32,12 @@ public abstract class Report extends SqlObject implements Serializable {
 		this.reportID = reportID;
 	}
 
-	public long getRequestID() {
-		return requestID;
+	public long getPhaseID() {
+		return phaseID;
 	}
 
-	public void setRequestID(long requestID) {
-		this.requestID = requestID;
+	public void setPhasetID(long phaseID) {
+		this.phaseID = phaseID;
 	}
 
 	public String getContentLT() {
@@ -50,7 +50,7 @@ public abstract class Report extends SqlObject implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Report [reportID=" + reportID + ", requestID=" + requestID + ", contentLT=" + contentLT + ", place="
+		return "Report [reportID=" + reportID + ", requestID=" + phaseID + ", contentLT=" + contentLT + ", place="
 				+ place + "]";
 	}
 

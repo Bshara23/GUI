@@ -9,6 +9,7 @@ import Controllers.Logic.ControllerManager;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Entities.ChangeRequest;
+import Entities.EvaluationReport;
 import Entities.Phase;
 import Protocol.Command;
 import Protocol.PhaseStatus;
@@ -24,23 +25,18 @@ import javafx.scene.text.Text;
 
 public class RequestDetailsDecisionGUIController implements Initializable {
 
+	private static final String GET_LATEST_EVAL_REPORT = "getLatestEvalReport";
+
 	private static final String REQUEST_MORE_DATE_FOR_DECISION = "requestMoreDateForDecision";
 
 	private static final String ACCEPT_DECISION_PHASE = "AcceptDecisionPhase";
 
 	private static final String DECLINE_DECISION_PHASE = "declineDecisionPhase";
-
 	@FXML
 	private VBox vbContainerAll;
 
 	@FXML
 	private VBox vbEvaluationReport;
-
-	@FXML
-	private Text txtComHeadName;
-
-	@FXML
-	private Text txtComHeadDecision;
 
 	@FXML
 	private HBox hbAgreeOrDeclineBtns;
@@ -53,6 +49,9 @@ public class RequestDetailsDecisionGUIController implements Initializable {
 
 	@FXML
 	private VBox vbRequestMoreDataContainer;
+
+	@FXML
+	private TextArea taMoreDataDesc;
 
 	@FXML
 	private HBox hbRequestData;
@@ -72,18 +71,19 @@ public class RequestDetailsDecisionGUIController implements Initializable {
 	@FXML
 	private Canvas canvasLeft;
 
-    @FXML
-    private TextArea taMoreDataDesc;
-    
-    
 	private ChangeRequest lastRequest;
 
 	private Phase lastPhase;
 
+	private EvaluationReport evalReport;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
 
+		
+		
+		
+		
 		// Apply the effects for the canvas
 		RequestDetailsUserController.applyCanvasEffects(canvasRight, canvasLeft);
 
@@ -109,7 +109,13 @@ public class RequestDetailsDecisionGUIController implements Initializable {
 		hbEvaluationReport.setOnMousePressed(event -> {
 			EvaluationReportComViewController controller2 = (EvaluationReportComViewController) ControllerSwapper
 					.loadContentWithController(vbEvaluationReport, FxmlNames.EVALUATION_REPORT_COM_VIEW);
-			controller2.setEvaluationReport(lastPhase.getEvaluationReport());
+			
+			controller2.setEvaluationReport(evalReport);
+			
+			
+			hbFullRequestDetails.setVisible(false);
+			hbTimeExtension.setVisible(false);
+			hbEvaluationReport.setVisible(false);
 		});
 
 		hbAgree.setCursor(Cursor.HAND);
@@ -181,12 +187,28 @@ public class RequestDetailsDecisionGUIController implements Initializable {
 			break;
 		}
 
+		
+		Client.getInstance().requestWithListener(Command.getLatestEvalReport, srMsg -> {
+
+			if (srMsg.getCommand() == Command.getLatestEvalReport) {
+
+				evalReport = (EvaluationReport)srMsg.getAttachedData()[0];
+
+				if (evalReport == null) {
+					System.err.println("Error, eval report not found");
+				}
+				Client.removeMessageRecievedFromServer(GET_LATEST_EVAL_REPORT);
+			}
+
+		}, GET_LATEST_EVAL_REPORT, lastPhase.getRequestID());
+		
 		loadPageDetails();
 
 	}
 
 	private void loadPageDetails() {
-		// TODO Auto-generated method stub
+
+		EvaluationReport evalR = lastPhase.getEvaluationReport();
 
 	}
 
@@ -217,7 +239,7 @@ public class RequestDetailsDecisionGUIController implements Initializable {
 			ControllerManager.showErrorMessage("Error", "Missing description", "Please write a description!", null);
 			return;
 		}
-		
+
 		lastPhase.setStatus(PhaseStatus.Waiting_For_More_Data.nameNo_());
 
 		Client.getInstance().requestWithListener(Command.requestMoreDateForDecision, srMsg -> {
@@ -232,7 +254,7 @@ public class RequestDetailsDecisionGUIController implements Initializable {
 
 			}
 
-		}, REQUEST_MORE_DATE_FOR_DECISION, lastPhase);
+		}, REQUEST_MORE_DATE_FOR_DECISION, lastPhase, taMoreDataDesc.getText());
 
 	}
 

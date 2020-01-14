@@ -39,12 +39,9 @@
                                        <children>
                                           <HBox spacing="5.0">
                                              <children>
-                                                <Text id="text" strokeType="OUTSIDE" strokeWidth="0.0" text="Committee Head" />
-                                                <Text id="text" fx:id="txtComHeadName" strokeType="OUTSIDE" strokeWidth="0.0" text="(James)" />
-                                                <Text id="text" strokeType="OUTSIDE" strokeWidth="0.0" text="decision:" />
+                                                <Text id="text" strokeType="OUTSIDE" strokeWidth="0.0" text="Do you agree to execute the request?" />
                                              </children>
                                           </HBox>
-                                          <Text id="text" fx:id="txtComHeadDecision" strokeType="OUTSIDE" strokeWidth="0.0" text="Agree" />
                                        </children>
                                     </HBox>
                                     <HBox fx:id="hbAgreeOrDeclineBtns" alignment="CENTER_RIGHT" spacing="15.0">

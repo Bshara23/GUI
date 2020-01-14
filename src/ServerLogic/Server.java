@@ -150,32 +150,50 @@ public class Server extends AbstractServer {
 		Command command = srMsg.getCommand();
 		switch (command) {
 
+		
+		case getLatestEvalReport:
+			
+			long requestId6663 = (long) srMsg.getAttachedData()[0];
+			
+			EvaluationReport evalR3 = db.getLatestEvaluationReport(requestId6663);
+			
+			sendMessageToClient(client, command, evalR3);
+
+			
+			break;
+			
 		case requestMoreDateForDecision:
 
 			Phase p3 = (Phase) srMsg.getAttachedData()[0];
 
-			// update phase status to closed of decision phase
+			String reason = (String) srMsg.getAttachedData()[1];
+
+			// update phase status to Waiting_For_More_Data of decision phase
 			db.updatePhaseStatus(p3.getPhaseID(), PhaseStatus.Waiting_For_More_Data);
 
 			// send message to the committee members that more data has been requested
-			ArrayList<String> comNames3 = db.getComsUsernames();
+			ArrayList<String> comNames4 = db.getComsUsernames();
 
-			for (String comName : comNames3) {
+			for (String comName : comNames4) {
 				sendUserMessage("More data requested", comName,
 						"More data has been request for the the requests [" + p3.getRequestID() + "].");
 			}
-
-			// init evaluation phase
-			initEvaluationPhase(p3.getRequestID());
 
 			long latestEvalEmpNum = db.getLatestEvaluatorEmpNumber(p3.getRequestID());
 			String latestEvalUsername = db.getUsernameByEmpNumber(latestEvalEmpNum);
 
 			// Send a message to the previous evaluator of the requested data
 			sendUserMessage("More data requested", latestEvalUsername,
-					"More data has been request for the the requests [" + p3.getRequestID() + "].");
+					"More data has been request for the the requests [" + p3.getRequestID() + "]." + "\nReason: "
+							+ reason);
 
 			// send a message to the supervisor of the requested data
+			sendUserMessage("More data requested", db.getUsernameOfSupervisor(),
+					"More data has been request for the the requests [" + p3.getRequestID() + "]." + "\nReason: "
+							+ reason);
+
+			// init evaluation phase
+			initEvaluationPhase(p3.getRequestID());
 
 			sendMessageToClient(client, command);
 
@@ -234,13 +252,12 @@ public class Server extends AbstractServer {
 			db.insertObject(evaluationReport);
 			db.updatePhaseStatus(phaseId63, PhaseStatus.Closed);
 
-			long reqId2 = evaluationReport.getRequestID();
-
+			long requestID53 = db.getRequestIdByPhaseId(phaseId63);
 			// init decision phase
 			long decPhaseId = db.getNewMaxID(Phase.getEmptyInstance());
-			Phase decisionPhase = new Phase(decPhaseId, reqId2, PhaseType.Decision.name(), PhaseStatus.Active.name(),
-					db.getComHeadEmpNum(), DateUtil.daysFromNow(7), DateUtil.daysFromNow(7), DateUtil.NA,
-					DateUtil.now(), false);
+			Phase decisionPhase = new Phase(decPhaseId, requestID53, PhaseType.Decision.name(),
+					PhaseStatus.Active.name(), db.getComHeadEmpNum(), DateUtil.daysFromNow(7), DateUtil.daysFromNow(7),
+					DateUtil.NA, DateUtil.now(), false);
 
 			db.insertObject(decisionPhase);
 
@@ -249,8 +266,8 @@ public class Server extends AbstractServer {
 			// send message to all com
 			for (String comName : comNames2) {
 				sendUserMessage("A request is waiting for decision", comName,
-						"The requests [" + reqId2 + "] is waiting for a decision. you have 7 days to decide!", reqId2,
-						decPhaseId);
+						"The requests [" + requestID53 + "] is waiting for a decision. you have 7 days to decide!",
+						requestID53, decPhaseId);
 			}
 
 			ArrayList<Long> comEmpNums = db.getComsEmpNums();

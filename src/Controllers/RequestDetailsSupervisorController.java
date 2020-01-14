@@ -251,7 +251,7 @@ public class RequestDetailsSupervisorController implements Initializable {
 			requestedPhases.get(currentPhaseIndex).setEstimatedTimeOfCompletion(DateUtil.NA);
 			requestedPhases.get(currentPhaseIndex)
 					.setStatus(PhaseStatus.Waiting_To_Set_Time_Required_For_Phase.nameNo_());
-			
+
 			Client.getInstance().requestWithListener(Command.rejectPhaseDeadline, srMsg -> {
 				if (srMsg.getCommand() == Command.rejectPhaseDeadline) {
 
@@ -309,7 +309,6 @@ public class RequestDetailsSupervisorController implements Initializable {
 					Phase currentPhase = requestedPhases.get(currentPhaseIndex);
 					currentPhase.setPhaseTimeExtensionRequest(null);
 					currentPhase.setStatus(PhaseStatus.Active.name());
-
 
 				} else {
 					ControllerManager.showErrorMessage("Error", "An error has occured",
@@ -415,11 +414,11 @@ public class RequestDetailsSupervisorController implements Initializable {
 			txtExtendedTime.setText("N/A");
 		}
 
-		if (currentPhase.phaseName.equals(PhaseType.Evaluation.name())) {
+		if (currentPhase.phaseName.equals(PhaseType.Evaluation.name())
+				|| currentPhase.phaseName.equals(PhaseType.Execution.name())) {
 
-			if (currentPhase.getStatus().equals(PhaseStatus.Waiting_To_Set_Evaluator.nameNo_())) {
-
-				System.out.println("is evaluation and is waiting");
+			if (currentPhase.getStatus().equals(PhaseStatus.Waiting_To_Set_Evaluator.nameNo_())
+					|| currentPhase.getStatus().equals(PhaseStatus.Waiting_To_Set_Executer.nameNo_())) {
 
 				hbAssignEvaluatiorContainer.setVisible(true);
 
