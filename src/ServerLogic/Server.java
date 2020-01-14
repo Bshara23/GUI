@@ -173,6 +173,12 @@ public class Server extends AbstractServer {
 
 			break;
 
+			
+		case assignExaminerForRequest:
+			
+			
+			break;
+			
 		case rejectExamination:
 
 			break;
