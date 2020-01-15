@@ -2,11 +2,13 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
+<?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollBar?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -19,7 +21,16 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="876.0" prefWidth="1348.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.AnalyticsGUIController">
    <children>
-      <LineChart fx:id="chartSaReqestExecution" layoutX="8.0" layoutY="411.0" prefHeight="450.0" prefWidth="1338.0">
+      <ScrollBar layoutX="40.0" layoutY="837.0" prefHeight="14.0" prefWidth="1291.0" />
+      <BarChart fx:id="bc" layoutX="3.0" layoutY="420.0" prefHeight="417.0" prefWidth="1338.0">
+        <xAxis>
+          <CategoryAxis side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis side="LEFT" />
+        </yAxis>
+      </BarChart>
+      <LineChart fx:id="chartSaReqestExecution" layoutX="8.0" layoutY="420.0" prefHeight="450.0" prefWidth="1338.0">
         <xAxis>
           <CategoryAxis side="BOTTOM" />
         </xAxis>
@@ -29,7 +40,7 @@
       </LineChart>
       <HBox alignment="CENTER_LEFT" layoutX="8.0" layoutY="112.0" prefHeight="64.0" prefWidth="746.0" spacing="80.0">
          <children>
-            <Label prefHeight="64.0" prefWidth="112.0" styleClass="d" stylesheets="@MainCombobox.css" text="Last week" textFill="#515151" textOverrun="CLIP">
+            <Label fx:id="lblLastWeek" onMouseClicked="#SetNewDataToLastWeek" prefHeight="64.0" prefWidth="112.0" styleClass="d" stylesheets="@MainCombobox.css" text="Last week" textFill="#515151" textOverrun="CLIP">
                <font>
                   <Font size="22.0" />
                </font>
@@ -40,7 +51,7 @@
                   <Insets left="5.0" right="5.0" />
                </padding>
             </Label>
-            <Label prefHeight="80.0" styleClass="d" stylesheets="@MainCombobox.css" text="Last 30 days" textFill="#515151" textOverrun="CLIP">
+            <Label fx:id="lblLast30" onMouseClicked="#SetNewDataTo30Days" prefHeight="80.0" styleClass="d" stylesheets="@MainCombobox.css" text="Last 30 days" textFill="#515151" textOverrun="CLIP">
                <font>
                   <Font size="22.0" />
                </font>
@@ -51,7 +62,7 @@
                   <Insets left="5.0" right="5.0" />
                </padding>
             </Label>
-            <Label prefHeight="64.0" prefWidth="104.0" styleClass="d" stylesheets="@MainCombobox.css" text="Last year" textFill="#515151" textOverrun="CLIP">
+            <Label fx:id="lblLastYear" onMouseClicked="#SetNewDataToLastYear" prefHeight="64.0" prefWidth="104.0" styleClass="d" stylesheets="@MainCombobox.css" text="Last year" textFill="#515151" textOverrun="CLIP">
                <font>
                   <Font size="22.0" />
                </font>
@@ -62,7 +73,7 @@
                   <Insets left="5.0" right="5.0" />
                </padding>
             </Label>
-            <Label prefHeight="64.0" prefWidth="132.0" styleClass="d" stylesheets="@MainCombobox.css" text="Date range" textFill="#515151" textOverrun="CLIP">
+            <Label fx:id="lblDateRange" onMouseClicked="#SetDateRange" prefHeight="64.0" prefWidth="132.0" styleClass="d" stylesheets="@MainCombobox.css" text="Date range" textFill="#515151" textOverrun="CLIP">
                <font>
                   <Font size="22.0" />
                </font>
@@ -252,6 +263,23 @@
                         </Text>
                      </children>
                   </HBox>
+                  <HBox fx:id="hbBtnBarChart" alignment="CENTER" prefHeight="100.0" prefWidth="0.0">
+                     <children>
+                        <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../Images/Analytics/bar.png" />
+                           </image>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </ImageView>
+                        <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Bar">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </HBox>
                </children>
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -259,20 +287,84 @@
             </HBox>
          </children>
       </VBox>
-      <HBox layoutX="31.0" layoutY="196.0" prefHeight="70.0" prefWidth="177.0" spacing="10.0">
+      <HBox layoutX="308.0" layoutY="383.0" prefHeight="43.0" prefWidth="774.0">
          <children>
-            <VBox prefHeight="200.0" prefWidth="63.0" spacing="15.0">
+            <AnchorPane prefHeight="200.0" prefWidth="200.0">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Standard Deviation:" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Median:" />
+                  <Label fx:id="lblAverageCanceled" alignment="CENTER" contentDisplay="CENTER" text="Label" textAlignment="CENTER">
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="lblSTDCanceled" alignment="CENTER" layoutX="63.0" layoutY="5.0" text="Label" textAlignment="CENTER">
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="lblMedianCanceled" alignment="CENTER" layoutX="126.0" layoutY="5.0" text="Label" textAlignment="CENTER">
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </Label>
                </children>
-            </VBox>
-            <VBox prefHeight="200.0" prefWidth="63.0" spacing="15.0">
+            </AnchorPane>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="0.521" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="0.857" />
+                  <Label fx:id="lblAverageLocked" alignment="CENTER" layoutX="-5.0" text="Label">
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="lblSTDLocked" alignment="CENTER" layoutX="58.0" layoutY="1.0" text="Label">
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="lblMedianLocked" alignment="CENTER" layoutX="121.0" text="Label">
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </Label>
                </children>
-            </VBox>
+            </AnchorPane>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <Label fx:id="lblAverageClosed" alignment="CENTER" contentDisplay="CENTER" layoutX="-2.0" text="Label">
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="lblSTDClosed" alignment="CENTER" layoutX="68.0" layoutY="5.0" text="Label">
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="lblMedianClosed" alignment="CENTER" layoutX="131.0" layoutY="5.0" text="Label">
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </Label>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <Label fx:id="lblAverageActive" alignment="CENTER" contentDisplay="CENTER" layoutX="17.0" layoutY="3.0" text="Label">
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="lblSTDActive" alignment="CENTER" layoutX="87.0" layoutY="8.0" text="Label">
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="lblMedianActive" alignment="CENTER" layoutX="150.0" layoutY="8.0" text="Label">
+                     <padding>
+                        <Insets left="5.0" />
+                     </padding>
+                  </Label>
+               </children>
+            </AnchorPane>
          </children>
       </HBox>
    </children>

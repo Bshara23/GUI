@@ -9,16 +9,20 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Blob;
-import java.sql.Date;
+import java.util.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Map;
 import java.util.Random;
 
 import ClientLogic.Client;
+
 import Entities.*;
 import ServerLogic.MySQL;
 import Utility.AppManager;
@@ -26,7 +30,7 @@ import Utility.AppManager;
 public class MySqlCreationTester {
 	private static MySQL db = new MySQL("root", "A123456", "ICM", null);
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	public static void main(String[] args) {
 
 		// db.insertObject(SystemUser.emptyInstance);
@@ -65,19 +69,29 @@ public class MySqlCreationTester {
 
 		// System.out.println(db.getNewMaxID(ChangeRequest.getEmptyInstance()));
 	//	Map<String,Integer> result=db.GetCounterOfRequestByStatus();
-		ArrayList<String> r=new ArrayList<>();
-		r.add("Canceled");
-		r.add("Locked");
-		r.add("Closed");
-		r.add("Active");
-		String status;
-		Random rand = new Random();
-		for(int i=1013;i<1014;i++) {
-			int j=rand.nextInt(4);
-			status=r.get(j)+"";
-			db.updateRequestStatusByID(i+"", status);
-		}
-		
+		  Date date;
+			try {
+				Timestamp date1;
+				Timestamp date2;
+				 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				 	Timestamp firstDate = new Timestamp(System.currentTimeMillis());
+				    Calendar cal = Calendar.getInstance();
+				    cal.setTimeInMillis(firstDate.getTime());
+				    cal.add(Calendar.DAY_OF_MONTH, -7);
+				    Timestamp secDate = new Timestamp(cal.getTime().getTime());
+			    	
+			    	 Date d = new Date();
+			         Date d2 = new Date();
+			     	d = sdf.parse(firstDate.toString());
+					d2 = sdf.parse(secDate.toString());
+					date1 = new Timestamp(d.getTime());
+					date2 = new Timestamp(d2.getTime());
+					System.out.println(date1+" "+date2);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 
 	}
 
 	private static void changeRequestTest() {

@@ -13,7 +13,6 @@ public class SRMessage implements Serializable {
 		this.command = command;
 		this.data = data;
 	}
-
 	
 	public SRMessage(Command command, MsgReturnType returnType, Object[] data) {
 		super();

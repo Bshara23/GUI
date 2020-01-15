@@ -413,6 +413,8 @@ public class ClientGUI extends Application implements Initializable {
 
 	@FXML
 	void onAnalyticsPress(MouseEvent event) {
+		
+			
 
 		commondMenuBehavior(apBtnAnalytics, "Analytics", FxmlNames.ANALYTICS);
 	}
@@ -485,7 +487,7 @@ public class ClientGUI extends Application implements Initializable {
     			
     				
     			boolean sucess=(boolean)SRMessage.getAttachedData()[0];
-    			System.out.println("got to here");
+    			
     			if(sucess) {
     				try {
 						ShowLogIn();

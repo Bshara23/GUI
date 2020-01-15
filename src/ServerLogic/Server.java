@@ -3,7 +3,10 @@ package ServerLogic;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -46,7 +49,7 @@ public class Server extends AbstractServer {
 	private static ArrayList<VoidFunc> serverStartedEvents;
 	private static ArrayList<VoidFunc> serverStoppedEvents;
 	private static MySQL db;
-	//private static ExecutorService executorService;
+	// private static ExecutorService executorService;
 	static {
 
 		instance = new Server(5555);
@@ -102,7 +105,7 @@ public class Server extends AbstractServer {
 	// Initialize the client
 	public void initialize(int port, String username, String password, String schemaName, int poolSize) {
 
-		//executorService = Executors.newFixedThreadPool(poolSize);
+		// executorService = Executors.newFixedThreadPool(poolSize);
 
 		sqlException = false;
 		instance.setPort(port);
@@ -144,9 +147,8 @@ public class Server extends AbstractServer {
 		Command command = srMsg.getCommand();
 		switch (command) {
 
-		
 		case GetMyIssuedRequests:
-			
+
 			String forUsername = (String) srMsg.getAttachedData()[0];
 
 			int startingRow = (int) srMsg.getAttachedData()[1];
@@ -155,18 +157,17 @@ public class Server extends AbstractServer {
 			ArrayList<ChangeRequest> crs = db.getChangeRequests(forUsername, startingRow, size);
 
 			sendMessageToClient(client, command, crs);
-		
 
 			break;
-		
+
 		case GetMyIssuedRequestsCount:
-			
+
 			String countOfMyRequestsCondition = (String) srMsg.getAttachedData()[0];
 			int countOfMyIssuedRequests = db.getCountOf(ChangeRequest.getEmptyInstance(), countOfMyRequestsCondition);
 			sendMessageToClient(client, command, countOfMyIssuedRequests);
-			
+
 			break;
-			
+
 		case getPermissionsData:
 
 			String username23 = (String) srMsg.getAttachedData()[0];
@@ -211,7 +212,7 @@ public class Server extends AbstractServer {
 		case getCountOfPhasesTypes:
 
 			long empNumberForPhases = (long) srMsg.getAttachedData()[0];
-			
+
 			int cntSupervision = db.isEmployeeIsSupervisor(empNumberForPhases) ? 1 : 0;
 			int cntEvaluation = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Evaluation);
 			int cntDecision = db.getCountOfPhasesByType(empNumberForPhases, PhaseType.Decision);
@@ -337,10 +338,10 @@ public class Server extends AbstractServer {
 
 			// TODO: fix in my requests list
 			PhaseType phaseType = (PhaseType) srMsg.getAttachedData()[0];
-			
+
 			switch (phaseType) {
 			case Supervision:
-				
+
 				ArrayList<ChangeRequest> requestsWithCurrentPhase = db.getChangeRequestWithCurrentPhase();
 
 				sendMessageToClient(client, command, phaseType, requestsWithCurrentPhase);
@@ -349,10 +350,8 @@ public class Server extends AbstractServer {
 			case Evaluation:
 			case Examination:
 			case Execution:
-			
 
 				long empNum = (long) srMsg.getAttachedData()[1];
-
 
 				ArrayList<ChangeRequest> crSupervision = db.getChangeRequestPhaseByEmployee(empNum, phaseType);
 
@@ -366,34 +365,60 @@ public class Server extends AbstractServer {
 			}
 
 			break;
-			
-			/**
-			 * @Author EliaB
-			 * Creating request "counter of request by status"
-			 * */
-			
-		case GetCounterOfRequestsByStatus:
-				
-				int index=(int)srMsg.getAttachedData()[0];
-				System.out.println("data of analytic sent to client[Manager]");
-				sendMessageToClient(client,command,db.GetCounterOfRequestByStatus(index));
-		
-		break;
-		//End case
 		/**
 		 * @author EliaB
-		 * Logout user from server 
+		 * Get phases counter by status from date range
+		 *
 		 * */
-		case LogOut:
-			if(client.isAlive())
-				try {
-					sendMessageToClient(client,command,true);
-					client.close();
-					
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+		case GetCounterOfPhasesByStatusDateRange:
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			Timestamp from = (Timestamp) srMsg.getAttachedData()[0];
+			Timestamp to = (Timestamp) srMsg.getAttachedData()[1];
 			
+			System.out.println("data of analytic sent to client[Manager] date range :"+sdf.format(from).toString()+"-"+sdf.format(to).toString());
+			
+			ArrayList<HashMap<String,Integer>> data = new ArrayList<HashMap<String,Integer>>();
+			
+			int range=(int) ((TimeUnit.DAYS.convert(to.getTime() - from.getTime(), TimeUnit.MILLISECONDS))+1);
+			for (int i = 0; i < range; i++) {
+				
+				data.add(db.GetCounterOfPhasesBetweenTwoDates(from,to,range-i-1));
+
+			}
+			System.out.println(data.toString());
+			// System.out.println(AmountOfData);
+			sendMessageToClient(client, command, data);
+			
+			break;
+		/**
+		 * @Author EliaB Creating request "counter of request by status"
+		 */
+
+		case GetCounterOfPhasesByStatus:
+
+			int index = (int) srMsg.getAttachedData()[0];
+
+			System.out.println("data of analytic sent to client[Manager]");
+			ArrayList<ArrayList<Integer>> p = new ArrayList<ArrayList<Integer>>();
+
+			for (int i = 0; i < index; i++) {
+				
+				p.add(db.GetCounterOfPhaseByStatus(i));
+
+			}
+
+			// System.out.println(AmountOfData);
+			sendMessageToClient(client, command, p);
+
+			break;
+		// End case
+		/**
+		 * @author EliaB Logout user from server
+		 */
+		case LogOut:
+
+			sendMessageToClient(client, command, true);
+
 			break;
 		default:
 			System.err.println("Error, undefine command [" + srMsg.getCommand() + "]");

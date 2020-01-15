@@ -4,8 +4,12 @@ import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import Entities.*;
@@ -55,7 +59,6 @@ public class MySQL extends MySqlConnBase {
 
 		executeStatement("SELECT * FROM " + tableName, statment);
 	}
-	
 
 	/* get table column name by index */
 
@@ -740,7 +743,7 @@ public class MySQL extends MySqlConnBase {
 			try {
 
 				if (rs.next()) {
-					
+
 					results.add(rs.getString(1));
 					results.add(rs.getString(2));
 				}
@@ -864,24 +867,23 @@ public class MySQL extends MySqlConnBase {
 
 		return results;
 	}
+
 	/**
-	 * @author EliaB
-	 * get counter of request with specific status
-	 * */
-	public Map<String,Integer> GetCounterOfRequestByStatus(int i) {
-		Map<String,Integer> results = new HashMap<>();
-		String query = "SELECT count(phaseID),p.status from icm.phase as p WHERE p.startingDate <=CURDATE() - INTERVAL "+i+" DAY AND p.timeOfCompletion <=CURDATE() - INTERVAL "+i+" DAY ;";
+	 * @author EliaB get counter of request with specific status
+	 */
+	public ArrayList<Integer> GetCounterOfPhaseByStatus(int i) {
+		ArrayList<Integer> results = new ArrayList<Integer>();
+		String query = "SELECT count(phaseID),p.status from icm.phase as p WHERE p.startingDate <=CURDATE() - INTERVAL "
+				+ i + " DAY AND p.timeOfCompletion <=CURDATE() - INTERVAL " + i + " DAY  group by p.status;";
 		IStatement prepS = rs -> {
 
-		
 			try {
+				
 
-				while(rs.next()) {
-						results.put(rs.getString(2),rs.getInt(1));
-						
+				while (rs.next()) {
 				
+					results.add(rs.getInt(1));
 				}
-				
 
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -891,19 +893,18 @@ public class MySQL extends MySqlConnBase {
 		executeStatement(query, prepS);
 		return results;
 	}
+
 	/**
-	 * @author EliaB
-	 * update request description by id
-	 * */
-	public int updateRequestStatusByID(String RequestID,String status) {
+	 * @author EliaB update request description by id
+	 */
+	public int updateRequestStatusByID(String RequestID, String status) {
 		String query = "update icm.changerequest set descriptionOfCurrentStateLT=? where requestID=?;";
 
 		IPreparedStatement prepS = ps -> {
 			try {
 
-				ps.setString(1,status);
+				ps.setString(1, status);
 				ps.setString(2, RequestID);
-			
 
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -913,19 +914,18 @@ public class MySQL extends MySqlConnBase {
 
 		return executePreparedStatement(query, prepS);
 	}
+
 	/**
-	 * @author EliaB
-	 * update phase description by id
-	 * */
-	public int updatePhaseStatusByID(String PhaseID,String status) {
+	 * @author EliaB update phase description by id
+	 */
+	public int updatePhaseStatusByID(String PhaseID, String status) {
 		String query = "update icm.changerequest set status=? where phaseID=?;";
 
 		IPreparedStatement prepS = ps -> {
 			try {
 
-				ps.setString(1,status);
+				ps.setString(1, status);
 				ps.setString(2, PhaseID);
-			
 
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -934,6 +934,74 @@ public class MySQL extends MySqlConnBase {
 		};
 
 		return executePreparedStatement(query, prepS);
+	}
+
+	/**
+	 * @author EliaB insert new phase to database
+	 * 
+	 */
+	public int insertPhase(int phaseID, String status, int requestID, int empNumber, Timestamp ts) {
+
+		String query = "INSERT INTO `icm`.`phase` (`phaseId`,`requestID`, `phaseName`,`status`,`empNumber`, `deadline`, `estimatedTimeOfCompletion`,`timeOfCompletion`,`startingDate`,`hasBeenTimeExtended`) "
+				+ "VALUES (?, ?, ?, ?,?,?,?,?,?,?);";
+		try {
+
+			PreparedStatement ps = conn.prepareStatement(query);
+
+			ps.setInt(1, phaseID);
+			ps.setInt(2, requestID);
+			ps.setString(3, "evaluation");
+			ps.setString(4, status);
+			ps.setInt(5, empNumber);
+			ps.setTimestamp(6, ts);
+			ps.setTimestamp(7, ts);
+			ps.setTimestamp(8, ts);
+			ps.setTimestamp(9, ts);
+			ps.setInt(10, 0);
+
+			return ps.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	/**
+	 * @author EliaB
+	 * get counter of phases by status from two different dates
+	 * */
+	public HashMap<String,Integer> GetCounterOfPhasesBetweenTwoDates(Timestamp from,Timestamp to, int i){
+		int d=i;
+		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		HashMap<String,Integer> results = new HashMap<String,Integer>();
+		
+		
+		String query="select count(p.phaseID),p.status from icm.phase as p " + 
+				"where (p.startingDate>= '"+sdf.format(from)+"' and p.deadline<='"+sdf.format(to).toString()+"' - interval "+d+" day ) or " + 
+				"(p.startingDate<='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(from)+"' and p.deadline<='"+sdf.format(to).toString()+"' - interval "+d+" day )or " + 
+				"(p.startingDate>='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(to).toString()+"' - interval "+d+" day  and p.startingDate<='"+sdf.format(to).toString()+"' - interval "+d+" day ) or " + 
+				"(p.startingDate<='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(to).toString()+"' - interval "+d+" day ) " + 
+				"group by p.status;";
+		IStatement prepS = rs -> {
+
+			try {
+				
+
+				while (rs.next()) {
+					
+					results.put(rs.getString(2),rs.getInt(1));
+					
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results;
+		
+		
 	}
 
 }

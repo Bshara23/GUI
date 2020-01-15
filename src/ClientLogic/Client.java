@@ -1,6 +1,7 @@
 package ClientLogic;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import Protocol.Command;
@@ -194,6 +195,8 @@ public class Client extends AbstractClient {
 	
 	
 
+	
+	
 
 	public static void removeServerConnectionEstablishedEvent(String key) {
 		serverConnectionEstablishedEvents.remove(key);
