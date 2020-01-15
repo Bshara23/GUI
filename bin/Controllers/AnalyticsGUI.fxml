@@ -291,17 +291,17 @@
          <children>
             <AnchorPane prefHeight="200.0" prefWidth="200.0">
                <children>
-                  <Label fx:id="lblAverageCanceled" alignment="CENTER" contentDisplay="CENTER" text="Label" textAlignment="CENTER">
+                  <Label fx:id="lblAverageCanceled" alignment="CENTER" contentDisplay="CENTER" prefHeight="48.0" prefWidth="66.6" text="Label" textAlignment="CENTER">
                      <padding>
                         <Insets left="5.0" />
                      </padding>
                   </Label>
-                  <Label fx:id="lblSTDCanceled" alignment="CENTER" layoutX="63.0" layoutY="5.0" text="Label" textAlignment="CENTER">
+                  <Label fx:id="lblSTDCanceled" alignment="CENTER" layoutX="71.0" layoutY="5.0" prefHeight="48.0" prefWidth="66.6" text="Label" textAlignment="CENTER">
                      <padding>
                         <Insets left="5.0" />
                      </padding>
                   </Label>
-                  <Label fx:id="lblMedianCanceled" alignment="CENTER" layoutX="126.0" layoutY="5.0" text="Label" textAlignment="CENTER">
+                  <Label fx:id="lblMedianCanceled" alignment="CENTER" layoutX="138.0" layoutY="5.0" maxHeight="48.0" maxWidth="56.0" prefHeight="48.0" prefWidth="66.0" text="Label" textAlignment="CENTER">
                      <padding>
                         <Insets left="5.0" />
                      </padding>
@@ -367,5 +367,36 @@
             </AnchorPane>
          </children>
       </HBox>
+      <AnchorPane layoutX="32.0" layoutY="204.0" prefHeight="180.0" prefWidth="200.0">
+         <children>
+            <HBox prefHeight="60.0" prefWidth="200.0">
+               <children>
+                  <Label alignment="CENTER" prefHeight="60.0" prefWidth="201.0" text="Average" textFill="RED">
+                     <font>
+                        <Font size="22.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox layoutY="60.0" prefHeight="60.0" prefWidth="200.0">
+               <children>
+                  <Label alignment="CENTER" prefHeight="60.0" prefWidth="201.0" text="STD" textFill="#20b203">
+                     <font>
+                        <Font size="22.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox layoutY="120.0" prefHeight="60.0" prefWidth="200.0">
+               <children>
+                  <Label alignment="CENTER" prefHeight="60.0" prefWidth="201.0" text="Median" textFill="#1a78db">
+                     <font>
+                        <Font size="22.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>

@@ -169,10 +169,10 @@ public class AnalyticsGUIController implements Initializable {
 	Series<String, Number> s2 = new XYChart.Series<String, Number>();
 	Series<String, Number> s3 = new XYChart.Series<String, Number>();
 	Series<String, Number> s4 = new XYChart.Series<String, Number>();
-	Series<String,Double> Active =new Series<>();
-	Series<String,Double> Canceled =new Series<>();
-	Series<String,Double> Locked =new Series<>();
-	Series<String,Double> Closed =new Series<>();
+	Series<String,Number> Active =new Series<String,Number>();
+	Series<String,Number> Canceled =new Series<String,Number>();
+	Series<String,Number> Locked =new Series<String,Number>();
+	Series<String,Number> Closed =new Series<String,Number>();
 	int requestsNumber = 0;
 	int requestsActive = 0;
 	int requestsLocked = 0;
@@ -243,12 +243,26 @@ public class AnalyticsGUIController implements Initializable {
 	private void SetData2() {
 		Client.getInstance().addMessageRecievedFromServer("GetCounterOfPhasesByStatusDateRange", rsMsg -> {
 			if (rsMsg.getCommand() == Command.GetCounterOfPhasesByStatusDateRange) {
-			
+	
 				bc.setTitle("");
 				bc.setBarGap(2);
 			    xAxis.setLabel("Day");       
 			    yAxis.setLabel("Value");
-				
+			    bc.getData().removeAll(Canceled,Locked,Active,Closed);
+			    ser.removeAll(ser);
+				Active =new Series<String,Number>();
+				Canceled =new Series<String,Number>();
+				Locked =new Series<String,Number>();
+				Closed =new Series<String,Number>();
+			    Canceled.setName("Canceled");
+			    Locked.setName("Locked");
+			    Active.setName("Active");
+			    Closed.setName("Closed");
+			   
+		     	ser.add(Canceled);
+		    	ser.add(Locked);
+		    	ser.add(Active);
+		    	ser.add(Closed);
 				ArrayList<Double> listofActiveRequest= new ArrayList<>();
 				ArrayList<Double> listofClosedRequest= new ArrayList<>();
 				ArrayList<Double> listofCanceledRequest= new ArrayList<>();
@@ -262,10 +276,6 @@ public class AnalyticsGUIController implements Initializable {
 		    	results = (ArrayList<HashMap<String,Integer>>)rsMsg.getAttachedData()[0];
 		    	requestsActive = requestsActive = requestsLocked = requestsClosed = 0;
 		    	
-		     	ser.add(Canceled);
-		    	ser.add(Locked);
-		    	ser.add(Active);
-		    	ser.add(Closed);
 		    	 int size=results.size();
 		    	 int j=0;
 				for(int i=0;i<results.size();i++)
@@ -278,8 +288,7 @@ public class AnalyticsGUIController implements Initializable {
 					 switch(r) {
 				 		case "Active":
 				 			s1.getData().add(new XYChart.Data<String, Number>("" + i, results.get(i).get("Active")));
-				 			if( (double)results.get(i).get(r)>=requestsActive)
-				 				requestsActive= results.get(i).get(r);
+				 			requestsActive+= results.get(i).get(r);
 						 	listofActiveRequest.add((double)results.get(i).get(r));
 						 	
 						 	break;
@@ -287,8 +296,7 @@ public class AnalyticsGUIController implements Initializable {
 					 
 				 		case"Canceled":
 				 			s2.getData().add(new XYChart.Data<String, Number>("" + i, results.get(i).get("Canceled")));
-				 			if( (double)results.get(i).get(r)>=requestsCanceled)
-				 				requestsCanceled= results.get(i).get(r);
+				 			requestsCanceled+= results.get(i).get(r);
 						 	listofCanceledRequest.add((double)results.get(i).get(r));
 						 
 						 break;
@@ -296,16 +304,14 @@ public class AnalyticsGUIController implements Initializable {
 					 
 				 		case "Locked":
 				 			s3.getData().add(new XYChart.Data<String, Number>("" + i, results.get(i).get("Locked")));
-				 			if( (double)results.get(i).get(r)>=requestsLocked)
-				 				requestsLocked=  results.get(i).get(r);
+				 			requestsLocked+=  results.get(i).get(r);
 						 	listofLockedRequest.add((double)results.get(i).get(r));
 						 	
 						 break;
 					 
 				 		case "Closed":
-				 			s4.getData().add(new XYChart.Data<String, Number>("" + i, results.get(i).get("Closed")));
-				 			if( (double)results.get(i).get(r)>=requestsClosed)
-				 				requestsClosed+=(double)results.get(i).get(r);
+				 			s4.getData().add(new XYChart.Data<String, Number>("" + i, results.get(i).get("Closed")));	
+				 			requestsClosed+=(double)results.get(i).get(r);
 				 			listofClosedRequest.add((double)results.get(i).get(r));
 				 			
 						 break;
@@ -313,12 +319,12 @@ public class AnalyticsGUIController implements Initializable {
 					 }	 
 					 
 					
-					 if((j%10==0 && j>=10) ||(results.size()<=10&& results.size()-j<=10)||(results.size()>10&&results.size()-j+1==0)) {
+					 if((j%10==0 && j>1) ||(results.size()<10)||(results.size()>10&&results.size()==j+1)) {
 						 
-						 ser.get(0).getData().add(new XYChart.Data(i%10+"",requestsCanceled));
-						 ser.get(1).getData().add(new XYChart.Data(i%10+"",requestsLocked));
-						 ser.get(2).getData().add(new XYChart.Data(i%10+"", requestsActive));
-						 ser.get(3).getData().add(new XYChart.Data(i%10+"",requestsClosed));
+						 ser.get(0).getData().add(new XYChart.Data("Day "+i,requestsCanceled));
+						 ser.get(1).getData().add(new XYChart.Data("Day "+i,requestsLocked));
+						 ser.get(2).getData().add(new XYChart.Data("Day "+i, requestsActive));
+						 ser.get(3).getData().add(new XYChart.Data("Day "+i,requestsClosed));
 						
 						
 					 }
@@ -327,10 +333,11 @@ public class AnalyticsGUIController implements Initializable {
 					
 					
 				}
-				if(bc!=null&&bc.getData().size()>0)bc.getData().clear();
-				for(Series<String, Number> x:ser)
-					if(!bc.getData().contains(x))
+				bc.getData().clear();
+				bc.layout();
+				for(Series<String, Number> x:ser)	
 						bc.getData().add(x);
+				
 				requestsNumber = requestsCanceled + requestsActive + requestsClosed + requestsLocked;
 				listofActiveRequest.sort(new Comparator<Double>() {
 				    public int compare(Double p1, Double p2) {
@@ -495,7 +502,7 @@ public class AnalyticsGUIController implements Initializable {
 		d2 = sdf.parse(secDate.toString());
 		date2 = new Timestamp(d.getTime());
 		date1 = new Timestamp(d2.getTime());
-     	Client.getInstance().request(Command.GetCounterOfPhasesByStatusDateRange, date2,date1);
+     	Client.getInstance().request(Command.GetCounterOfPhasesByStatusDateRange, date1,date2);
     	SetData2();
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -526,7 +533,7 @@ public class AnalyticsGUIController implements Initializable {
 		date2 = new Timestamp(d.getTime());
 		date1 = new Timestamp(d2.getTime());
 		System.out.println(date1+ " "+ date2);
-     	Client.getInstance().request(Command.GetCounterOfPhasesByStatusDateRange, date2,date1);
+     	Client.getInstance().request(Command.GetCounterOfPhasesByStatusDateRange, date1,date2);
     	SetData2();
 		} catch (ParseException e) {
 			
