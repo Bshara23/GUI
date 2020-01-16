@@ -66,6 +66,30 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 	private AnchorPane mainAnchor;
 
 	@FXML
+	private TableView<XTableDataX> tblSupervisorOnly;
+
+	@FXML
+	private TableColumn<XTableDataX, String> tcXRequestId;
+
+	@FXML
+	private TableColumn<XTableDataX, String> tcXPhaseName;
+
+	@FXML
+	private TableColumn<XTableDataX, String> tcXPhaseStatus;
+
+	@FXML
+	private TableColumn<XTableDataX, String> tcXPhaseStartingDate;
+
+	@FXML
+	private TableColumn<XTableDataX, String> tcXPhaseDeadline;
+
+	@FXML
+	private TableColumn<XTableDataX, String> tcXPhaseTimeLeft;
+
+	@FXML
+	private TableColumn<XTableDataX, String> tcXHasBeenTimeExtended;
+
+	@FXML
 	private TableView<TableDataRequests> tblSupervisorRequests;
 
 	@FXML
@@ -154,6 +178,9 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		System.out.println("Init: ListOfRequestsForTreatmentController");
 
+		
+
+		
 		ClientGUI.addOnMenuBtnClickedEvent(getClass().getName() + "3232145125", () -> {
 			System.out.println("Finalize: ListOfRequestsForTreatmentController");
 
@@ -163,6 +190,7 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 		});
 
 		initTable();
+		initXTableX();
 
 		requestTypesAPs = ControllerManager.getAllNodes(hbRequestsType);
 
@@ -229,12 +257,20 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 				int size = myRequests.size();
 				txtRequestsCount.setText("Size: " + size);
+
+				boolean isSupervision = requestType == PhaseType.Supervision;
+
+				tblSupervisorOnly.setVisible(isSupervision);
+				tblSupervisorOnly.setDisable(!isSupervision);
+
+				tblSupervisorRequests.setVisible(!isSupervision);
+				tblSupervisorRequests.setDisable(isSupervision);
+
 				switch (requestType) {
 
-				// TODO: add the closing with the supervision; or instead of
 				case Supervision:
 
-					loadIntoTable(myRequests);
+					loadIntoXTableX(myRequests);
 					break;
 
 				case Examination:
@@ -257,7 +293,6 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 					break;
 
-				// TODO: add the rest of the phases
 				default:
 					break;
 				}
@@ -391,11 +426,12 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 			Phase ph = cr.getPhases().get(0);
 
-			String issuedBy = cr.getUsername();
+			String issuedBy = cr.getRequestID() + "";
 			String phaseStatus = ph.getStatus();
-			String phaseStartingDate = ControllerManager.getDateTime(ph.getStartingDate());//DateUtil.toString(ph.getStartingDate());
+			String phaseStartingDate = ControllerManager.getDateTime(ph.getStartingDate());// DateUtil.toString(ph.getStartingDate());
 			String phaseDeadline = ph.getDeadline().equals(DateUtil.NA) ? "N/A" : DateUtil.toString(ph.getDeadline());
-			String phaseTimeLeft = ph.getDeadline().equals(DateUtil.NA) ? "N/A" : DateUtil.difference(ph.getStartingDate(), ph.getDeadline());
+			String phaseTimeLeft = ph.getDeadline().equals(DateUtil.NA) ? "N/A"
+					: DateUtil.differenceInDaysHours(ph.getDeadline(), DateUtil.now());
 			String hasBeenTimeExtended = ph.isHasBeenTimeExtended() ? "Yes" : "No";
 
 			TableDataRequests tableRow = new TableDataRequests(issuedBy, phaseStatus, phaseStartingDate, phaseDeadline,
@@ -407,9 +443,30 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 	}
 
-	// TODO: implement
-	private PhaseType firstRelatedRequests(long myID) {
-		return PhaseType.Supervision;
+	private void loadIntoXTableX(ArrayList<ChangeRequest> myRequests) {
+		ArrayList<XTableDataX> tableContent = new ArrayList<XTableDataX>();
+
+		for (ChangeRequest cr : myRequests) {
+
+			Phase ph = cr.getPhases().get(0);
+
+			String phaseStatus = ph.getStatus();
+			String phaseStartingDate = ControllerManager.getDateTime(ph.getStartingDate());// DateUtil.toString(ph.getStartingDate());
+			String phaseDeadline = ph.getDeadline().equals(DateUtil.NA) ? "N/A" : DateUtil.toString(ph.getDeadline());
+			String timeLeftForPhase = ph.getDeadline().equals(DateUtil.NA) ? "N/A"
+					: DateUtil.differenceInDaysHours(ph.getDeadline(), DateUtil.now());
+			String hasBeenTimeExtended = ph.isHasBeenTimeExtended() ? "Yes" : "No";
+
+			String requestId = cr.getRequestID() + "";
+			String phase = ph.getPhaseName() + "";
+
+			XTableDataX tableRow = new XTableDataX(requestId, phase, phaseStatus, phaseStartingDate, phaseDeadline,
+					timeLeftForPhase, hasBeenTimeExtended);
+			tableContent.add(tableRow);
+		}
+
+		tblSupervisorOnly.setItems(FXCollections.observableArrayList(tableContent));
+
 	}
 
 	private void selectNode(Node node) {
@@ -471,6 +528,15 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 				.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("phaseStartingDate"));
 		tcPhaseStatus.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("phaseStatus"));
 		tcPhaseTimeLeft.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("phaseTimeLeft"));
+		
+		tcHasBeenTimeExtended.setSortable(false);
+		tcIssuedBy.setSortable(false);
+		tcPhaseDeadline.setSortable(false);
+		tcPhaseStartingDate.setSortable(false);
+		tcPhaseStatus.setSortable(false);
+		tcPhaseTimeLeft.setSortable(false);
+
+
 
 	}
 
@@ -538,12 +604,114 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 	}
 
+	private void initXTableX() {
+
+		tcXHasBeenTimeExtended
+				.setCellValueFactory(new PropertyValueFactory<XTableDataX, String>("hasBeenTimeExtended"));
+		tcXPhaseDeadline.setCellValueFactory(new PropertyValueFactory<XTableDataX, String>("phaseDeadline"));
+		tcXPhaseName.setCellValueFactory(new PropertyValueFactory<XTableDataX, String>("phase"));
+		tcXPhaseStartingDate.setCellValueFactory(new PropertyValueFactory<XTableDataX, String>("phaseStartingDate"));
+		tcXPhaseStatus.setCellValueFactory(new PropertyValueFactory<XTableDataX, String>("phaseStatus"));
+		tcXPhaseTimeLeft.setCellValueFactory(new PropertyValueFactory<XTableDataX, String>("timeLeftForPhase"));
+		tcXRequestId.setCellValueFactory(new PropertyValueFactory<XTableDataX, String>("requestId"));
+		
+		
+		tcXHasBeenTimeExtended.setSortable(false);
+		tcXPhaseDeadline.setSortable(false);
+		tcXPhaseName.setSortable(false);
+		tcXPhaseStartingDate.setSortable(false);
+		tcXPhaseStatus.setSortable(false);
+		tcXPhaseTimeLeft.setSortable(false);
+		tcXRequestId.setSortable(false);
+
+	}
+
+	public class XTableDataX {
+		String requestId, phase, phaseStatus, phaseStartingDate, phaseDeadline, timeLeftForPhase, hasBeenTimeExtended;
+
+		public XTableDataX(String requestId, String phase, String phaseStatus, String phaseStartingDate,
+				String phaseDeadline, String timeLeftForPhase, String hasBeenTimeExtended) {
+			super();
+			this.requestId = requestId;
+			this.phase = phase;
+			this.phaseStatus = phaseStatus;
+			this.phaseStartingDate = phaseStartingDate;
+			this.phaseDeadline = phaseDeadline;
+			this.timeLeftForPhase = timeLeftForPhase;
+			this.hasBeenTimeExtended = hasBeenTimeExtended;
+		}
+
+		public String getRequestId() {
+			return requestId;
+		}
+
+		public void setRequestId(String requestId) {
+			this.requestId = requestId;
+		}
+
+		public String getPhase() {
+			return phase;
+		}
+
+		public void setPhase(String phase) {
+			this.phase = phase;
+		}
+
+		public String getPhaseStatus() {
+			return phaseStatus;
+		}
+
+		public void setPhaseStatus(String phaseStatus) {
+			this.phaseStatus = phaseStatus;
+		}
+
+		public String getPhaseStartingDate() {
+			return phaseStartingDate;
+		}
+
+		public void setPhaseStartingDate(String phaseStartingDate) {
+			this.phaseStartingDate = phaseStartingDate;
+		}
+
+		public String getPhaseDeadline() {
+			return phaseDeadline;
+		}
+
+		public void setPhaseDeadline(String phaseDeadline) {
+			this.phaseDeadline = phaseDeadline;
+		}
+
+		public String getTimeLeftForPhase() {
+			return timeLeftForPhase;
+		}
+
+		public void setTimeLeftForPhase(String timeLeftForPhase) {
+			this.timeLeftForPhase = timeLeftForPhase;
+		}
+
+		public String getHasBeenTimeExtended() {
+			return hasBeenTimeExtended;
+		}
+
+		public void setHasBeenTimeExtended(String hasBeenTimeExtended) {
+			this.hasBeenTimeExtended = hasBeenTimeExtended;
+		}
+
+	}
+
 	@FXML
 	public void clickItem(MouseEvent event) {
 		if (event.getClickCount() == 2) // Checking double click
 		{
+			int selectedIndex;
+			if (tblSupervisorRequests.isDisabled()) {
+				selectedIndex = tblSupervisorOnly.getSelectionModel().getSelectedIndex();
 
-			int selectedIndex = tblSupervisorRequests.getSelectionModel().getSelectedIndex();
+			} else {
+				selectedIndex = tblSupervisorRequests.getSelectionModel().getSelectedIndex();
+
+			}
+
 			if (selectedIndex != -1) {
 				lastSelectedRequest = myRequests.get(selectedIndex);
 				Client.getInstance().request(Command.getSystemUserByRequest, lastSelectedRequest.getRequestID());

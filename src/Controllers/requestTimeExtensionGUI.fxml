@@ -10,7 +10,6 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
 <VBox fx:id="vbEvaluationReport" spacing="15.0" stylesheets="@blueBorder.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.requestTimeExtensionController">
    <children>
       <Text id="containerTitle" fill="#515050" strokeType="OUTSIDE" strokeWidth="0.0" text="Time Extension">
@@ -45,11 +44,11 @@
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="140.0">
                <children>
-                  <Text id="text" strokeType="OUTSIDE" strokeWidth="0.0" text="Old Deadline:" />
+                  <Text id="text" strokeType="OUTSIDE" strokeWidth="0.0" text="Current Deadline:" />
                   <Text id="text" fx:id="txtOldDeadline" strokeType="OUTSIDE" strokeWidth="0.0" text="199/89/78" />
                </children>
             </HBox>
-            <HBox alignment="CENTER_LEFT" spacing="71.0">
+            <HBox alignment="CENTER_LEFT" spacing="71.0" visible="false">
                <children>
                   <Text id="text" strokeType="OUTSIDE" strokeWidth="0.0" text="New Deadline will be:" />
                   <Text id="text" fx:id="txtNewDeadline1" strokeType="OUTSIDE" strokeWidth="0.0" text="199/89/78" />

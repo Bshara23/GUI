@@ -10,6 +10,7 @@ import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Entities.ChangeRequest;
 import Protocol.Command;
+import Utility.DateUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -20,6 +21,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 public class MyIssuedRequestDetailsController implements Initializable {
@@ -68,17 +70,20 @@ public class MyIssuedRequestDetailsController implements Initializable {
 	@FXML
 	private Canvas canvasLeft;
 
+	@FXML
+	private VBox vbRequestEndedConfirmation;
+
 	private ObservableList<Node> nodes;
-	private boolean swapper = false;
 	private ChangeRequest changeRequest;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
 		RequestDetailsUserController.applyCanvasEffects(canvasRight, canvasLeft);
+		vbRequestEndedConfirmation.setVisible(false);
 
 		nodes = FXCollections.observableArrayList(hbInformationContainer.getChildren());
-		changeRequest = ListOfRequestsForTreatmentController.lastSelectedRequest;
+		changeRequest = ListOfRequestsController.lastSelectedRequest;
 
 		hbConfirm.setCursor(Cursor.HAND);
 		ControllerManager.setEffect(hbConfirm, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
@@ -96,9 +101,11 @@ public class MyIssuedRequestDetailsController implements Initializable {
 
 								Client.removeMessageRecievedFromServer(REQUEST_OWNER_CONFIRM);
 
+								NavigationBar.reload();
+
 							}
 
-						}, REQUEST_OWNER_CONFIRM, changeRequest.getUsername());
+						}, REQUEST_OWNER_CONFIRM, changeRequest.getRequestID());
 
 					}, null);
 		});
@@ -108,7 +115,7 @@ public class MyIssuedRequestDetailsController implements Initializable {
 		ControllerManager.setOnHoverEffect(hbDecline, CommonEffects.REQUEST_DETAILS_BUTTON_RED,
 				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 		hbDecline.setOnMousePressed(event -> {
-			
+
 			ControllerManager.showYesNoMessage("Rejection", "Reject Request",
 					"Are you sure you want to reject the execution of this request?", () -> {
 						Client.getInstance().requestWithListener(Command.requestOwnerDecline, srMsg -> {
@@ -120,9 +127,11 @@ public class MyIssuedRequestDetailsController implements Initializable {
 
 								Client.removeMessageRecievedFromServer(REQUEST_OWNER_DECLINE);
 
+								NavigationBar.reload();
+
 							}
 
-						}, REQUEST_OWNER_DECLINE, changeRequest.getUsername());
+						}, REQUEST_OWNER_DECLINE, changeRequest.getRequestID());
 					}, null);
 		});
 
@@ -131,16 +140,37 @@ public class MyIssuedRequestDetailsController implements Initializable {
 		ControllerManager.setOnHoverEffect(hbAttachedFilesList, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
 				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 		hbAttachedFilesList.setOnMousePressed(event -> {
-			
+
 			// Set the request id for the files table
-			filesListController.requestId = 2;
+			filesListController.requestId = ListOfRequestsController.lastSelectedRequest.getRequestID();
 			NavigationBar.next("Files List", FxmlNames.FILES_LIST);
-			
-			
+
 		});
 
 		loadFields();
 
+		checkIfRequestHasEnded();
+
+	}
+
+	private void checkIfRequestHasEnded() {
+
+		Client.getInstance().requestWithListener(Command.isMyRequestWaitingForMyConfirmation, srMsg -> {
+
+			if (srMsg.getCommand() == Command.isMyRequestWaitingForMyConfirmation) {
+
+				boolean correct = (boolean) srMsg.getAttachedData()[0];
+
+				if (correct) {
+					vbRequestEndedConfirmation.setVisible(true);
+				} else {
+					vbRequestEndedConfirmation.setVisible(false);
+				}
+
+				Client.removeMessageRecievedFromServer(REQUEST_OWNER_DECLINE);
+			}
+
+		}, REQUEST_OWNER_DECLINE, changeRequest.getRequestID());
 	}
 
 	private void loadFields() {
@@ -149,22 +179,11 @@ public class MyIssuedRequestDetailsController implements Initializable {
 			lblRequestID.setText(changeRequest.getRequestID() + "");
 			lblComments.setText(changeRequest.getCommentsLT());
 			lblDescriptionOfCurrentState.setText(changeRequest.getDescriptionOfCurrentStateLT());
-			lblIssueDate.setText(ControllerManager.getDateTime(changeRequest.getDateOfRequest()));
+			lblIssueDate.setText(DateUtil.toString(changeRequest.getDateOfRequest()));
 			lblDescriptionOfRequestedChange.setText(changeRequest.getDescriptionOfRequestedChangeLT());
 			lblRelatedInfoSystem.setText(changeRequest.getRelatedInformationSystem());
 			lblRequestDescription.setText(changeRequest.getRequestDescriptionLT());
 
-//			Client.getInstance().requestWithListener(Command.getFullNameByUsername, srMsg -> {
-//
-//				if (srMsg.getCommand() == Command.getFullNameByUsername) {
-//
-//					String fullName = (String) srMsg.getAttachedData()[0];
-//					lbl.setText(fullName);
-//					Client.removeMessageRecievedFromServer(GET_FULL_NAME_OF_SYSTEM_USER);
-//
-//				}
-//
-//			}, GET_FULL_NAME_OF_SYSTEM_USER, changeRequest.getUsername());
 		}
 	}
 }

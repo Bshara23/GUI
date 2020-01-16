@@ -128,7 +128,7 @@ public class RequestDetailsEvaluatorGUIController implements Initializable {
 			ControllerManager.setOnHoverEffect(hbSendExecutionDetails, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
 					CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 
-			if (phaseStatus != PhaseStatus.Active_And_Waiting_For_Time_Extension) {
+			if (phaseStatus != PhaseStatus.Active_And_Waiting_For_Time_Extension && !lastPhase.isHasBeenTimeExtended()) {
 				hbTimeExtension.setVisible(true);
 				hbTimeExtension.setCursor(Cursor.HAND);
 				ControllerManager.setEffect(hbTimeExtension, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);

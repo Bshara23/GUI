@@ -54,10 +54,8 @@ public class DateUtil {
 
 	public static void main(String[] args) {
 
-		// System.out.println(toString(NA));
-		System.out.println(now());
-
-		System.out.println(add(now(), 1, 3));
+		String str = DateUtil.differenceInDaysHours(DateUtil.add(DateUtil.now(),  3, 7), DateUtil.now());
+		System.out.println(str);
 
 	}
 	
@@ -69,6 +67,14 @@ public class DateUtil {
 		LocalDateTime now = LocalDateTime.now();
 		now = now.plusDays(days);
 		return Timestamp.valueOf(now);
+	}
+
+	public static String differenceInDaysHours(Timestamp a, Timestamp b) {
+		long diff = a.getTime() - b.getTime();
+		double hours = diff * 2.77778e-7;
+		double days = hours * 0.0416667;
+		hours -= (int)days / 0.0416667;
+		return "Days: " + (int)days + ", Hours: " + (int)hours;
 	}
 
 	

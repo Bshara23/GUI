@@ -38,6 +38,7 @@ public enum Command {
 	setEvaluationPhaseToWaitingToSetTime, insertTimeExtension, confirmPhaseDeadline, rejectPhaseDeadline,
 	declineDecisionPhase, acceptDecisionPhase, requestMoreDateForDecision, getLatestEvalReport, confirmExamination,
 	rejectExamination, getExecutionReportForExaminationAndComsNames, assignExaminerForRequest, requestOwnerConfirm,
-	requestOwnerDecline, getRequestFiles,
+	requestOwnerDecline, getRequestFiles, isMyRequestWaitingForMyConfirmation, confirmRequestEndedBySupervisor,
+	declinedRequestEndedBySupervisor,
 
 }

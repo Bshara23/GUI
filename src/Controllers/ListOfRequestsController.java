@@ -205,25 +205,6 @@ public class ListOfRequestsController implements Initializable {
 		}
 	};
 
-	// TODO: implement
-	private PhaseType firstRelatedRequests(long myID) {
-		return PhaseType.Supervision;
-	}
-
-	private void requestDataForTable(long myID, PhaseType rType) {
-
-		switch (rType) {
-		case myRequests:
-
-			Client.getInstance().request(Command.GetMyRequests, new Object[] { ClientGUI.systemUser.getUserName(), rType });
-			break;
-
-		default:
-			break;
-		}
-
-	}
-
 	private void loadRequestToTable(ArrayList<ChangeRequest> changeRequests) {
 
 		ArrayList<TableDataRequests> strs = new ArrayList<TableDataRequests>();
@@ -252,7 +233,6 @@ public class ListOfRequestsController implements Initializable {
 	}
 
 	private void addContentToTable(ArrayList<TableDataRequests> strs) {
-		// tblSupervisorRequests.getSelectionModel().setCellSelectionEnabled(true);
 
 		tblSupervisorRequests.setItems(FXCollections.observableArrayList(strs));
 

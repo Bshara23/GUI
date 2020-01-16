@@ -81,7 +81,7 @@
                                  </children>
                               </HBox>
                               <Text id="text" strokeType="OUTSIDE" strokeWidth="0.0" text="No, Send failure details instead:" />
-                              <TextArea id="text" fx:id="taDescriptionOfFailure" minHeight="-Infinity" prefHeight="88.0" prefWidth="668.0" promptText="Enter a description of the failure" />
+                              <TextArea id="text" fx:id="taDescriptionOfFailure" minHeight="-Infinity" prefHeight="151.0" prefWidth="668.0" promptText="Enter a description of the failure" />
                               <HBox alignment="CENTER_RIGHT">
                                  <children>
                                     <HBox fx:id="hbSendFaulureDescription" alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="73.0" spacing="10.0">
@@ -151,7 +151,7 @@
                <children>
                   <HBox alignment="CENTER" spacing="5.0">
                      <children>
-                        <Text id="text" strokeType="OUTSIDE" strokeWidth="0.0" text="Want to assign a committee member to examine this?">
+                        <Text id="text" strokeType="OUTSIDE" strokeWidth="0.0" text="Want to assign an examiner instead?">
                            <font>
                               <Font size="18.0" />
                            </font>

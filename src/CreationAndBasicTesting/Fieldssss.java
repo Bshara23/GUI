@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import Entities.ChangeRequest;
 import Entities.Employee;
+import Entities.EvaluationReport;
 import Entities.File;
 import Entities.Phase;
 import Entities.Student;
@@ -34,28 +35,8 @@ public class Fieldssss {
 		
 		
 		
-		ArrayList<File> files = db.getFiles(0);
-
-		System.out.println(files.size());
-		String appData = System.getenv("LOCALAPPDATA") + "\\Temp\\";
-		for (File file : files) {
-			System.out.println(file.fileName);
-			file.writeFileToLocal(appData);
-			
-		       Desktop d = Desktop.getDesktop();
-		       
-		       try {
-				d.open(new java.io.File(appData + file.getFileName()));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			return;
-			
-			
-		}
-		//System.out.println(appData);
+		EvaluationReport evalR3 = db.getLatestEvaluationReport(7);
+		System.out.println(evalR3);
 
 	}
 

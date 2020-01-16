@@ -33,6 +33,10 @@ import javafx.scene.text.Text;
 
 public class RequestDetailsSupervisorController implements Initializable {
 
+	private static final String DECLINED_REQUEST_ENDED_BY_SUPERVISOR = "declinedRequestEndedBySupervisor";
+
+	private static final String CONFIRM_REQUEST_ENDED_BY_SUPERVISOR = "confirmRequestEndedBySupervisor";
+
 	private static final String ACCE = "dawdawfw53252365435435435435t5th5463453";
 
 	private static final String REJECT_PHASE_DEADLINE = "RejectPhaseDeadline";
@@ -137,7 +141,17 @@ public class RequestDetailsSupervisorController implements Initializable {
 	@FXML
 	private Canvas canvasLeft;
 
+	@FXML
+	private VBox vbRequestEndedConfirmation;
+
+	@FXML
+	private HBox hbConfirmRequestEnded;
+
+	@FXML
+	private HBox hbDeclineRequestEnded;
+
 	private ChangeRequest changeRequest;
+	private Phase selectedPhase;
 
 	private ArrayList<Phase> requestedPhases;
 	private int currentPhaseIndex = 0;
@@ -149,6 +163,8 @@ public class RequestDetailsSupervisorController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		changeRequest = ListOfRequestsForTreatmentController.lastSelectedRequest;
+		selectedPhase = changeRequest.getPhases().get(0);
+		vbRequestEndedConfirmation.setVisible(false);
 
 		RequestDetailsUserController.applyCanvasEffects(canvasRight, canvasLeft);
 
@@ -156,7 +172,7 @@ public class RequestDetailsSupervisorController implements Initializable {
 
 		setClientObservers();
 
-		loadPhase(changeRequest.getPhases().get(0));
+		// loadPhase(changeRequest.getPhases().get(0));
 
 	}
 
@@ -176,6 +192,7 @@ public class RequestDetailsSupervisorController implements Initializable {
 		ControllerManager.setEffect(hbEditPhaseDetails, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 		ControllerManager.setOnHoverEffect(hbEditPhaseDetails, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
 				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+
 		hbBrowsePhases.setCursor(Cursor.HAND);
 		ControllerManager.setEffect(hbBrowsePhases, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 		ControllerManager.setOnHoverEffect(hbBrowsePhases, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
@@ -193,16 +210,20 @@ public class RequestDetailsSupervisorController implements Initializable {
 		});
 
 		ListOfEmployeesSimpleController.setOnRowDoubleClicked(emp -> {
-			txtAssignedByName.setText(emp.getFirstName() + " " + emp.getLastName());
 
 			Client.getInstance().requestWithListener(Command.updatePhaseOwner, srMsg -> {
 				if (srMsg.getCommand() == Command.updatePhaseOwner) {
 
+					// requestedPhases.get(currentPhaseIndex).setEmpNumber(10);
+					// currentEmployeeOfSelectedPhase.setEmpNumber(10);
 					NavigationBar.back(true);
 
-					ControllerManager.showInformationMessage("Success", "Employee Selected",
-							"The employee has been set to the current phase, press the confirm button to confirm your selection",
-							null);
+//					ControllerManager.showInformationMessage("Success", "Employee Selected",
+//							"The employee has been set to the current phase, press the confirm button to confirm your selection",
+//							null);
+
+					// txtAssignedByName.setText(emp.getFirstName() + " " + emp.getLastName());
+
 					// OK, so now the confirm button will change the phase status to active and send
 					// the manager of the phase a message.
 					Client.removeMessageRecievedFromServer(UPDATE_PHASE_OWNER_FROM_REQUEST_DETAILS_SUPERVISOR);
@@ -328,24 +349,17 @@ public class RequestDetailsSupervisorController implements Initializable {
 
 					requestedPhases = (ArrayList<Phase>) srMsg.getAttachedData()[0];
 
-					for (
-
-					Phase phase : requestedPhases) {
-						System.out.println(phase);
-						if (phase.getPhaseTimeExtensionRequest() != null)
-							System.out.println(phase.getPhaseTimeExtensionRequest());
-					}
+					long id = selectedPhase.getPhaseID();
 
 					// set the current index to the selected id.
 					for (int i = 0; i < requestedPhases.size(); i++) {
-						long id = requestedPhases.get(i).getPhaseID();
-						if (id == changeRequest.getPhases().get(0).getPhaseID()) {
+						if (id == requestedPhases.get(i).getPhaseID()) {
 							currentPhaseIndex = i;
 							break;
 						}
 					}
 
-					// loadPageDetails();
+					loadPageDetails();
 
 				}
 			}
@@ -360,6 +374,7 @@ public class RequestDetailsSupervisorController implements Initializable {
 	}
 
 	private void loadPhase(Phase currentPhase) {
+		hbAssignEvaluatiorContainer.setVisible(false);
 
 		txtPhaseName.setText(currentPhase.getPhaseName());
 
@@ -386,6 +401,7 @@ public class RequestDetailsSupervisorController implements Initializable {
 
 					currentEmployeeOfSelectedPhase = (Employee) srMsg.getAttachedData()[0];
 
+					System.out.println("Getting employee number " + currentEmployeeOfSelectedPhase);
 					txtAssignedByName.setText(currentEmployeeOfSelectedPhase.getFirstName() + " "
 							+ currentEmployeeOfSelectedPhase.getLastName());
 					Client.removeMessageRecievedFromServer(GET_EMPLOYEE_BY_EMPLOYEE_NUMBER);
@@ -424,9 +440,9 @@ public class RequestDetailsSupervisorController implements Initializable {
 			int days = currentPhase.getPhaseTimeExtensionRequest().getRequestedTimeInDays();
 			int hours = currentPhase.getPhaseTimeExtensionRequest().getRequestedTimeInHours();
 			// Check if this has been time extended
-			txtExtendedTime.setText("Days: " + days + " Hours: " + hours);
+			txtRequestedTimeExtension.setText("Days: " + days + " Hours: " + hours);
 		} else {
-			txtExtendedTime.setText("N/A");
+			txtRequestedTimeExtension.setText("N/A");
 		}
 
 		if (currentPhase.phaseName.equals(PhaseType.Evaluation.name())
@@ -442,34 +458,108 @@ public class RequestDetailsSupervisorController implements Initializable {
 
 			}
 
-			if (!currentPhase.isHasBeenTimeExtended() && currentPhase.getPhaseTimeExtensionRequest() != null) {
-				hbRequestedTimeExtenContainer.setVisible(true);
+		}
 
-				if (currentPhase.getPhaseTimeExtensionRequest() != null) {
-					int days1 = currentPhase.getPhaseTimeExtensionRequest().getRequestedTimeInDays();
-					int hours1 = currentPhase.getPhaseTimeExtensionRequest().getRequestedTimeInHours();
-					txtRequestedTimeExtension.setText("Days: " + days1 + " Hours: " + hours1);
+		if (currentPhase.phaseName.equals(PhaseType.Closing.name())) {
 
-				} else {
-					txtRequestedTimeExtension.setText("N/A");
+			if (currentPhase.getStatus().equals(PhaseStatus.Waiting_For_Owner_And_Supervisor_Confirmation.nameNo_())
+					|| currentPhase.getStatus().equals(PhaseStatus.Waiting_For_Supervisor_Confirmation.nameNo_())) {
 
-				}
-				// if supervisor has accepted the time request
-				hbConfirmTimeRequestExtension.setOnMousePressed(event -> {
-					Client.getInstance().request(Command.acceptPhaseTimeExtensionSupervisor, currentPhase);
+				hbDeclineRequestEnded.setCursor(Cursor.HAND);
+				ControllerManager.setEffect(hbDeclineRequestEnded, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+				ControllerManager.setOnHoverEffect(hbDeclineRequestEnded, CommonEffects.REQUEST_DETAILS_BUTTON_RED,
+						CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+				hbDeclineRequestEnded.setOnMousePressed(event -> {
+					onDeclineRequestEnded();
 				});
 
-				// if the supervisor has decline the time request
-				hbDeclineRequestTimeExtension.setOnMousePressed(event -> {
-					Client.getInstance().request(Command.rejectPhaseTimeExtensionSupervisor, currentPhase);
+				hbConfirmRequestEnded.setCursor(Cursor.HAND);
+				ControllerManager.setEffect(hbConfirmRequestEnded, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+				ControllerManager.setOnHoverEffect(hbConfirmRequestEnded, CommonEffects.REQUEST_DETAILS_BUTTON_GREEN,
+						CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+				hbConfirmRequestEnded.setOnMousePressed(event -> {
+					onConfirmRequestEnded();
 				});
+				vbRequestEndedConfirmation.setVisible(true);
+
+			}
+
+		} 
+
+		if (currentPhase.isHasBeenTimeExtended() && currentPhase.getPhaseTimeExtensionRequest() != null) {
+			int days1 = currentPhase.getPhaseTimeExtensionRequest().getRequestedTimeInDays();
+			int hours1 = currentPhase.getPhaseTimeExtensionRequest().getRequestedTimeInHours();
+			txtExtendedTime.setText("Days: " + days1 + " Hours: " + hours1);
+		}
+
+		if (!currentPhase.isHasBeenTimeExtended() && currentPhase.getPhaseTimeExtensionRequest() != null) {
+			hbRequestedTimeExtenContainer.setVisible(true);
+
+			if (currentPhase.getPhaseTimeExtensionRequest() != null) {
+				int days1 = currentPhase.getPhaseTimeExtensionRequest().getRequestedTimeInDays();
+				int hours1 = currentPhase.getPhaseTimeExtensionRequest().getRequestedTimeInHours();
+				txtRequestedTimeExtension.setText("Days: " + days1 + " Hours: " + hours1);
 
 			} else {
-				hbRequestedTimeExtenContainer.setVisible(false);
 				txtRequestedTimeExtension.setText("N/A");
 
 			}
+			// if supervisor has accepted the time request
+			hbConfirmTimeRequestExtension.setOnMousePressed(event -> {
+				Client.getInstance().request(Command.acceptPhaseTimeExtensionSupervisor, currentPhase);
+			});
+
+			// if the supervisor has decline the time request
+			hbDeclineRequestTimeExtension.setOnMousePressed(event -> {
+				Client.getInstance().request(Command.rejectPhaseTimeExtensionSupervisor, currentPhase);
+			});
+
+		} else {
+			hbRequestedTimeExtenContainer.setVisible(false);
+			txtRequestedTimeExtension.setText("N/A");
+
 		}
+	}
+
+	private void onConfirmRequestEnded() {
+
+		ControllerManager.showYesNoMessage("Confirmation", "Confirming Request",
+				"Are you sure you want to confirm the execution of this request?", () -> {
+					Client.getInstance().requestWithListener(Command.confirmRequestEndedBySupervisor, srMsg -> {
+						if (srMsg.getCommand() == Command.confirmRequestEndedBySupervisor) {
+
+							vbRequestEndedConfirmation.setVisible(false);
+
+							ControllerManager.showInformationMessage("Success", "Request End Confirmed",
+									"The request has been confirmed for ending!", null);
+
+							Client.removeMessageRecievedFromServer(CONFIRM_REQUEST_ENDED_BY_SUPERVISOR);
+
+							NavigationBar.reload();
+
+						}
+					}, CONFIRM_REQUEST_ENDED_BY_SUPERVISOR, requestedPhases.get(currentPhaseIndex));
+				}, null);
+	}
+
+	private void onDeclineRequestEnded() {
+		ControllerManager.showYesNoMessage("Rejection", "Rejecting Request",
+				"Are you sure you want to reject the execution of this request?", () -> {
+					Client.getInstance().requestWithListener(Command.declinedRequestEndedBySupervisor, srMsg -> {
+						if (srMsg.getCommand() == Command.declinedRequestEndedBySupervisor) {
+
+							vbRequestEndedConfirmation.setVisible(false);
+
+							ControllerManager.showInformationMessage("Success", "Request End Rejected",
+									"The request has been rejected for ending!", null);
+
+							Client.removeMessageRecievedFromServer(DECLINED_REQUEST_ENDED_BY_SUPERVISOR);
+
+							NavigationBar.reload();
+						}
+					}, DECLINED_REQUEST_ENDED_BY_SUPERVISOR, requestedPhases.get(currentPhaseIndex));
+				}, null);
+
 	}
 
 	private String getPhaseOwnerLabel(String phaseName) {
@@ -482,7 +572,7 @@ public class RequestDetailsSupervisorController implements Initializable {
 
 		case Decision:
 
-			return "The Change Committee";
+			return "The Committee Head";
 
 		case Execution:
 

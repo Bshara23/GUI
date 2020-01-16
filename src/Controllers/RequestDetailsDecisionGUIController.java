@@ -80,10 +80,6 @@ public class RequestDetailsDecisionGUIController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		
-		
-		
-		
 		// Apply the effects for the canvas
 		RequestDetailsUserController.applyCanvasEffects(canvasRight, canvasLeft);
 
@@ -109,10 +105,9 @@ public class RequestDetailsDecisionGUIController implements Initializable {
 		hbEvaluationReport.setOnMousePressed(event -> {
 			EvaluationReportComViewController controller2 = (EvaluationReportComViewController) ControllerSwapper
 					.loadContentWithController(vbEvaluationReport, FxmlNames.EVALUATION_REPORT_COM_VIEW);
-			
+
 			controller2.setEvaluationReport(evalReport);
-			
-			
+
 			hbFullRequestDetails.setVisible(false);
 			hbTimeExtension.setVisible(false);
 			hbEvaluationReport.setVisible(false);
@@ -154,6 +149,9 @@ public class RequestDetailsDecisionGUIController implements Initializable {
 		} else {
 			hbAgreeOrDeclineBtns.setVisible(false);
 			vbRequestMoreDataContainer.setVisible(false);
+
+			vbContainerAll.getChildren().remove(0);
+
 		}
 
 		hbTimeExtension.setVisible(false);
@@ -161,9 +159,11 @@ public class RequestDetailsDecisionGUIController implements Initializable {
 		PhaseStatus phaseStatus = PhaseStatus.valueOfAdvanced(lastPhase.getStatus());
 		switch (phaseStatus) {
 
+		case Waiting_For_More_Data:
 		case Active_And_Waiting_For_Time_Extension:
 		case Active:
-			if (phaseStatus != PhaseStatus.Active_And_Waiting_For_Time_Extension) {
+			if (phaseStatus != PhaseStatus.Active_And_Waiting_For_Time_Extension
+					&& !lastPhase.isHasBeenTimeExtended()) {
 				hbTimeExtension.setVisible(true);
 				hbTimeExtension.setCursor(Cursor.HAND);
 				ControllerManager.setEffect(hbTimeExtension, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
@@ -187,12 +187,11 @@ public class RequestDetailsDecisionGUIController implements Initializable {
 			break;
 		}
 
-		
 		Client.getInstance().requestWithListener(Command.getLatestEvalReport, srMsg -> {
 
 			if (srMsg.getCommand() == Command.getLatestEvalReport) {
 
-				evalReport = (EvaluationReport)srMsg.getAttachedData()[0];
+				evalReport = (EvaluationReport) srMsg.getAttachedData()[0];
 
 				if (evalReport == null) {
 					System.err.println("Error, eval report not found");
@@ -201,7 +200,7 @@ public class RequestDetailsDecisionGUIController implements Initializable {
 			}
 
 		}, GET_LATEST_EVAL_REPORT, lastPhase.getRequestID());
-		
+
 		loadPageDetails();
 
 	}
@@ -214,21 +213,25 @@ public class RequestDetailsDecisionGUIController implements Initializable {
 
 	private void onDeclinePressed() {
 
-		lastPhase.setStatus(PhaseStatus.Closed.name());
+		ControllerManager.showYesNoMessage("Decline", "Decline to execute",
+				"Are you sure you want to decline to execute this request?", () -> {
 
-		Client.getInstance().requestWithListener(Command.declineDecisionPhase, srMsg -> {
+					lastPhase.setStatus(PhaseStatus.Closed.name());
 
-			if (srMsg.getCommand() == Command.declineDecisionPhase) {
+					Client.getInstance().requestWithListener(Command.declineDecisionPhase, srMsg -> {
 
-				ControllerManager.showInformationMessage("Success", "Execution Declined",
-						"The request has been declined for execution!", null);
+						if (srMsg.getCommand() == Command.declineDecisionPhase) {
 
-				Client.removeMessageRecievedFromServer(DECLINE_DECISION_PHASE);
-				NavigationBar.back(true);
+							ControllerManager.showInformationMessage("Execution", "Execution Declined",
+									"The request has been declined for execution!", null);
 
-			}
+							Client.removeMessageRecievedFromServer(DECLINE_DECISION_PHASE);
+							NavigationBar.back(true);
 
-		}, DECLINE_DECISION_PHASE, lastPhase);
+						}
+
+					}, DECLINE_DECISION_PHASE, lastPhase);
+				}, null);
 
 	}
 
@@ -240,40 +243,49 @@ public class RequestDetailsDecisionGUIController implements Initializable {
 			return;
 		}
 
-		lastPhase.setStatus(PhaseStatus.Waiting_For_More_Data.nameNo_());
+		ControllerManager.showYesNoMessage("Agree", "Agree to execute",
+				"Are you sure you want to agree to execute this request?", () -> {
 
-		Client.getInstance().requestWithListener(Command.requestMoreDateForDecision, srMsg -> {
+					lastPhase.setStatus(PhaseStatus.Closed.nameNo_());
 
-			if (srMsg.getCommand() == Command.requestMoreDateForDecision) {
+					Client.getInstance().requestWithListener(Command.requestMoreDateForDecision, srMsg -> {
 
-				ControllerManager.showInformationMessage("Success", "Data Request Sent",
-						"A message has been sent to request more data for this request", null);
+						if (srMsg.getCommand() == Command.requestMoreDateForDecision) {
 
-				Client.removeMessageRecievedFromServer(REQUEST_MORE_DATE_FOR_DECISION);
-				NavigationBar.reload();
+							ControllerManager.showInformationMessage("Success", "Data Request Sent",
+									"A message has been sent to request more data for this request", null);
 
-			}
+							Client.removeMessageRecievedFromServer(REQUEST_MORE_DATE_FOR_DECISION);
+							NavigationBar.back(true);
 
-		}, REQUEST_MORE_DATE_FOR_DECISION, lastPhase, taMoreDataDesc.getText());
+						}
 
+					}, REQUEST_MORE_DATE_FOR_DECISION, lastPhase, taMoreDataDesc.getText());
+				}, null);
 	}
 
 	private void onAgreePressed() {
-		lastPhase.setStatus(PhaseStatus.Closed.name());
 
-		Client.getInstance().requestWithListener(Command.acceptDecisionPhase, srMsg -> {
+		ControllerManager.showYesNoMessage("Agree", "Agree to execute",
+				"Are you sure you want to agree to execute this request?", () -> {
 
-			if (srMsg.getCommand() == Command.acceptDecisionPhase) {
+					lastPhase.setStatus(PhaseStatus.Closed.name());
 
-				ControllerManager.showInformationMessage("Success", "Execution Accepted",
-						"The request has been accepted for execution!", null);
+					Client.getInstance().requestWithListener(Command.acceptDecisionPhase, srMsg -> {
 
-				Client.removeMessageRecievedFromServer(ACCEPT_DECISION_PHASE);
-				NavigationBar.back(true);
+						if (srMsg.getCommand() == Command.acceptDecisionPhase) {
 
-			}
+							ControllerManager.showInformationMessage("Execution", "Execution Accepted",
+									"The request has been accepted for execution!", null);
 
-		}, ACCEPT_DECISION_PHASE, lastPhase);
+							Client.removeMessageRecievedFromServer(ACCEPT_DECISION_PHASE);
+							NavigationBar.back(true);
+
+						}
+
+					}, ACCEPT_DECISION_PHASE, lastPhase);
+
+				}, null);
 
 	}
 

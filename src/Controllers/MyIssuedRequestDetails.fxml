@@ -135,7 +135,7 @@
                                     <Insets left="5.0" />
                                  </padding>
                               </HBox>
-                              <VBox spacing="15.0">
+                              <VBox fx:id="vbRequestEndedConfirmation" spacing="15.0">
                                  <children>
                                     <HBox spacing="10.0">
                                        <children>

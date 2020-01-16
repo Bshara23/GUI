@@ -156,7 +156,7 @@ public class RequestDetailsExaminerGUIController implements Initializable {
 
 		PhaseStatus phaseStatus = PhaseStatus.valueOfAdvanced(lastPhase.getStatus());
 
-		if (phaseStatus != PhaseStatus.Active_And_Waiting_For_Time_Extension) {
+		if (phaseStatus != PhaseStatus.Active_And_Waiting_For_Time_Extension && !lastPhase.isHasBeenTimeExtended()) {
 			hbTimeExtension.setVisible(true);
 			hbTimeExtension.setCursor(Cursor.HAND);
 			ControllerManager.setEffect(hbTimeExtension, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
@@ -224,8 +224,8 @@ public class RequestDetailsExaminerGUIController implements Initializable {
 
 						if (srMsg.getCommand() == Command.assignExaminerForRequest) {
 
-							ControllerManager.showInformationMessage("Execution", "Execution Rejected",
-									"The execution of this request has been rejected!", null);
+							ControllerManager.showInformationMessage("Assign", "Examiner has been assigned",
+									"The committee member " + name + " has been assigned as an examiner for this request!", null);
 
 							Client.removeMessageRecievedFromServer(ASSIGN_EXAMINER_FOR_REQUEST);
 

@@ -14,6 +14,7 @@ import Protocol.PhaseType;
 import ServerLogic.UtilityInterfaces.IPreparedStatement;
 import ServerLogic.UtilityInterfaces.IStatement;
 import ServerLogic.UtilityInterfaces.UpdateFunc;
+import Utility.DateUtil;
 import Utility.VoidFunc;
 
 /**
@@ -379,14 +380,10 @@ public class MySQL extends MySqlConnBase {
 	}
 
 	public ArrayList<File> getFiles(long forRequestID) {
-		String query = "SELECT icm.file.* FROM icm.changerequest "
-				+ "INNER JOIN icm.file ON icm.file.requestID=icm.changerequest.requestID ";
+		String query = "SELECT f.* FROM icm.file as f\r\n"
+				+ "inner join icm.changerequest as c on c.requestID = f.requestID\r\n" + "where f.requestID = '"
+				+ forRequestID + "';";
 
-		if (forRequestID != 0) {
-			query += "WHERE icm.changerequest.username = " + forRequestID;
-		}
-
-		query += " ORDER BY icm.changerequest.requestID ASC ,icm.file.requestID ASC ";
 		ArrayList<File> results = new ArrayList<File>();
 
 		IStatement prepS = rs -> {
@@ -629,7 +626,7 @@ public class MySQL extends MySqlConnBase {
 
 	public int getCountOfPhasesByType(PhaseType phaseType) {
 		String query = "SELECT COUNT(*) FROM icm.phase as ph where ph.phaseName = '" + phaseType.name()
-				+ "' AND ph.status != 'closed'";
+				+ "' AND ph.status != 'closed' AND ph.status != 'Rejected'";
 
 		ArrayList<Integer> results = new ArrayList<Integer>();
 		IStatement prepS = rs -> {
@@ -1092,6 +1089,26 @@ public class MySQL extends MySqlConnBase {
 
 	}
 
+	public boolean updatePhaseTimeOfCompletion(long phaseId, Timestamp dateTime) {
+
+		String query = "UPDATE `icm`.`phase` SET `timeOfCompletion` = ? WHERE (`phaseID` = ?);";
+
+		IPreparedStatement prepS = ps -> {
+			try {
+
+				ps.setTimestamp(1, dateTime);
+				ps.setLong(2, phaseId);
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		return executePreparedStatement(query, prepS) == 1;
+
+	}
+
 	public long getRequestIdByPhaseId(long phId) {
 
 		String query = "SELECT p.requestID FROM icm.phase as p where p.phaseID = '" + phId + "';";
@@ -1215,7 +1232,7 @@ public class MySQL extends MySqlConnBase {
 		String query = "SELECT * FROM icm.phase p\r\n"
 				+ "inner join icm.changerequest as c on c.requestID = p.requestID\r\n"
 				+ "left join icm.evaluationreport as e on e.phaseID = p.phaseID\r\n"
-				+ "where p.phaseName = 'decision' and p.status != 'Closed' ORDER BY p.startingDate ASC";
+				+ "where p.phaseName = 'decision' and p.status != 'Closed' and p.status != 'Rejected' ORDER BY p.startingDate ASC";
 
 		ArrayList<ChangeRequest> results = new ArrayList<ChangeRequest>();
 
@@ -1338,8 +1355,8 @@ public class MySQL extends MySqlConnBase {
 
 		String query = "SELECT * FROM icm.evaluationreport as e\r\n"
 				+ "inner join icm.phase as p on p.phaseID = e.phaseID\r\n"
-				+ "where p.phaseName = 'Evaluation' and p.status = 'Closed' and p.phaseID = '" + requestId6663 + "'\r\n"
-				+ "order by p.startingDate desc;";
+				+ "where p.phaseName = 'Evaluation' and p.status = 'Closed' and p.requestId = '" + requestId6663
+				+ "'\r\n" + "order by p.startingDate desc;";
 
 		ArrayList<EvaluationReport> results = new ArrayList<EvaluationReport>();
 
@@ -1447,7 +1464,7 @@ public class MySQL extends MySqlConnBase {
 		ArrayList<Object> results = new ArrayList<Object>();
 
 		IStatement prepS = rs -> {
-			
+
 			try {
 				while (rs.next()) {
 
@@ -1464,6 +1481,101 @@ public class MySQL extends MySqlConnBase {
 
 		return results;
 
+	}
+
+	public boolean isRequestStatusEql(PhaseType type, PhaseStatus status) {
+
+		String query = "SELECT COUNT(*) FROM icm.phase as p where p.phaseName = '" + type.name() + "' and p.status = '"
+				+ status.nameNo_() + "';";
+
+		ArrayList<Boolean> results = new ArrayList<Boolean>();
+
+		IStatement prepS = rs -> {
+
+			try {
+				if (rs.next()) {
+
+					results.add(rs.getBoolean(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		};
+
+		executeStatement(query, prepS);
+
+		return results.size() == 1 ? results.get(0) : false;
+
+	}
+
+	public Phase getClosingPhase(long reqId12) {
+
+		String query = "SELECT * FROM icm.phase as p inner join icm.changerequest as c on c.requestID=p.requestID "
+				+ "where p.phaseName = 'Closing' and c.requestID = '" + reqId12 + "' order by p.startingDate;";
+
+		ArrayList<Phase> results = new ArrayList<Phase>();
+
+		IStatement prepS = rs -> {
+
+			try {
+				if (rs.next()) {
+
+					Phase phase = new Phase(rs.getLong(1), rs.getLong(2), rs.getString(3), rs.getString(4),
+							rs.getLong(5), rs.getTimestamp(6), rs.getTimestamp(7), rs.getTimestamp(8),
+							rs.getTimestamp(9), rs.getBoolean(10));
+
+					results.add(phase);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		};
+
+		executeStatement(query, prepS);
+
+		return results.size() == 1 ? results.get(0) : null;
+
+	}
+
+	public void setCompletionTimeOfRequestToNow(long requestID) {
+
+		String query = "UPDATE `icm`.`changerequest` SET `endDateOfRequest` = ? WHERE (`requestID` = ?);";
+
+		IPreparedStatement prepS = ps -> {
+			try {
+
+				ps.setTimestamp(1, DateUtil.now());
+				ps.setLong(2, requestID);
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		executePreparedStatement(query, prepS);
+	}
+
+	public void setRequestEstimateTimeOfExecution(long requestID, Timestamp estimatedExecutionTime) {
+
+		String query = "UPDATE `icm`.`changerequest` SET `estimatedTimeForExecution` = ? WHERE (`requestID` = ?);";
+
+		IPreparedStatement prepS = ps -> {
+			try {
+
+				ps.setTimestamp(1, estimatedExecutionTime);
+				ps.setLong(2, requestID);
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		executePreparedStatement(query, prepS);
+		
 	}
 
 }
