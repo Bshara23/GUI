@@ -155,35 +155,74 @@ public class Server extends AbstractServer {
 		Command command = srMsg.getCommand();
 		switch (command) {
 
+		case getRequestFiles:
+
+			long reqId54648 = (long) srMsg.getAttachedData()[0];
+
+			ArrayList<File> files24 = db.getFiles(0); //TODO
+
+			sendMessageToClient(client, command, files24);
+
+			break;
 		case getExecutionReportForExaminationAndComsNames:
 
 			long reqId0909 = (long) srMsg.getAttachedData()[0];
 
-			
 			ExecutionReport exeRep1 = db.getLatestExecutionReport(reqId0909);
 
 			ArrayList<Object> res3123 = db.getRegularCommitteeMemebersNamesAndNumbers();
-			
-			String mem1un = (String)res3123.get(0);
-			long mem1empNum = (long)res3123.get(1);
-			String mem2un = (String)res3123.get(2);
-			long mem2empNum = (long)res3123.get(3);
+
+			String mem1un = (String) res3123.get(0);
+			long mem1empNum = (long) res3123.get(1);
+			String mem2un = (String) res3123.get(2);
+			long mem2empNum = (long) res3123.get(3);
 
 			sendMessageToClient(client, command, exeRep1, mem1un, mem1empNum, mem2un, mem2empNum);
 
 			break;
 
-			
 		case assignExaminerForRequest:
-			
-			
+
+			Phase ph4 = (Phase) srMsg.getAttachedData()[0];
+
+			db.updateByObject(ph4);
+
+			// Notify the supervisor about the start of the examination
+			sendUserMessage("Examine Request", db.getUsernameOfSupervisor(),
+					"You have been assigned to examine the request[" + ph4.getRequestID() + "]", ph4.getRequestID(),
+					ph4.getPhaseID());
+
+			notifyEmployeeTreatmentRequestsUpdated(ph4.getEmpNumber());
+			sendMessageToClient(client, command);
+
 			break;
-			
+
 		case rejectExamination:
+			Phase ph3 = (Phase) srMsg.getAttachedData()[0];
+
+			db.updatePhaseStatus(ph3.getPhaseID(), PhaseStatus.Closed);
+
+			// Notify the supervisor about the start of the examination
+			sendUserMessage("The request [" + ph3.getRequestID() + "] execution has been rejected",
+					db.getUsernameOfSupervisor(),
+					"The requests [" + ph3.getRequestID() + "] execcution has been rejected by an examiner", -1, -1);
+			initClosingPhase(ph3);
+			sendMessageToClient(client, command);
 
 			break;
 
 		case confirmExamination:
+
+			Phase ph2 = (Phase) srMsg.getAttachedData()[0];
+
+			db.updatePhaseStatus(ph2.getPhaseID(), PhaseStatus.Closed);
+
+			// Notify the supervisor about the start of the examination
+			sendUserMessage("The request [" + ph2.getRequestID() + "] execution has been confirmed",
+					db.getUsernameOfSupervisor(),
+					"The requests [" + ph2.getRequestID() + "] execcution has been confirmed by an examiner", -1, -1);
+			initClosingPhase(ph2);
+			sendMessageToClient(client, command);
 
 			break;
 
@@ -826,8 +865,10 @@ public class Server extends AbstractServer {
 		sendUserMessage(subject, supervisorUsername, content, p1.getRequestID(), nextPhaseId);
 
 		// send message to the owner
+		String contentOwner = "Please confirm the closing of your request [" + p1.getRequestID() + "].";
+
 		String ownerUsername = db.getRequestOwnerUsername(p1.getRequestID());
-		sendUserMessage(subject, ownerUsername, content, p1.getRequestID(), nextPhaseId);
+		sendUserMessage(subject, ownerUsername, contentOwner, p1.getRequestID(), nextPhaseId);
 
 	}
 

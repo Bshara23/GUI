@@ -141,10 +141,10 @@ public class File extends SqlObject implements Serializable {
 		}
 	}
 	
-	public void writeFileToLocal() {
+	public void writeFileToLocal(String path) {
 		try {
 			InputStream is = getBinaryStream();
-			FileOutputStream fos = new FileOutputStream("2332" + getFileName());
+			FileOutputStream fos = new FileOutputStream(path + getFileName());
 
 			BufferedOutputStream bos = new BufferedOutputStream(fos);
 

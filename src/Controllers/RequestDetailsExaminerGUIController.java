@@ -218,6 +218,8 @@ public class RequestDetailsExaminerGUIController implements Initializable {
 		ControllerManager.showYesNoMessage("Confirmation", "Confirm the examiner", "Are you sure you want to assign "
 				+ name + " as an examiner for request [" + lastRequest.getRequestID() + "].", () -> {
 
+					lastPhase.setEmpNumber(empNum);
+					
 					Client.getInstance().requestWithListener(Command.assignExaminerForRequest, srMsg -> {
 
 						if (srMsg.getCommand() == Command.assignExaminerForRequest) {
@@ -230,7 +232,7 @@ public class RequestDetailsExaminerGUIController implements Initializable {
 							NavigationBar.back(true);
 						}
 
-					}, ASSIGN_EXAMINER_FOR_REQUEST, empNum);
+					}, ASSIGN_EXAMINER_FOR_REQUEST, lastPhase);
 
 				}, null);
 	}
@@ -253,7 +255,7 @@ public class RequestDetailsExaminerGUIController implements Initializable {
 
 						}
 
-					}, CONFIRM_EXAMINATION, lastPhase.getPhaseID());
+					}, CONFIRM_EXAMINATION, lastPhase);
 
 				}, null);
 
@@ -284,7 +286,7 @@ public class RequestDetailsExaminerGUIController implements Initializable {
 
 						}
 
-					}, REJECT_EXECUTION, lastPhase.getPhaseID());
+					}, REJECT_EXECUTION, lastPhase);
 
 				}, null);
 

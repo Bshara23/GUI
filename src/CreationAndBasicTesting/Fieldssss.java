@@ -1,5 +1,7 @@
 package CreationAndBasicTesting;
 
+import java.awt.Desktop;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -7,6 +9,7 @@ import java.util.ArrayList;
 
 import Entities.ChangeRequest;
 import Entities.Employee;
+import Entities.File;
 import Entities.Phase;
 import Entities.Student;
 import Protocol.PhaseStatus;
@@ -27,7 +30,32 @@ public class Fieldssss {
 
 		// System.out.println(db.getEmployees().size());
 
-		System.out.println(db.getSupervisorEmpNum());
+		//System.out.println(db.getSupervisorEmpNum());
+		
+		
+		
+		ArrayList<File> files = db.getFiles(0);
+
+		System.out.println(files.size());
+		String appData = System.getenv("LOCALAPPDATA") + "\\Temp\\";
+		for (File file : files) {
+			System.out.println(file.fileName);
+			file.writeFileToLocal(appData);
+			
+		       Desktop d = Desktop.getDesktop();
+		       
+		       try {
+				d.open(new java.io.File(appData + file.getFileName()));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			return;
+			
+			
+		}
+		//System.out.println(appData);
 
 	}
 

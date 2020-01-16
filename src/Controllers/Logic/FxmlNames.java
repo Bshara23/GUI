@@ -47,5 +47,7 @@ public class FxmlNames {
 	public static final String WAITING_FOR_PHASE_ESTIMATED_TIME_CONFIRMATION = "WaitingForPhaseEstimatedTimeConfirmationGUI.fxml";
 
 	public static final String EVALUATION_REPORT_COM_VIEW = "EvaluationReportComViewGUI.fxml";
+
+	public static final String FILES_LIST = "FilesList.fxml";
 	
 }

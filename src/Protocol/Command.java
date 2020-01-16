@@ -37,6 +37,7 @@ public enum Command {
 	rejectPhaseTimeExtensionSupervisor, receivedNewOrUpdateRequests, getEmployeesListSimple, updatePhaseOwner,
 	setEvaluationPhaseToWaitingToSetTime, insertTimeExtension, confirmPhaseDeadline, rejectPhaseDeadline,
 	declineDecisionPhase, acceptDecisionPhase, requestMoreDateForDecision, getLatestEvalReport, confirmExamination,
-	rejectExamination, getExecutionReportForExaminationAndComsNames, assignExaminerForRequest,
+	rejectExamination, getExecutionReportForExaminationAndComsNames, assignExaminerForRequest, requestOwnerConfirm,
+	requestOwnerDecline, getRequestFiles,
 
 }
