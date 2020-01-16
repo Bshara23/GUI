@@ -1,5 +1,6 @@
 package Controllers;
 
+import java.io.File;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
@@ -13,15 +14,31 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.text.Document;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
 import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
+import Entities.FileXML;
 import Protocol.Command;
 import Protocol.MsgReturnType;
 import Utility.ControllerSwapper;
@@ -47,6 +64,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -159,7 +177,12 @@ public class AnalyticsGUIController implements Initializable {
 
     @FXML
     private Label lblMedianActive;
-
+    @FXML
+    private AnchorPane InformationAboutRequests;
+    @FXML
+    private HBox MenuRequestsNumber2;
+    @FXML
+    private HBox MenuRequestsNumbers;
 	Timestamp date1;
 	Timestamp date2;
 	private ArrayList<Node> buttons;
@@ -173,11 +196,14 @@ public class AnalyticsGUIController implements Initializable {
 	Series<String,Number> Canceled =new Series<String,Number>();
 	Series<String,Number> Locked =new Series<String,Number>();
 	Series<String,Number> Closed =new Series<String,Number>();
+	Series<String,Number> totalWorkingCount=new Series<String,Number>();
+	Series<String,Number> SumOfDates=new Series<String,Number>();
 	int requestsNumber = 0;
 	int requestsActive = 0;
 	int requestsLocked = 0;
 	int requestsCanceled = 0;
 	int requestsClosed = 0;
+	int totalWorkingCount1=0;
 	ArrayList<HashMap<String, Integer>> results;
 	private static  ArrayList<XYChart.Series>  ser = new ArrayList<XYChart.Series>();
 
@@ -215,7 +241,7 @@ public class AnalyticsGUIController implements Initializable {
 		ControllerManager.setEffect(hbBtnLineChart, CommonEffects.REQUEST_DETAILS_BUTTON_BLUE);
 		pieChartRequests.setOpacity(0);
 		bc.setOpacity(0);
-		chartSaReqestExecution.setTitle("Requests Status");
+		
 		try {
 	    	 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		 	Timestamp firstDate = new Timestamp(System.currentTimeMillis());
@@ -239,34 +265,80 @@ public class AnalyticsGUIController implements Initializable {
 
 	}
 
-
-	private void SetData2() {
+	public void setData3() {
+		Client.getInstance().addMessageRecievedFromServer("GetSumOfTwoDiffernceDateBetweenTwoDates", rsMsg -> {
+			if (rsMsg.getCommand() == Command.GetSumOfTwoDiffernceDateBetweenTwoDates) {
+				
+				bc.setTitle("");
+				bc.setBarGap(2);
+			    xAxis.setLabel("Day");       
+			    yAxis.setLabel("Value");
+			    bc.getData().removeAll(Canceled,Locked,Active,Closed,totalWorkingCount,SumOfDates);
+			    ser.removeAll(ser);
+			    Active =new Series<String,Number>();
+				Canceled =new Series<String,Number>();
+				Locked =new Series<String,Number>();
+				Closed =new Series<String,Number>();
+				SumOfDates=new Series<String,Number>();
+				totalWorkingCount=new Series<String,Number>();
+			    double sum=0;
+			    SumOfDates.setName("Data");
+				ArrayList<Double> data= new ArrayList<>();
+		    	results = (ArrayList<HashMap<String,Integer>>)rsMsg.getAttachedData()[0];
+		    	 int size=results.size();
+		    	
+				for(int i=0;i<results.size();i++)
+				{
+					
+				 for(String r:results.get(i).keySet()) {
+					 
+				 			sum+=(double)results.get(i).get(r);
+				 			data.add((double)results.get(i).get(r));
+					 }
+					
+						 
+						 SumOfDates.getData().add(new XYChart.Data(i+"",sum));
+						 sum=0;
+				 }
+				bc.getData().clear();
+				bc.layout();
+				bc.getData().add(SumOfDates);
+				DecimalFormat df = new DecimalFormat("#.##");
+			}
+		});
+		Client.getInstance().request(Command.GetSumOfTwoDiffernceDateBetweenTwoDates,date1,date2);
+		
+	}
+	public void SetData2() {
 		Client.getInstance().addMessageRecievedFromServer("GetCounterOfPhasesByStatusDateRange", rsMsg -> {
-			if (rsMsg.getCommand() == Command.GetCounterOfPhasesByStatusDateRange) {
+			if (rsMsg.getCommand() == Command.GetCounterOfPhasesByStatusDateRange||rsMsg.getCommand()==Command.GetTheData) {
 	
 				bc.setTitle("");
 				bc.setBarGap(2);
 			    xAxis.setLabel("Day");       
 			    yAxis.setLabel("Value");
-			    bc.getData().removeAll(Canceled,Locked,Active,Closed);
+			    bc.getData().removeAll(Canceled,Locked,Active,Closed,totalWorkingCount,SumOfDates);
 			    ser.removeAll(ser);
 				Active =new Series<String,Number>();
 				Canceled =new Series<String,Number>();
 				Locked =new Series<String,Number>();
 				Closed =new Series<String,Number>();
+				totalWorkingCount=new Series<String,Number>();
 			    Canceled.setName("Canceled");
 			    Locked.setName("Locked");
 			    Active.setName("Active");
 			    Closed.setName("Closed");
-			   
+			    totalWorkingCount.setName("totalWorkingCount");
 		     	ser.add(Canceled);
 		    	ser.add(Locked);
 		    	ser.add(Active);
 		    	ser.add(Closed);
+		    	ser.add(totalWorkingCount);
 				ArrayList<Double> listofActiveRequest= new ArrayList<>();
 				ArrayList<Double> listofClosedRequest= new ArrayList<>();
 				ArrayList<Double> listofCanceledRequest= new ArrayList<>();
 				ArrayList<Double> listofLockedRequest= new ArrayList<>();
+				ArrayList<Double> listoftotalWorkingCount= new ArrayList<>();
 				chartSaReqestExecution.getData().removeAll(s1,s2,s3,s4);
 		
 				s1 = new XYChart.Series<String, Number>();
@@ -274,7 +346,7 @@ public class AnalyticsGUIController implements Initializable {
 		    	s3 = new XYChart.Series<String, Number>();
 		    	s4 = new XYChart.Series<String, Number>();
 		    	results = (ArrayList<HashMap<String,Integer>>)rsMsg.getAttachedData()[0];
-		    	requestsActive = requestsActive = requestsLocked = requestsClosed = 0;
+		    	requestsActive = requestsActive = requestsLocked = requestsClosed= totalWorkingCount1 = 0;
 		    	
 		    	 int size=results.size();
 		    	 int j=0;
@@ -290,7 +362,8 @@ public class AnalyticsGUIController implements Initializable {
 				 			s1.getData().add(new XYChart.Data<String, Number>("" + i, results.get(i).get("Active")));
 				 			requestsActive+= results.get(i).get(r);
 						 	listofActiveRequest.add((double)results.get(i).get(r));
-						 	
+							 ser.get(2).getData().add(new XYChart.Data("Day "+i, results.get(i).get(r)));
+
 						 	break;
 					
 					 
@@ -298,7 +371,7 @@ public class AnalyticsGUIController implements Initializable {
 				 			s2.getData().add(new XYChart.Data<String, Number>("" + i, results.get(i).get("Canceled")));
 				 			requestsCanceled+= results.get(i).get(r);
 						 	listofCanceledRequest.add((double)results.get(i).get(r));
-						 
+						 	 ser.get(0).getData().add(new XYChart.Data("Day "+i,results.get(i).get(r)));
 						 break;
 
 					 
@@ -306,28 +379,33 @@ public class AnalyticsGUIController implements Initializable {
 				 			s3.getData().add(new XYChart.Data<String, Number>("" + i, results.get(i).get("Locked")));
 				 			requestsLocked+=  results.get(i).get(r);
 						 	listofLockedRequest.add((double)results.get(i).get(r));
-						 	
+							 ser.get(1).getData().add(new XYChart.Data("Day "+i,results.get(i).get(r)));
+
 						 break;
 					 
 				 		case "Closed":
 				 			s4.getData().add(new XYChart.Data<String, Number>("" + i, results.get(i).get("Closed")));	
 				 			requestsClosed+=(double)results.get(i).get(r);
 				 			listofClosedRequest.add((double)results.get(i).get(r));
-				 			
+							 ser.get(3).getData().add(new XYChart.Data("Day "+i,results.get(i).get(r)));
+
 						 break;
+				 		case "totalWorkingCount":
+				 			
+				 				
+				 			totalWorkingCount1+=(double)results.get(i).get(r);
+				 			listoftotalWorkingCount.add((double)results.get(i).get(r));
+							 ser.get(4).getData().add(new XYChart.Data("Day "+i,results.get(i).get(r)));
+				 			break;
 					 
 					 }	 
 					 
 					
-					 if((j%10==0 && j>1) ||(results.size()<10)||(results.size()>10&&results.size()==j+1)) {
-						 
-						 ser.get(0).getData().add(new XYChart.Data("Day "+i,requestsCanceled));
-						 ser.get(1).getData().add(new XYChart.Data("Day "+i,requestsLocked));
-						 ser.get(2).getData().add(new XYChart.Data("Day "+i, requestsActive));
-						 ser.get(3).getData().add(new XYChart.Data("Day "+i,requestsClosed));
+					
 						
 						
-					 }
+						
+					 
 				 }
 					
 					
@@ -377,7 +455,7 @@ public class AnalyticsGUIController implements Initializable {
 			}
 				
 		});
-		Client.getInstance().request(Command.GetCounterOfPhasesByStatusDateRange,date1,date2);
+		//Client.getInstance().request(Command.GetCounterOfPhasesByStatusDateRange,date1,date2);
 		
 	}
 
@@ -411,7 +489,7 @@ public class AnalyticsGUIController implements Initializable {
 
 	}
 
-	String[] statTitles = new String[] { "Requests Executions", "Requests Delays", "Requests Delays222" };
+	String[] statTitles = new String[] { "PartA", "PartB", "PartC" };
 	int statTitlesCurrIndex = 0;
 
 	@FXML
@@ -428,7 +506,6 @@ public class AnalyticsGUIController implements Initializable {
 
 		}
 
-		System.out.println(y);
 	}
 
 	private void changeStatTitle(boolean goNext) {
@@ -439,7 +516,28 @@ public class AnalyticsGUIController implements Initializable {
 		}
 
 		String res = statTitles[statTitlesCurrIndex];
-
+		if(res.contains("PartA")) {
+			InformationAboutRequests.setOpacity(1);
+			MenuRequestsNumber2.setOpacity(1);
+			MenuRequestsNumbers.setOpacity(1);
+			chartSaReqestExecution.setOpacity(1);
+			bc.setOpacity(0);
+		}
+		if(res.contains("PartB")) {
+			InformationAboutRequests.setOpacity(0);
+			MenuRequestsNumber2.setOpacity(0);
+			MenuRequestsNumbers.setOpacity(0);
+			chartSaReqestExecution.setOpacity(0);
+			bc.setOpacity(1);
+		}
+		if(res.contains("PartC")) {
+			InformationAboutRequests.setOpacity(0);
+			MenuRequestsNumber2.setOpacity(0);
+			MenuRequestsNumbers.setOpacity(0);
+			chartSaReqestExecution.setOpacity(0);
+			bc.setOpacity(0);
+		}
+		
 		txtStatTitle.setText(res);
 
 	}
@@ -549,7 +647,7 @@ public class AnalyticsGUIController implements Initializable {
         ButtonType loginButtonType = new ButtonType("OK", ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
 
-                GridPane gridPane = new GridPane();
+       GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(20, 150, 10, 10));
@@ -598,8 +696,19 @@ public class AnalyticsGUIController implements Initializable {
 		            System.out.println("Range by days:"+(TimeUnit.DAYS.convert(date2.getTime() - date1.getTime(), TimeUnit.MILLISECONDS)));
 		            if (CurrentDate.compareTo(date2) > 0 && date2.compareTo(date1) > 0) {
 		            	CurrentData= (int) ((TimeUnit.DAYS.convert(date2.getTime() - date1.getTime(), TimeUnit.MILLISECONDS))+1);
+		            	if(txtStatTitle.getText().contains("PartA")) {
 		             	Client.getInstance().request(Command.GetCounterOfPhasesByStatusDateRange,date1,date2);
 		            	SetData2();
+		            	}else if(txtStatTitle.getText().contains("PartB")){
+		            		Client.getInstance().request(Command.GetSumOfTwoDiffernceDateBetweenTwoDates,date1,date2);
+			            	setData3();
+		            	}
+		            	else if(txtStatTitle.getText().contains("PartC")) {
+		            		
+		            	}else {
+		            		System.out.println("unkown select");
+		            	}
+		            	
 		            } else {
 		            	SetDateRange(event);
 		            }
@@ -649,4 +758,64 @@ public class AnalyticsGUIController implements Initializable {
 		return 0.0;
 	}
 
+    @FXML
+    void SaveTheData(MouseEvent event) {
+    	
+    	Client.getInstance().request(Command.SaveTheData, date1,date2);
+    }
+    @FXML
+    void getData(MouseEvent event) {
+    	
+   
+    	Client.getInstance().request(Command.getNameOfReports);
+    	try {
+			this.wait(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	GetNameOfReport();
+
+    }
+    public void GetNameOfReport() {
+    	Client.getInstance().addMessageRecievedFromServer("getNameOfReports", rsMsg -> {
+		if (rsMsg.getCommand() == Command.SaveTheData) {
+    	Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Select Report");
+        ComboBox comboBox = new ComboBox();
+        // Set the button types.
+        ButtonType loginButtonType = new ButtonType("OK", ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
+
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.setPadding(new Insets(20, 150, 10, 10));
+    	
+				ArrayList<String> reports= (ArrayList<String>)rsMsg.getAttachedData()[0];
+				
+				for(String x:reports)
+				comboBox.getItems().add(x);
+				comboBox.getSelectionModel();
+				gridPane.add(comboBox, 0, 0);
+				dialog.getDialogPane().setContent(gridPane);
+			
+				// Convert the result to a username-password-pair when the login button is clicked.
+				dialog.setResultConverter(dialogButton -> {
+					if (dialogButton == loginButtonType) {
+						return comboBox.getValue().toString();
+					}
+					return null;
+				});
+
+				Optional<String> result = dialog.showAndWait();
+				 result.ifPresent(pair -> {
+					 Client.getInstance().request(Command.GetTheData,pair);
+					 setData3();
+				 });
+    	
+			}
+    	});
+    	Client.getInstance().request(Command.getNameOfReports);
+    }
 }

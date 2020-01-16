@@ -1,20 +1,47 @@
 package ServerLogic;
 
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.bind.JAXB;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import Entities.ChangeRequest;
 import Entities.Employee;
 import Entities.File;
+import Entities.FileXML;
 import Entities.Message;
 import Entities.SqlObject;
 import Entities.SystemUser;
@@ -365,29 +392,52 @@ public class Server extends AbstractServer {
 			}
 
 			break;
+			
+			/**
+			 * @author EliaB
+			 * get sum of length (estimatedTimeOfCompletion - deadline) where time has extended from two different dates
+			 * */
+		case GetSumOfTwoDiffernceDateBetweenTwoDates:
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Timestamp from = (Timestamp) srMsg.getAttachedData()[0];
+		Timestamp to = (Timestamp) srMsg.getAttachedData()[1];
+		
+		System.out.println("data of analytic sent to client[Manager] date range :"+sdf.format(from).toString()+"-"+sdf.format(to).toString());
+		
+		ArrayList<HashMap<String,Integer>> data = new ArrayList<HashMap<String,Integer>>();
+		
+		int range=(int) ((TimeUnit.DAYS.convert(to.getTime() - from.getTime(), TimeUnit.MILLISECONDS))+1);
+		for (int i = 0; i < range; i++) {
+			
+			data.add(db.GetSumOfTwoDiffernceDateBetweenTwoDates(from,to,range-i-1));
+			if(range>10) {
+				if(i+10>range)i+=range%10;
+				else i+=10;
+			}
+
+		}
+		System.out.println(data.toString());
+		// System.out.println(AmountOfData);
+		sendMessageToClient(client, command, data);
+		
+		
+		break;
 		/**
 		 * @author EliaB
 		 * Get phases counter by status from date range
 		 *
 		 * */
 		case GetCounterOfPhasesByStatusDateRange:
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			Timestamp from = (Timestamp) srMsg.getAttachedData()[0];
-			Timestamp to = (Timestamp) srMsg.getAttachedData()[1];
+			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+			Timestamp from1 = (Timestamp) srMsg.getAttachedData()[0];
+			Timestamp to1= (Timestamp) srMsg.getAttachedData()[1];
 			
-			System.out.println("data of analytic sent to client[Manager] date range :"+sdf.format(from).toString()+"-"+sdf.format(to).toString());
+			System.out.println("data of analytic sent to client[Manager] date range :"+sdf1.format(from1).toString()+"-"+sdf1.format(to1).toString());
 			
-			ArrayList<HashMap<String,Integer>> data = new ArrayList<HashMap<String,Integer>>();
-			
-			int range=(int) ((TimeUnit.DAYS.convert(to.getTime() - from.getTime(), TimeUnit.MILLISECONDS))+1);
-			for (int i = 0; i < range; i++) {
-				
-				data.add(db.GetCounterOfPhasesBetweenTwoDates(from,to,range-i-1));
-
-			}
-			System.out.println(data.toString());
+			ArrayList<HashMap<String,Integer>> data1=(ArrayList<HashMap<String, Integer>>) GetDataByTwoDates(from1,to1);
+			System.out.println(data1.toString());
 			// System.out.println(AmountOfData);
-			sendMessageToClient(client, command, data);
+			sendMessageToClient(client, command, data1);
 			
 			break;
 		/**
@@ -413,12 +463,49 @@ public class Server extends AbstractServer {
 			break;
 		// End case
 		/**
+		 * 
 		 * @author EliaB Logout user from server
 		 */
 		case LogOut:
 
 			sendMessageToClient(client, command, true);
 
+			break;
+			/**
+			 * @author EliaB
+			 * Save the data of the report
+			 * */
+		case SaveTheData:
+			
+			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
+			Timestamp from2 = (Timestamp) srMsg.getAttachedData()[0];
+			Timestamp to2= (Timestamp) srMsg.getAttachedData()[1];
+			ArrayList<HashMap<String,Integer>> results=(ArrayList<HashMap<String, Integer>>) GetDataByTwoDates(from2,to2);
+			
+			Timestamp today = new Timestamp(System.currentTimeMillis());
+			db.SaveData(results, today);
+		
+			
+		
+			break;
+		/**
+		 * @author EliaB
+		 * Get the data of saved report
+		 * */
+		case GetTheData:
+			String reportName = (String) srMsg.getAttachedData()[0];
+			ArrayList<HashMap<String,Integer>> results1=db.GetData(reportName);
+			sendMessageToClient(client, command, results1);	
+			break;
+			/**
+			 *@author EliaB
+			 *get array of reports that's have been saved
+			 * */
+		case getNameOfReports:
+			ArrayList<String> reports=new ArrayList<>();
+			reports=db.getNameOfReports();
+			System.out.println(reports.toString());
+			sendMessageToClient(client, command, reports);
 			break;
 		default:
 			System.err.println("Error, undefine command [" + srMsg.getCommand() + "]");
@@ -431,6 +518,8 @@ public class Server extends AbstractServer {
 		}
 
 	}
+
+
 
 	private void sendMessageToClient(ConnectionToClient client, Command cmd, Object... objs) {
 		try {
@@ -625,5 +714,16 @@ public class Server extends AbstractServer {
 	public String getHostName() {
 		return inetAddress.getHostName();
 	}
+	
+	public Object GetDataByTwoDates(Timestamp from,Timestamp to) {
+		ArrayList<HashMap<String,Integer>> data = new ArrayList<HashMap<String,Integer>>();
+		
+		int range1=(int) ((TimeUnit.DAYS.convert(to.getTime() - from.getTime(), TimeUnit.MILLISECONDS))+1);
+		for (int i = 0; i < range1; i++) {
+			
+			data.add(db.GetCounterOfPhasesBetweenTwoDates(from,to,range1-i-1));
 
+		}
+		return data;
+	}
 }

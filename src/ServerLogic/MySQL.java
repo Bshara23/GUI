@@ -972,17 +972,39 @@ public class MySQL extends MySqlConnBase {
 	 * */
 	public HashMap<String,Integer> GetCounterOfPhasesBetweenTwoDates(Timestamp from,Timestamp to, int i){
 		int d=i;
+		ArrayList<Integer> totalWorkingCount=new ArrayList<>();
 		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		HashMap<String,Integer> results = new HashMap<String,Integer>();
+		String query="select sum(timestampdiff(day,p.startingDate, p.deadline)) from icm.phase as p " + 
+				"where (p.startingDate>= '"+sdf.format(from)+"' and p.deadline<='"+sdf.format(to).toString()+"' - interval "+d+" day ) or " + 
+				"(p.startingDate<='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(from)+"' and p.deadline<='"+sdf.format(to).toString()+"' - interval "+d+" day )or " + 
+				"(p.startingDate>='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(to).toString()+"' - interval "+d+" day  and p.startingDate<='"+sdf.format(to).toString()+"' - interval "+d+" day ) or " + 
+				"(p.startingDate<='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(to).toString()+"' - interval "+d+" day ) ;";
+		IStatement prepS = rs -> {
+
+			try {
+				
+
+				if (rs.next()) {
+					
+					totalWorkingCount.add(rs.getInt(1));
+					
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
 		
-		
-		String query="select count(p.phaseID),p.status from icm.phase as p " + 
+		String query1="select count(p.phaseID),p.status from icm.phase as p " + 
 				"where (p.startingDate>= '"+sdf.format(from)+"' and p.deadline<='"+sdf.format(to).toString()+"' - interval "+d+" day ) or " + 
 				"(p.startingDate<='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(from)+"' and p.deadline<='"+sdf.format(to).toString()+"' - interval "+d+" day )or " + 
 				"(p.startingDate>='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(to).toString()+"' - interval "+d+" day  and p.startingDate<='"+sdf.format(to).toString()+"' - interval "+d+" day ) or " + 
 				"(p.startingDate<='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(to).toString()+"' - interval "+d+" day ) " + 
 				"group by p.status;";
-		IStatement prepS = rs -> {
+		IStatement prepS1 = rs -> {
 
 			try {
 				
@@ -990,6 +1012,42 @@ public class MySQL extends MySqlConnBase {
 				while (rs.next()) {
 					
 					results.put(rs.getString(2),rs.getInt(1));
+					
+				}
+				results.put("totalWorkingCount", totalWorkingCount.get(0));
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query1, prepS1);
+		return results;
+		
+		
+	}
+	/**
+	 * @author EliaB
+	 * get sum of length (estimatedTimeOfCompletion - deadline) where time has extended from two different dates
+	 * */
+	public HashMap<String,Integer> GetSumOfTwoDiffernceDateBetweenTwoDates(Timestamp from,Timestamp to, int i){
+		int d=i;
+		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		HashMap<String,Integer> results = new HashMap<String,Integer>();
+		
+		
+		String query="select  sum(timestampdiff(day, p.deadline,p.estimatedTimeOfCompletion)) AS  sum from icm.phase as p " + 
+				"where p.deadline<=p.estimatedTimeOfCompletion and p.hasBeenTimeExtended=1 and  (p.startingDate>= '"+sdf.format(from)+"' and p.deadline<='"+sdf.format(to).toString()+"' - interval "+d+" day ) or " + 
+				"(p.startingDate<='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(from)+"' and p.deadline<='"+sdf.format(to).toString()+"' - interval "+d+" day )or " + 
+				"(p.startingDate>='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(to).toString()+"' - interval "+d+" day  and p.startingDate<='"+sdf.format(to).toString()+"' - interval "+d+" day ) or " + 
+				"(p.startingDate<='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(to).toString()+"' - interval "+d+" day ) ";
+		IStatement prepS = rs -> {
+
+			try {
+				
+
+				while (rs.next()) {
+					
+					results.put(i+"",rs.getInt(1));
 					
 				}
 
@@ -1001,6 +1059,123 @@ public class MySQL extends MySqlConnBase {
 		executeStatement(query, prepS);
 		return results;
 		
+		
+	}
+	public ArrayList<HashMap<String,Integer>> GetData(String reportName){
+		
+		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		ArrayList<HashMap<String,Integer>> results = new ArrayList<HashMap<String,Integer>>();
+		
+		
+		String query="SELECT sr.activeCount,sr.freezeCount,sr.closedNum,sr.deniedNum,sr.totalWorkingCount  FROM icm.statereport as sr where sr.reportName='"+reportName+"';";
+		IStatement prepS = rs -> {
+
+			try {
+				
+
+				while (rs.next()) {
+					
+					results.add(new HashMap<String,Integer>());
+					results.get(results.size()-1).put("Active",rs.getInt(1));
+					results.get(results.size()-1).put("Locked",rs.getInt(2));
+					results.get(results.size()-1).put("Closed",rs.getInt(3));
+					results.get(results.size()-1).put("Canceled",rs.getInt(4));
+					results.get(results.size()-1).put("totalWorkingCount",rs.getInt(5));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results;
+		
+		
+	}
+	public void SaveData(ArrayList<HashMap<String,Integer>> results,Timestamp today) {
+		String query1 = "SELECT max(reportName) FROM icm.statereport ";
+
+		ArrayList<Integer> result=new ArrayList();
+		System.out.println(result.toString());
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					result.add(rs.getInt(1));
+					
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query1, prepS);
+		
+		
+		String query = "INSERT INTO `icm`.`statereport`(`reportName`, `dateOfCreation`, `activeCount`, `freezeCount`,`closedNum`,`deniedNum`,`totalWorkingCount`) VALUES (?, ?, ?, ?,?,?,?);";
+		
+		try {
+			for(HashMap<String,Integer> x:results) {
+			PreparedStatement ps = conn.prepareStatement(query);
+
+				ps.setInt(1, result.get(0)+1);
+				ps.setTimestamp(2, today);
+				if(x.containsKey("Active"))
+					ps.setInt(3, x.get("Active"));
+				else
+					ps.setInt(3, 0);
+				if(x.containsKey("Locked"))
+					ps.setInt(4, x.get("Locked"));
+				else
+					ps.setInt(4, 0);
+				if(x.containsKey("Closed"))
+					ps.setInt(5, x.get("Closed"));
+				else
+					ps.setInt(5, 0);
+				if(x.containsKey("Canceled"))
+					ps.setInt(6, x.get("Canceled"));
+				else
+					ps.setInt(6, 0);
+				if(x.containsKey("totalWorkingCount"))
+					ps.setInt(7, x.get("totalWorkingCount"));
+				else
+					ps.setInt(7, 0);
+				ps.executeUpdate();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		
+		
+		
+		
+	}
+	public ArrayList<String> getNameOfReports(){
+		ArrayList<String> reports =new ArrayList<>();
+
+		String query="SELECT distinct reportName as reportName  FROM icm.statereport;";
+		IStatement prepS = rs -> {
+
+			try {
+				
+
+				while (rs.next()) {
+					
+					
+				reports.add(rs.getString(1));
+					
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return reports;
 		
 	}
 
