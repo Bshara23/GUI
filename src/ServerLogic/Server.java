@@ -155,11 +155,60 @@ public class Server extends AbstractServer {
 		Command command = srMsg.getCommand();
 		switch (command) {
 
-		
+		case unfreezePhase:
+
+			Phase p17 = (Phase) srMsg.getAttachedData()[0];
+			db.updatePhaseStatus(p17.getPhaseID(), db.getPreviousStatusBeforeFreeze(p17.getPhaseID()));
+			db.setLatestFreezeEndDate(p17.getPhaseID(), DateUtil.now());
+
+			String phaseOwner2 = db.getUsernameOfEmployee(p17.getPhaseID());
+
+			String title = "The request [" + p17.getRequestID() + "] has been unsuspended";
+			String contnet = "The requests [" + p17.getRequestID() + "] has been unsuspended!";
+
+			sendUserMessage(title, phaseOwner2, contnet, -1, -1);
+
+			sendUserMessage(title, db.getUsernameOfSupervisor(), contnet, -1, -1);
+
+			sendUserMessage(title, db.getUsernameOfManager(), contnet, -1, -1);
+
+			notifyEmployeeTreatmentRequestsUpdated(p17.getEmpNumber());
+
+			sendMessageToClient(client, command);
+
+			break;
+
+		case freezePhase:
+			Phase p16 = (Phase) srMsg.getAttachedData()[0];
+
+			db.insertFreeze(p16.getPhaseID(), p16.getStatus(), DateUtil.now(), DateUtil.NA);
+
+			db.updatePhaseStatus(p16.getPhaseID(), PhaseStatus.Frozed);
+
+			String phaseOwner = db.getUsernameOfEmployee(p16.getPhaseID());
+
+			sendUserMessage("The request [" + p16.getRequestID() + "] has been suspended", phaseOwner,
+					"The requests [" + p16.getRequestID() + "] has been suspended and no changes can be made to it!",
+					-1, -1);
+
+			sendUserMessage("The request [" + p16.getRequestID() + "] has been suspended", db.getUsernameOfSupervisor(),
+					"The requests [" + p16.getRequestID() + "] has been suspended and no changes can be made to it!",
+					-1, -1);
+
+			sendUserMessage("The request [" + p16.getRequestID() + "] has been suspended", db.getUsernameOfManager(),
+					"The requests [" + p16.getRequestID() + "] has been suspended and no changes can be made to it!",
+					-1, -1);
+
+			notifyEmployeeTreatmentRequestsUpdated(p16.getEmpNumber());
+
+			sendMessageToClient(client, command);
+
+			break;
+
 		case requestOwnerConfirm:
 			long reqId12 = (long) srMsg.getAttachedData()[0];
 			Phase p12 = db.getClosingPhase(reqId12);
-			
+
 			PhaseStatus phaseStat12 = PhaseStatus.valueOfAdvanced(p12.getStatus());
 			if (phaseStat12 == PhaseStatus.Waiting_For_Owner_Confirmation) {
 				db.updatePhaseStatus(p12.getPhaseID(), PhaseStatus.Closed);
@@ -174,25 +223,21 @@ public class Server extends AbstractServer {
 
 				sendUserMessage("The request [" + p12.getRequestID() + "] has ended", reqOwner,
 						"The requests [" + p12.getRequestID() + "] has ended successfully.", -1, -1);
-				
+
 				db.setCompletionTimeOfRequestToNow(p12.getRequestID());
-				
 
 			} else {
 				db.updatePhaseStatus(p12.getPhaseID(), PhaseStatus.Waiting_For_Supervisor_Confirmation);
 			}
-			
-			
+
 			sendMessageToClient(client, command);
 
 			break;
-		
+
 		case requestOwnerDecline:
 			long reqId11 = (long) srMsg.getAttachedData()[0];
 			Phase p11 = db.getClosingPhase(reqId11);
 
-			
-			
 			PhaseStatus phaseStat11 = PhaseStatus.valueOfAdvanced(p11.getStatus());
 			if (phaseStat11 == PhaseStatus.Waiting_For_Owner_Confirmation) {
 				db.updatePhaseStatus(p11.getPhaseID(), PhaseStatus.Closed);
@@ -202,8 +247,7 @@ public class Server extends AbstractServer {
 
 				// Notify the supervisor and the owner about ending the request successfully.
 				sendUserMessage("The request [" + p11.getRequestID() + "] has ended", db.getUsernameOfSupervisor(),
-						"The requests [" + p11.getRequestID() + "] has ended without success!",
-						-1, -1);
+						"The requests [" + p11.getRequestID() + "] has ended without success!", -1, -1);
 
 				sendUserMessage("The request [" + p11.getRequestID() + "] has ended", reqOwner,
 						"The requests [" + p11.getRequestID() + "] has ended without success!", -1, -1);
@@ -212,13 +256,11 @@ public class Server extends AbstractServer {
 			} else {
 				db.updatePhaseStatus(p11.getPhaseID(), PhaseStatus.Waiting_For_Supervisor_Confirmation);
 			}
-			
-			
-			
+
 			sendMessageToClient(client, command);
 
 			break;
-		
+
 		case declinedRequestEndedBySupervisor:
 
 			Phase ph10 = (Phase) srMsg.getAttachedData()[0];
@@ -232,8 +274,7 @@ public class Server extends AbstractServer {
 
 				// Notify the supervisor and the owner about ending the request successfully.
 				sendUserMessage("The request [" + ph10.getRequestID() + "] has ended", db.getUsernameOfSupervisor(),
-						"The requests [" + ph10.getRequestID() + "] has ended without success!",
-						-1, -1);
+						"The requests [" + ph10.getRequestID() + "] has ended without success!", -1, -1);
 
 				sendUserMessage("The request [" + ph10.getRequestID() + "] has ended", reqOwner,
 						"The requests [" + ph10.getRequestID() + "] has ended without success!", -1, -1);
@@ -516,7 +557,7 @@ public class Server extends AbstractServer {
 			db.insertObject(decisionPhase);
 
 			db.setRequestEstimateTimeOfExecution(requestID53, evaluationReport.getEstimatedExecutionTime());
-			
+
 			ArrayList<String> comNames2 = db.getComsUsernames();
 
 			// send message to all com
@@ -701,6 +742,8 @@ public class Server extends AbstractServer {
 					+ "] has been accepted!";
 
 			sendUserMessage(subject, toUsername, content, SYSTEM_EMPLOYEE_NUMBER, SYSTEM_EMPLOYEE_NUMBER);
+			sendUserMessage(subject, db.getUsernameOfManager(), content, SYSTEM_EMPLOYEE_NUMBER,
+					SYSTEM_EMPLOYEE_NUMBER);
 
 			// Notify the requester for a new treatment requests update
 			notifyEmployeeTreatmentRequestsUpdated(phaseRTE.getEmpNumber());
@@ -758,10 +801,23 @@ public class Server extends AbstractServer {
 			String username23 = (String) srMsg.getAttachedData()[0];
 			int countOfPhasesForUsername = db.getCountOfPhaseForEmpByUsername(username23);
 			boolean isManager = db.isUserManager(username23);
-
 			boolean hasAtleastOnePhaseToManage = countOfPhasesForUsername > 0;
 
-			sendMessageToClient(client, command, isManager, hasAtleastOnePhaseToManage);
+			long empNum798 = db.getEmpNumByUsername(username23);
+			boolean isSupervisor = false;
+			boolean isComMember = false;
+			boolean isComHead = false;
+
+			if (empNum798 != -1) {
+				isSupervisor = db.isEmployeeIsSupervisor(empNum798);
+				isComMember = db.isEmployeeComMember(empNum798);
+				
+				if (isComMember) {
+					isComHead = db.isEmployeeComHead(empNum798);
+				}
+			}
+
+			sendMessageToClient(client, command, isManager, hasAtleastOnePhaseToManage, empNum798, isSupervisor, isComMember, isComHead);
 
 			break;
 
@@ -999,8 +1055,9 @@ public class Server extends AbstractServer {
 
 	private void initClosingPhaseRejecton(Phase p1) {
 		long nextPhaseId = db.getNewMaxID(Phase.getEmptyInstance());
-		Phase phase = new Phase(nextPhaseId, p1.getRequestID(), PhaseType.Closing.name(), PhaseStatus.Waiting_For_Owner_And_Supervisor_Confirmation.nameNo_(),
-				db.getSupervisorEmpNum(), DateUtil.NA, DateUtil.NA, DateUtil.NA, DateUtil.now(), false);
+		Phase phase = new Phase(nextPhaseId, p1.getRequestID(), PhaseType.Closing.name(),
+				PhaseStatus.Waiting_For_Owner_And_Supervisor_Confirmation.nameNo_(), db.getSupervisorEmpNum(),
+				DateUtil.NA, DateUtil.NA, DateUtil.NA, DateUtil.now(), false);
 
 		db.insertObject(phase);
 
@@ -1011,17 +1068,20 @@ public class Server extends AbstractServer {
 		sendUserMessage(subject, supervisorUsername, content, p1.getRequestID(), nextPhaseId);
 
 		// send message to the owner
-		String contentOwner = "Request Rejected, Please confirm the closing of your request [" + p1.getRequestID() + "].";
+		String contentOwner = "Request Rejected, Please confirm the closing of your request [" + p1.getRequestID()
+				+ "].";
 
 		String ownerUsername = db.getRequestOwnerUsername(p1.getRequestID());
 		sendUserMessage(subject, ownerUsername, contentOwner, p1.getRequestID(), nextPhaseId);
 
 	}
+
 	private void initClosingPhase(Phase p1) {
 
 		long nextPhaseId = db.getNewMaxID(Phase.getEmptyInstance());
-		Phase phase = new Phase(nextPhaseId, p1.getRequestID(), PhaseType.Closing.name(), PhaseStatus.Waiting_For_Owner_And_Supervisor_Confirmation.nameNo_(),
-				db.getSupervisorEmpNum(), DateUtil.NA, DateUtil.NA, DateUtil.NA, DateUtil.now(), false);
+		Phase phase = new Phase(nextPhaseId, p1.getRequestID(), PhaseType.Closing.name(),
+				PhaseStatus.Waiting_For_Owner_And_Supervisor_Confirmation.nameNo_(), db.getSupervisorEmpNum(),
+				DateUtil.NA, DateUtil.NA, DateUtil.NA, DateUtil.now(), false);
 
 		db.insertObject(phase);
 

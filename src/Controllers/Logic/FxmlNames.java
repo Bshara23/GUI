@@ -49,5 +49,7 @@ public class FxmlNames {
 	public static final String EVALUATION_REPORT_COM_VIEW = "EvaluationReportComViewGUI.fxml";
 
 	public static final String FILES_LIST = "FilesList.fxml";
-	
+
+	public static final String REQUEST_DETAILS_MANAGER = "RequestDetailsManager.fxml";
+	public static final String LIST_OF_REQUESTS_FOR_MANAGER = "ListOfRequestsForManagerGUI.fxml";
 }

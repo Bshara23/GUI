@@ -3,6 +3,7 @@ package Controllers;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import ClientLogic.Client;
@@ -20,6 +21,7 @@ import Utility.DateUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextArea;
@@ -75,9 +77,15 @@ public class RequestDetailsEvaluatorGUIController implements Initializable {
 
 	private Phase lastPhase;
 
+	private ArrayList<Node> btnsAffectedBySuspension;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
+		
+		btnsAffectedBySuspension = new ArrayList<Node>();
+		btnsAffectedBySuspension.add(hbSendExecutionDetails);
+		btnsAffectedBySuspension.add(hbTimeExtension);
+		
 		// Apply the effects for the canvas
 		RequestDetailsUserController.applyCanvasEffects(canvasRight, canvasLeft);
 		// ControllerSwapper.loadAnchorContent(vbEvaluationReport,
@@ -88,13 +96,13 @@ public class RequestDetailsEvaluatorGUIController implements Initializable {
 		ControllerManager.setEffect(hbFullRequestDetails, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 		ControllerManager.setOnHoverEffect(hbFullRequestDetails, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
 				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
-		
+
 		hbFullRequestDetails.setOnMousePressed(event -> {
 
 			NavigationBar.next("Request Full Details", FxmlNames.REQUEST_DETAILS);
 
 		});
-		
+
 		lastRequest = ListOfRequestsForTreatmentController.lastSelectedRequest;
 		lastPhase = lastRequest.getPhases().get(0);
 
@@ -128,7 +136,8 @@ public class RequestDetailsEvaluatorGUIController implements Initializable {
 			ControllerManager.setOnHoverEffect(hbSendExecutionDetails, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
 					CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 
-			if (phaseStatus != PhaseStatus.Active_And_Waiting_For_Time_Extension && !lastPhase.isHasBeenTimeExtended()) {
+			if (phaseStatus != PhaseStatus.Active_And_Waiting_For_Time_Extension
+					&& !lastPhase.isHasBeenTimeExtended()) {
 				hbTimeExtension.setVisible(true);
 				hbTimeExtension.setCursor(Cursor.HAND);
 				ControllerManager.setEffect(hbTimeExtension, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
@@ -202,8 +211,9 @@ public class RequestDetailsEvaluatorGUIController implements Initializable {
 			break;
 		}
 
-		
-
+		if (phaseStatus == PhaseStatus.Frozed) {
+			ControllerManager.setFreezeBehavior(btnsAffectedBySuspension);
+		}
 	}
 
 }

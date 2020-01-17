@@ -25,6 +25,7 @@ import Utility.Graphics.ParticlePlexus;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -32,6 +33,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 public class RequestDetailsSupervisorController implements Initializable {
+
+	private static final String FREEZE_PHASE = "freezePhase";
 
 	private static final String DECLINED_REQUEST_ENDED_BY_SUPERVISOR = "declinedRequestEndedBySupervisor";
 
@@ -150,6 +153,9 @@ public class RequestDetailsSupervisorController implements Initializable {
 	@FXML
 	private HBox hbDeclineRequestEnded;
 
+	@FXML
+	private HBox hbFreezeProcess;
+
 	private ChangeRequest changeRequest;
 	private Phase selectedPhase;
 
@@ -157,15 +163,27 @@ public class RequestDetailsSupervisorController implements Initializable {
 	private int currentPhaseIndex = 0;
 	private Employee currentEmployeeOfSelectedPhase;
 
+	private ArrayList<Node> btnsAffectedBySuspension;
+
 	private boolean reload = false;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		btnsAffectedBySuspension = new ArrayList<Node>();
+		btnsAffectedBySuspension.add(hbConfirmTimeRequestExtension1);
+		btnsAffectedBySuspension.add(hbConfirmTimeRequestExtension);
+		btnsAffectedBySuspension.add(hbDeclineRequestTimeExtension);
+		btnsAffectedBySuspension.add(hbConfirmAutoAssign);
+		btnsAffectedBySuspension.add(hbConfirmDeadline);
+		btnsAffectedBySuspension.add(hbAssignOtherEmp);
+		btnsAffectedBySuspension.add(hbFreezeProcess);
+		btnsAffectedBySuspension.add(hbRejectDeadline);
+
 		changeRequest = ListOfRequestsForTreatmentController.lastSelectedRequest;
 		selectedPhase = changeRequest.getPhases().get(0);
 		vbRequestEndedConfirmation.setVisible(false);
-
+		hbFreezeProcess.setVisible(false);
 		RequestDetailsUserController.applyCanvasEffects(canvasRight, canvasLeft);
 
 		setButtonsBehaviors();
@@ -177,6 +195,17 @@ public class RequestDetailsSupervisorController implements Initializable {
 	}
 
 	private void setButtonsBehaviors() {
+
+		hbFreezeProcess.setCursor(Cursor.HAND);
+		ControllerManager.setEffect(hbFreezeProcess, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		ControllerManager.setOnHoverEffect(hbFreezeProcess, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
+				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+
+		hbFreezeProcess.setOnMousePressed(event -> {
+
+			onFreezeProcess();
+		});
+
 		hbFullRequestDetails.setCursor(Cursor.HAND);
 		ControllerManager.setEffect(hbFullRequestDetails, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 		ControllerManager.setOnHoverEffect(hbFullRequestDetails, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
@@ -378,6 +407,14 @@ public class RequestDetailsSupervisorController implements Initializable {
 
 		txtPhaseName.setText(currentPhase.getPhaseName());
 
+		PhaseStatus phStatus = PhaseStatus.valueOfAdvanced(currentPhase.getStatus());
+		if (phStatus != PhaseStatus.Frozed && phStatus != PhaseStatus.Closed) {
+			hbFreezeProcess.setVisible(true);
+		}
+		if (phStatus == PhaseStatus.Frozed) {
+			ControllerManager.setFreezeBehavior(btnsAffectedBySuspension);
+		}
+
 		// if the estimated time of completion has been set
 		if (!currentPhase.getEstimatedTimeOfCompletion().equals(DateUtil.NA)) {
 
@@ -484,7 +521,7 @@ public class RequestDetailsSupervisorController implements Initializable {
 
 			}
 
-		} 
+		}
 
 		if (currentPhase.isHasBeenTimeExtended() && currentPhase.getPhaseTimeExtensionRequest() != null) {
 			int days1 = currentPhase.getPhaseTimeExtensionRequest().getRequestedTimeInDays();
@@ -519,6 +556,30 @@ public class RequestDetailsSupervisorController implements Initializable {
 			txtRequestedTimeExtension.setText("N/A");
 
 		}
+	}
+
+	private void onFreezeProcess() {
+		ControllerManager.showYesNoMessage("Confirmation", "Freeze Process",
+				"Are you sure you want to freeze the process of this phase?", () -> {
+					Client.getInstance().requestWithListener(Command.freezePhase, srMsg -> {
+						if (srMsg.getCommand() == Command.freezePhase) {
+
+							hbFreezeProcess.setVisible(false);
+
+							ControllerManager.showInformationMessage("Success", "The process has been suspended",
+									"The process is frozed and suspeded from any further changes!", null);
+
+							Phase ph = requestedPhases.get(currentPhaseIndex);
+							ph.setStatus(PhaseStatus.Frozed.name());
+
+							Client.removeMessageRecievedFromServer(FREEZE_PHASE);
+
+							NavigationBar.reload();
+
+						}
+					}, FREEZE_PHASE, requestedPhases.get(currentPhaseIndex));
+				}, null);
+
 	}
 
 	private void onConfirmRequestEnded() {

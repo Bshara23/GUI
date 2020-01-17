@@ -1280,28 +1280,7 @@ public class MySQL extends MySqlConnBase {
 		return results;
 	}
 
-	public boolean isEmployeeComMember(long empNum) {
-		String query = "SELECT * FROM icm.employee as e\r\n"
-				+ "inner join icm.executionchangescommitteemember t on t.empNumber = e.empNumber\r\n"
-				+ "where e.empNumber = '" + empNum + "'";
-
-		ArrayList<Integer> results = new ArrayList<Integer>();
-
-		IStatement prepS = rs -> {
-			try {
-
-				if (rs.next()) {
-					results.add(10); // just add, doesn't matter what...
-				}
-
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-
-		};
-		executeStatement(query, prepS);
-		return results.size() == 1;
-	}
+	
 
 	public String getRequestOwnerUsername(long requestID) {
 
@@ -1575,7 +1554,214 @@ public class MySQL extends MySqlConnBase {
 		};
 
 		executePreparedStatement(query, prepS);
-		
+
 	}
 
+	public String getUsernameOfEmployee(long phaseId) {
+
+		String query = "SELECT e.userName FROM icm.phase as p "
+				+ "inner join icm.employee as e on e.empNumber = p.empNumber where p.phaseID = '" + phaseId + "'";
+
+		ArrayList<String> results = new ArrayList<String>();
+
+		IStatement prepS = rs -> {
+
+			try {
+				if (rs.next()) {
+
+					results.add(rs.getString(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		};
+
+		executeStatement(query, prepS);
+
+		return results.size() == 1 ? results.get(0) : "";
+	}
+
+	public String getUsernameOfManager() {
+
+		String query = "SELECT * FROM icm.manager;";
+
+		ArrayList<String> results = new ArrayList<String>();
+
+		IStatement prepS = rs -> {
+
+			try {
+				if (rs.next()) {
+
+					results.add(rs.getString(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		};
+
+		executeStatement(query, prepS);
+
+		return results.size() == 1 ? results.get(0) : "";
+	}
+
+	public void insertFreeze(long phaseID, String status, Timestamp initDate, Timestamp endDate) {
+
+		String query = "INSERT INTO `icm`.`freeze` (`phaseId`, `prevPhaseStatus`, `initDate`, `endDate`) VALUES (?, ?, ?, ?);";
+
+		IPreparedStatement prepS = ps -> {
+			try {
+				ps.setLong(1, phaseID);
+				ps.setString(2, status);
+				ps.setTimestamp(3, initDate);
+				ps.setTimestamp(4, endDate);
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		executePreparedStatement(query, prepS);
+	}
+
+	public PhaseStatus getPreviousStatusBeforeFreeze(long phaseID) {
+
+		String query = "SELECT f.prevPhaseStatus FROM icm.freeze as f where f.phaseId = '" + phaseID
+				+ "' order by f.initDate desc;";
+
+		ArrayList<PhaseStatus> results = new ArrayList<PhaseStatus>();
+
+		IStatement prepS = rs -> {
+
+			try {
+				if (rs.next()) {
+
+					results.add(PhaseStatus.valueOfAdvanced(rs.getString(1)));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		};
+
+		executeStatement(query, prepS);
+
+		return results.size() == 1 ? results.get(0) : null;
+	}
+
+	public long getLatestFreezeId(long phaseID) {
+
+		String query = "SELECT f.id FROM icm.freeze as f where f.phaseId = '" + phaseID + "' order by f.initDate desc;";
+
+		ArrayList<Long> results = new ArrayList<Long>();
+
+		IStatement prepS = rs -> {
+
+			try {
+				if (rs.next()) {
+
+					results.add(rs.getLong(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		};
+
+		executeStatement(query, prepS);
+
+		return results.size() == 1 ? results.get(0) : null;
+
+	}
+
+	public void setLatestFreezeEndDate(long phaseID, Timestamp dateTime) {
+		long freezeId = getLatestFreezeId(phaseID);
+		String query = "UPDATE `icm`.`freeze` SET `endDate` = ? WHERE (`id` = ?);";
+
+		IPreparedStatement prepS = ps -> {
+			try {
+
+				ps.setTimestamp(1, dateTime);
+				ps.setLong(2, freezeId);
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		executePreparedStatement(query, prepS);
+
+	}
+
+	public long getEmpNumByUsername(String username23) {
+
+		String query = "SELECT e.empNumber FROM icm.employee as e where e.username = '" + username23 + "';";
+
+		ArrayList<Long> results = new ArrayList<Long>();
+
+		IStatement prepS = rs -> {
+
+			try {
+				if (rs.next()) {
+
+					results.add(rs.getLong(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		};
+
+		executeStatement(query, prepS);
+
+		return results.size() == 1 ? results.get(0) : -1;
+	}
+	public boolean isEmployeeComMember(long empNum) {
+		String query = "SELECT * FROM icm.employee as e\r\n"
+				+ "inner join icm.executionchangescommitteemember t on t.empNumber = e.empNumber\r\n"
+				+ "where e.empNumber = '" + empNum + "'";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(10); // just add, doesn't matter what...
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() == 1;
+	}
+	
+	public boolean isEmployeeComHead(long empNum) {
+		String query = "SELECT * FROM icm.employee as e\r\n"
+				+ "inner join icm.executionchangescommitteemember t on t.empNumber = e.empNumber\r\n"
+				+ "where e.empNumber = '" + empNum + "' AND t.isManager = '1'";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(10); // just add, doesn't matter what...
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() == 1;
+	}
 }

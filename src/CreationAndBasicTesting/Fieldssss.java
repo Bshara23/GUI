@@ -35,8 +35,7 @@ public class Fieldssss {
 		
 		
 		
-		EvaluationReport evalR3 = db.getLatestEvaluationReport(7);
-		System.out.println(evalR3);
+		System.out.println(db.isEmployeeComMember(11));
 
 	}
 

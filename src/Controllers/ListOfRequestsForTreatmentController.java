@@ -238,15 +238,7 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 		ControllerManager.setEffect(jobs, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
 		ControllerManager.setEffect(tableButtons, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
 
-		// Set a listener for the requests list from the server.
-
-		Client.addMessageRecievedFromServer(GET_SYSTEM_USER_BY_REQUEST_LIST_OF_REQUESTS, srMsg -> {
-			if (srMsg.getCommand() == Command.getSystemUserByRequest) {
-				lastSelectedRequestOwner = (SystemUser) srMsg.getAttachedData()[0];
-				NavigationBar.next(NavigationBar.getNextPage().getPageTitle(),
-						NavigationBar.getNextPage().getPageLocation());
-			}
-		});
+		
 
 		Client.addMessageRecievedFromServer(GET_REQS_LIST_CTRL, srMsg -> {
 
@@ -355,7 +347,6 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 				int cntExecution = (int) srMsg.getAttachedData()[3];
 				int cntExamination = (int) srMsg.getAttachedData()[4];
 
-				System.out.println(cntSupervision);
 				ArrayList<Node> newNodesForRequestTypes = new ArrayList<Node>();
 
 				for (Node node : requestTypesAPs) {
@@ -365,35 +356,35 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 						switch (text) {
 						case "Supervise":
 
-							if (cntSupervision > 0) {
+							if (cntSupervision > 0 && ClientGUI.isSupervisor) {
 								newNodesForRequestTypes.add(node);
 							}
 
 							break;
 						case "Evaluate":
 
-							if (cntEvaluation > 0) {
+							if (cntEvaluation > 0 && ClientGUI.empNumber != -1) {
 								newNodesForRequestTypes.add(node);
 							}
 
 							break;
 						case "Decide":
 
-							if (cntDecision > 0) {
+							if (cntDecision > 0 && ClientGUI.isCommitteeMember) {
 								newNodesForRequestTypes.add(node);
 							}
 
 							break;
 						case "Execute":
 
-							if (cntExecution > 0) {
+							if (cntExecution > 0 && ClientGUI.empNumber != -1) {
 								newNodesForRequestTypes.add(node);
 							}
 
 							break;
 						case "Examine":
 
-							if (cntExamination > 0) {
+							if (cntExamination > 0 && ClientGUI.empNumber != -1) {
 								newNodesForRequestTypes.add(node);
 							}
 
@@ -408,6 +399,10 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 				hbRequestsType.getChildren().clear();
 				hbRequestsType.getChildren().setAll(FXCollections.observableArrayList(newNodesForRequestTypes));
 
+				int numOfReq = hbRequestsType.getChildren().size();
+				if (numOfReq == 0) {
+					
+				}
 				if (newNodesForRequestTypes.size() > 0) {
 					selectNode(newNodesForRequestTypes.get(0));
 				}
@@ -714,8 +709,21 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 			if (selectedIndex != -1) {
 				lastSelectedRequest = myRequests.get(selectedIndex);
+				
+				// Set a listener for the requests list from the server.
+
+				Client.addMessageRecievedFromServer(GET_SYSTEM_USER_BY_REQUEST_LIST_OF_REQUESTS, srMsg -> {
+					if (srMsg.getCommand() == Command.getSystemUserByRequest) {
+						lastSelectedRequestOwner = (SystemUser) srMsg.getAttachedData()[0];
+						NavigationBar.next(NavigationBar.getNextPage().getPageTitle(),
+								NavigationBar.getNextPage().getPageLocation());
+						Client.removeMessageRecievedFromServer(GET_SYSTEM_USER_BY_REQUEST_LIST_OF_REQUESTS);
+					}
+				});
+				
 				Client.getInstance().request(Command.getSystemUserByRequest, lastSelectedRequest.getRequestID());
 				// go to next page after receiving the request id from the server.
+				
 			}
 		}
 	}

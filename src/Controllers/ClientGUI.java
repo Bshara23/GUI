@@ -73,6 +73,9 @@ public class ClientGUI extends Application implements Initializable {
 	private AnchorPane apBtnRequestsTreatment;
 
 	@FXML
+	private AnchorPane apBtnRequestsManager;
+
+	@FXML
 	private AnchorPane apBtnEmployees;
 
 	@FXML
@@ -112,11 +115,11 @@ public class ClientGUI extends Application implements Initializable {
 	// TODO: make this dynamic
 	public static long myID = 5;
 
-	public static SystemUser systemUser = new SystemUser("userName10", "123", "eee", "Dwayne", "Johnson", "052-2862671",
+	public static SystemUser systemUser = new SystemUser("userName11", "123", "eee", "Dwayne", "Johnson", "052-2862671",
 			true);
-
-	public static long empNumber = 10;
-	public static boolean isManager = true;
+	
+	public static long empNumber = -1;
+	public static boolean isManager = false;
 	public static boolean isSupervisor = true;
 	public static boolean isCommitteeMember = true;
 	public static boolean isComitteeHead = true;
@@ -186,6 +189,7 @@ public class ClientGUI extends Application implements Initializable {
 		apList.add(apBtnAnalytics);
 		apList.add(apBtnEmployees);
 		apList.add(apBtnRequestsTreatment);
+		apList.add(apBtnRequestsManager);
 
 		for (Node node : apList) {
 
@@ -286,7 +290,13 @@ public class ClientGUI extends Application implements Initializable {
 
 				// get data from server
 				boolean isManager = (boolean) srMsg.getAttachedData()[0];
+				ClientGUI.isManager = isManager;
 				boolean hasAtleastOnePhaseToManage = (boolean) srMsg.getAttachedData()[1];
+				
+				ClientGUI.empNumber = (long) srMsg.getAttachedData()[2];
+				ClientGUI.isSupervisor = (boolean) srMsg.getAttachedData()[3];
+				ClientGUI.isCommitteeMember = (boolean) srMsg.getAttachedData()[4];
+				ClientGUI.isComitteeHead = (boolean) srMsg.getAttachedData()[5];
 
 				ArrayList<Node> newNodesForMenu = new ArrayList<Node>();
 
@@ -333,6 +343,13 @@ public class ClientGUI extends Application implements Initializable {
 								break;
 							case "Settings":
 								newNodesForMenu.add(node);
+
+								break;
+							case "Requests":
+								// Add only if the user is the manager
+								if (isManager) {
+									newNodesForMenu.add(node);
+								}
 
 								break;
 							default:
@@ -410,6 +427,12 @@ public class ClientGUI extends Application implements Initializable {
 	void onRequestTreatmentPress(MouseEvent event) {
 		removeNewOrUpdateRequestsMark();
 		commondMenuBehavior(apBtnMyRequests, "Requests Treatment", FxmlNames.LIST_OF_REQUESTS_FOR_TREATMENT);
+
+	}
+
+	@FXML
+	void onRequestPress(MouseEvent event) {
+		commondMenuBehavior(apBtnRequestsManager, "Requests", FxmlNames.LIST_OF_REQUESTS_FOR_MANAGER);
 
 	}
 

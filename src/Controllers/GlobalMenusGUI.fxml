@@ -99,6 +99,23 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </AnchorPane>
+            <AnchorPane fx:id="apBtnRequestsManager" onMouseClicked="#onRequestPress" prefHeight="90.0" prefWidth="154.0">
+               <children>
+                  <ImageView fitHeight="41.0" fitWidth="37.0" layoutX="59.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/Main%20Menu/icons8_check_50px.png" />
+                     </image>
+                  </ImageView>
+                  <Label alignment="TOP_RIGHT" contentDisplay="CENTER" layoutX="23.0" layoutY="80.0" prefHeight="37.0" prefWidth="92.0" text="Requests" textAlignment="CENTER" textFill="#5a708f" wrapText="true">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </AnchorPane>
             <AnchorPane fx:id="apBtnEmployees" onMouseClicked="#onEmployeesPress" prefHeight="101.0" prefWidth="153.0">
                <children>
                   <ImageView fitHeight="41.0" fitWidth="37.0" layoutX="59.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true">

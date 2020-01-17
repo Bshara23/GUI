@@ -1,6 +1,7 @@
 package Controllers;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import ClientLogic.Client;
@@ -17,6 +18,7 @@ import Utility.ControllerSwapper;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
@@ -77,9 +79,19 @@ public class RequestDetailsDecisionGUIController implements Initializable {
 
 	private EvaluationReport evalReport;
 
+	private ArrayList<Node> btnsAffectedBySuspension;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
+
+		btnsAffectedBySuspension = new ArrayList<Node>();
+		btnsAffectedBySuspension.add(hbRequestData);
+		btnsAffectedBySuspension.add(hbTimeExtension);
+		btnsAffectedBySuspension.add(hbDecline);
+		btnsAffectedBySuspension.add(hbAgree);
+
+		
 		// Apply the effects for the canvas
 		RequestDetailsUserController.applyCanvasEffects(canvasRight, canvasLeft);
 
@@ -202,6 +214,11 @@ public class RequestDetailsDecisionGUIController implements Initializable {
 		}, GET_LATEST_EVAL_REPORT, lastPhase.getRequestID());
 
 		loadPageDetails();
+		
+		
+		if (phaseStatus == PhaseStatus.Frozed) {
+			ControllerManager.setFreezeBehavior(btnsAffectedBySuspension);
+		}
 
 	}
 

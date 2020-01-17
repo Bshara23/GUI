@@ -66,7 +66,7 @@ public class ControllerManager {
 			}
 		});
 	}
-	
+
 	public static void showYesNoMessage(String title, String header, String content, VoidFunc yesFunc,
 			VoidFunc noFunc) {
 		Alert alertSuccess = new Alert(AlertType.CONFIRMATION);
@@ -90,7 +90,7 @@ public class ControllerManager {
 				});
 			}
 		});
-		
+
 	}
 
 	public static void showInformationMessage(String title, String header, String content, VoidFunc okFunc) {
@@ -243,6 +243,14 @@ public class ControllerManager {
 
 	}
 
-	
+	public static void setFreezeBehavior(ArrayList<Node> btns) {
+		for (Node node : btns) {
+			node.setOnMousePressed(event -> {
+				ControllerManager.showInformationMessage("Request Suspended", "Request suspended",
+						"You can't make any changes to this request until the suspention is left off", null);
+			});
+
+		}
+	}
 
 }

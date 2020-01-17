@@ -30,7 +30,6 @@ public class MySqlCreationTester {
 		// db.insertObject(SystemUser.emptyInstance);
 		// printTableInfo();
 		// insertObjects();
-		// db.createTable(File.getEmptyInstance());
 
 		// printFields(File.class);
 
@@ -44,7 +43,7 @@ public class MySqlCreationTester {
 		//Message msg = new Message(32811, "subject4029999", "username2", "username2", "messageContent402", true, LocalDate.now(), true, true, true);
 		
 		//db.updateByObject(msg);
-		insertObjects();
+		//insertObjects();
 		// changeRequestTest();
 
 		// populateChangeRequest();

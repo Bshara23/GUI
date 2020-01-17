@@ -2,6 +2,7 @@ package Controllers;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import ClientLogic.Client;
@@ -20,6 +21,7 @@ import Utility.DateUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -98,9 +100,20 @@ public class RequestDetailsExaminerGUIController implements Initializable {
 
 	private long mem2empNum;
 
+	private ArrayList<Node> btnsAffectedBySuspension;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
+		
+		btnsAffectedBySuspension = new ArrayList<Node>();
+		btnsAffectedBySuspension.add(hbAssignComMem2);
+		btnsAffectedBySuspension.add(hbAssignComMem1);
+		btnsAffectedBySuspension.add(hbTimeExtension);
+		btnsAffectedBySuspension.add(hbSendFaulureDescription);
+		btnsAffectedBySuspension.add(hbConfirmExamination);
+
+		
 		// Apply the effects for the canvas
 		RequestDetailsUserController.applyCanvasEffects(canvasRight, canvasLeft);
 
@@ -172,8 +185,14 @@ public class RequestDetailsExaminerGUIController implements Initializable {
 			});
 
 		}
+		
 
 		loadPageDetails();
+
+		
+		if (phaseStatus == PhaseStatus.Frozed) {
+			ControllerManager.setFreezeBehavior(btnsAffectedBySuspension);
+		}
 
 	}
 
