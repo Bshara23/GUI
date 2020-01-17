@@ -54,7 +54,7 @@
             <Image url="@../Images/Table/icons8_search_50px_1.png" />
          </image>
       </ImageView>
-      <TextField layoutX="76.0" layoutY="163.0" prefHeight="26.0" prefWidth="223.0" promptText="Search requests by id" />
+      <TextField fx:id="tfSeachByReqId" layoutX="76.0" layoutY="163.0" prefHeight="26.0" prefWidth="223.0" promptText="Search requests by id" />
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="1348.0">
          <children>
             <Text fx:id="txtPageHeader" fill="#6b6b6b" strokeType="OUTSIDE" strokeWidth="0.0" text="List of requests for treatment">

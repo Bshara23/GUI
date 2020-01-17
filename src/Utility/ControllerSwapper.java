@@ -19,6 +19,7 @@ import javafx.scene.Scene;
 import javafx.scene.effect.Effect;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -100,26 +101,38 @@ public class ControllerSwapper {
 
 		destination.getChildren().setAll(loader);
 	}
-	
-	
+
 	public static Initializable loadContentWithController(Pane destination, String fxmlFileName) {
-		
+
 		URL url = ClientGUI.class.getResource(fxmlFileName);
 
 		FXMLLoader loader = new FXMLLoader(url);
-		
+
 		Pane pane = null;
 		try {
 			pane = loader.load();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		Initializable controller = (Initializable) loader.getController();
 		destination.getChildren().setAll(pane);
-		
+
 		return controller;
 	}
-	
+
+	public static Parent loadContentWithLoader(String fxmlFileName) {
+		// Reference a class that exist in the same folder as the FXML files
+		URL url = ClientGUI.class.getResource(fxmlFileName);
+
+		Pane loader = null;
+		try {
+			loader = FXMLLoader.load(url);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+		return loader;
+	}
 
 }

@@ -19,6 +19,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -89,7 +90,8 @@ public class ListOfRequestsController implements Initializable {
 
 	@FXML
 	private ImageView imgMenu;
-
+	@FXML
+	private TextField tfSeachByReqId;
 	private ArrayList<Node> tableButtons;
 	private ArrayList<ChangeRequest> myIssuedRequests;
 	public static ChangeRequest lastSelectedRequest;
@@ -102,10 +104,17 @@ public class ListOfRequestsController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		initTable();
-
+		imgRefresh.setOnMousePressed(event->{
+			NavigationBar.reload();
+		});
 		tableButtons = new ArrayList<Node>();
 
-
+		ControllerManager.addListener(tfSeachByReqId, str -> {
+			long id = Integer.parseInt(str);
+			ArrayList<ChangeRequest> temp = (ArrayList<ChangeRequest>) myIssuedRequests.clone();
+			temp.removeIf(p -> !(p.getRequestID() + "").startsWith(id + ""));
+			loadRequestToTable(temp);
+		});
 		tableButtons.add(imgSearch);
 		tableButtons.add(imgSettings);
 		tableButtons.add(imgRefresh);

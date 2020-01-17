@@ -39,6 +39,6 @@ public enum Command {
 	declineDecisionPhase, acceptDecisionPhase, requestMoreDateForDecision, getLatestEvalReport, confirmExamination,
 	rejectExamination, getExecutionReportForExaminationAndComsNames, assignExaminerForRequest, requestOwnerConfirm,
 	requestOwnerDecline, getRequestFiles, isMyRequestWaitingForMyConfirmation, confirmRequestEndedBySupervisor,
-	declinedRequestEndedBySupervisor, freezePhase, unfreezePhase,
+	declinedRequestEndedBySupervisor, freezePhase, unfreezePhase, checkLogIn,
 
 }

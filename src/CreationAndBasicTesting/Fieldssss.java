@@ -35,7 +35,7 @@ public class Fieldssss {
 		
 		
 		
-		System.out.println(db.isEmployeeComMember(11));
+		System.out.println(db.getMaintainanceManagers());
 
 	}
 

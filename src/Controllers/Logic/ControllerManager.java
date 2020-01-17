@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.TimeZone;
 
+import Utility.Func;
+import Utility.StringFunc;
 import Utility.VoidFunc;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -251,6 +253,15 @@ public class ControllerManager {
 			});
 
 		}
+	}
+
+	public static void addListener(TextField textField, StringFunc f) {
+
+		textField.textProperty().addListener((observable, oldValue, newValue) -> {
+			if (f != null) {
+				f.call(newValue);
+			}
+		});
 	}
 
 }

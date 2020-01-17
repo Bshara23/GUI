@@ -140,14 +140,16 @@ public class ServerGUIController extends Application implements Initializable {
 			btnStartServer.setText("Stop Server");
 			lbAddressIP.setText(Server.getInstance().getHostAddress().toString());
 			lblHostName.setText(Server.getInstance().getHostName().toString());
+			Server.checkForTimeExceptions();
 
+			
 		};
 		Server.addServerStartedEvent(onServerStart);
 
 		VoidFunc onServerStop = () -> {
 			lblStatus.setText("Stopped");
 			cStatus.setFill(Color.RED);
-
+			Server.stopCheckingForTimeExceptions();
 			lbAddressIP.setText("-");
 			lblHostName.setText("-");
 
@@ -157,10 +159,8 @@ public class ServerGUIController extends Application implements Initializable {
 
 		Server.addServerStoppedEvent(onServerStop);
 
-		
 		FXUtility.addNumbersOnlyListner(tfThreadPoolSize);
-		
-		
+
 	}
 
 	@FXML
@@ -175,26 +175,20 @@ public class ServerGUIController extends Application implements Initializable {
 			String schemaName = ifDbSchemaName.getText();
 
 			if (username == "" || password == "" || schemaName == "") {
-				ControllerManager.showInformationMessage("Input error", "Missing fields", "Please fill the missing fields",
-						null);
+				ControllerManager.showInformationMessage("Input error", "Missing fields",
+						"Please fill the missing fields", null);
 			} else {
 
 				lblStatus.setText("Starting server...");
 				cStatus.setFill(Color.YELLOW);
-				
-				
+
 				int poolSize = Integer.parseInt(tfThreadPoolSize.getText());
-				
-				
-				
+
 				Server.getInstance().initialize(port, username, password, schemaName, poolSize);
 
 				System.out.println("Server started!");
 
 				System.out.println("max thread pool size = " + poolSize);
-
-				
-				
 
 			}
 

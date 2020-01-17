@@ -35,6 +35,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
@@ -99,7 +100,8 @@ public class ListOfRequestsForManagerController implements Initializable {
 
 	@FXML
 	private ImageView imgMenu;
-
+	@FXML
+	private TextField tfSeachByReqId;
 	private ArrayList<Node> tableButtons;
 
 	public static PhaseType phaseType;
@@ -117,9 +119,16 @@ public class ListOfRequestsForManagerController implements Initializable {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
+		imgRefresh.setOnMousePressed(event->{
+			NavigationBar.reload();
+		});
 		initXTableX();
-
+		ControllerManager.addListener(tfSeachByReqId, str -> {
+			long id = Integer.parseInt(str);
+			ArrayList<ChangeRequest> temp = (ArrayList<ChangeRequest>) myRequests.clone();
+			temp.removeIf(p -> !(p.getRequestID() + "").startsWith(id + ""));
+			loadIntoXTableX(temp);
+		});
 		tableButtons = new ArrayList<Node>();
 
 		tableButtons.add(imgSearch);

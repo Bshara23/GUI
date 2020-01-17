@@ -115,7 +115,7 @@ public class ClientGUI extends Application implements Initializable {
 	// TODO: make this dynamic
 	public static long myID = 5;
 
-	public static SystemUser systemUser = new SystemUser("userName11", "123", "eee", "Dwayne", "Johnson", "052-2862671",
+	public static SystemUser systemUser = new SystemUser("userName10", "123", "eee", "Dwayne", "Johnson", "052-2862671",
 			true);
 	
 	public static long empNumber = -1;

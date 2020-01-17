@@ -1,5 +1,6 @@
 package Controllers;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -8,18 +9,22 @@ import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
+import javax.imageio.ImageIO;
+
 import ClientLogic.Client;
 import Controllers.Logic.ControllerManager;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Entities.Message;
 import Protocol.Command;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
@@ -62,7 +67,12 @@ public class MessageEntryController implements Initializable {
 
 
 		imgStar.setOnMousePressed(event -> {
-			setStarredImage(!starred);
+			try {
+				setStarredImage(!starred);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			updateInDatabase();
 		});
 		
@@ -92,28 +102,41 @@ public class MessageEntryController implements Initializable {
 		
 		txtDate.setText(ControllerManager.getDateTime(msg.getSentAt()));
 
-		setStarredImage(msg.isStarred());
+		try {
+			setStarredImage(msg.isStarred());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//setStarredImage(msg.isStarred());
 		setCheckedImage(false);
 	}
 	
 	
-	private void setStarredImage(boolean value) {
+	
+	private Image getImage(String img) throws IOException {
+		URL url = getClass().getResource("/manikin.png");
+		BufferedImage awtImg = ImageIO.read(url);
+		Image fxImg = SwingFXUtils.toFXImage(awtImg, new WritableImage(50, 50));
+		Image fxImgDirect = new Image(url.openStream());
+		return fxImgDirect;
+	}
+	private void setStarredImage(boolean value) throws IOException {
 		this.starred = value;
 		message.setStarred(value);
 		if(value) {
-			imgStar.setImage(new Image("Images\\Messages\\icons8_star_50px_2.png"));
+			imgStar.setImage(getImage("Images/Messages/icons8_star_50px_2.png"));
 		}else {
-			imgStar.setImage(new Image("Images\\Messages\\icons8_star_50px_1.png"));
+			imgStar.setImage(new Image("Images/Messages/icons8_star_50px_1.png"));
 		}
 	}
 	
 	private void setCheckedImage(boolean value) {
 		this.checked = value;
 		if(value) {
-			imgCheckBox.setImage(new Image("Images\\Messages\\icons8_checked_checkbox_50px_3.png"));
+			imgCheckBox.setImage(new Image("Images/Messages/icons8_checked_checkbox_50px_3.png"));
 		}else {
-			imgCheckBox.setImage(new Image("Images\\Messages\\icons8_unchecked_checkbox_50px_1.png"));
+			imgCheckBox.setImage(new Image("Images/Messages/icons8_unchecked_checkbox_50px_1.png"));
 		}
 	}
 	

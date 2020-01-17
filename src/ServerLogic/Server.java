@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import Controllers.ClientGUI;
 import Entities.ChangeRequest;
 import Entities.Employee;
 import Entities.EvaluationReport;
@@ -18,6 +19,7 @@ import Entities.File;
 import Entities.Message;
 import Entities.SqlObject;
 import Entities.SystemUser;
+import Entities.TimeException;
 import Entities.Phase;
 import Entities.PhaseTimeExtensionRequest;
 import Protocol.Command;
@@ -97,16 +99,8 @@ public class Server extends AbstractServer {
 
 	@Override
 	protected void finalize() throws Throwable {
-
-//		executorService.shutdown();
-//		try {
-//			executorService.awaitTermination(10, TimeUnit.SECONDS);
-//		} catch (InterruptedException e1) {
-//		}
-//		if (executorService.isTerminated())
-//			System.out.println("All threads are done.");
-//		else
-//			System.out.println("Tired of waiting.");
+		stopCheckingForTimeExceptions();
+		executorService.shutdownNow();
 		super.finalize();
 	}
 
@@ -136,7 +130,58 @@ public class Server extends AbstractServer {
 			}
 		};
 		db = new MySQL(username, password, schemaName, f);
+	}
 
+	private static ExecutorService executorService = Executors.newSingleThreadExecutor();
+	private static boolean stop;
+
+	public static void stopCheckingForTimeExceptions() {
+		stop = false;
+	}
+
+	public static void checkForTimeExceptions() {
+		stop = true;
+		executorService.submit(new Runnable() {
+
+			@Override
+			public void run() {
+				while (stop) {
+
+					try {
+
+						ArrayList<Long> phaseIds = db.phasesForTimeException();
+
+						for (Long id : phaseIds) {
+							TimeException te = new TimeException(-1, id, DateUtil.now(), DateUtil.NA);
+							db.insertTimeException(te);
+
+							String phaseOwner2 = db.getUsernameOfEmployee(id);
+
+							String title = "Time exception";
+							String contnet = "Time exception on phase [" + id + "]";
+
+							getInstance().sendUserMessage(title, phaseOwner2, contnet, -1, -1);
+
+							getInstance().sendUserMessage(title, db.getUsernameOfSupervisor(), contnet, -1, -1);
+
+							getInstance().sendUserMessage(title, db.getUsernameOfManager(), contnet, -1, -1);
+
+						}
+
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+
+					}
+				}
+			}
+		});
+
+	}
+
+	private void timeExceptionValidation(long phaseId) {
+		if (db.phaseHasTimeException(phaseId)) {
+			db.setTimeExceptionTimeOfCompletion(phaseId, DateUtil.now());
+		}
 	}
 
 	public boolean isSqlException() {
@@ -154,6 +199,23 @@ public class Server extends AbstractServer {
 
 		Command command = srMsg.getCommand();
 		switch (command) {
+
+		case checkLogIn:
+			String username242 = (String) srMsg.getAttachedData()[0];
+			String password = (String) srMsg.getAttachedData()[1];
+
+			SystemUser sysUser452 = null;
+
+			boolean canLogIn = db.canLogIn(username242, password);
+			if (canLogIn) {
+
+				sysUser452 = db.getSystemUserByUsername(username242);
+
+			}
+
+			sendMessageToClient(client, command, canLogIn, sysUser452);
+
+			break;
 
 		case unfreezePhase:
 
@@ -385,6 +447,9 @@ public class Server extends AbstractServer {
 					db.getUsernameOfSupervisor(),
 					"The requests [" + ph3.getRequestID() + "] execcution has been rejected by an examiner", -1, -1);
 			initClosingPhase(ph3);
+
+			timeExceptionValidation(ph3.getPhaseID());
+
 			sendMessageToClient(client, command);
 
 			break;
@@ -401,6 +466,9 @@ public class Server extends AbstractServer {
 					db.getUsernameOfSupervisor(),
 					"The requests [" + ph2.getRequestID() + "] execcution has been confirmed by an examiner", -1, -1);
 			initClosingPhase(ph2);
+
+			timeExceptionValidation(ph2.getPhaseID());
+
 			sendMessageToClient(client, command);
 
 			break;
@@ -415,6 +483,7 @@ public class Server extends AbstractServer {
 			db.insertObject(exeRep);
 			db.updatePhaseStatus(phaseId64, PhaseStatus.Closed);
 			db.updatePhaseTimeOfCompletion(phaseId64, DateUtil.now());
+			timeExceptionValidation(phaseId64);
 
 			long requestID533 = db.getRequestIdByPhaseId(phaseId64);
 			// init examination phase
@@ -461,6 +530,7 @@ public class Server extends AbstractServer {
 
 			// update phase status to Waiting_For_More_Data of decision phase
 			db.updatePhaseStatus(p3.getPhaseID(), PhaseStatus.Closed);
+			timeExceptionValidation(p3.getPhaseID());
 
 			// send message to the committee members that more data has been requested
 			ArrayList<String> comNames4 = db.getComsUsernames();
@@ -497,6 +567,7 @@ public class Server extends AbstractServer {
 			// update phase status to closed of decision phase
 			db.updatePhaseStatus(p2.getPhaseID(), PhaseStatus.Closed);
 			db.updatePhaseTimeOfCompletion(p2.getPhaseID(), DateUtil.now());
+			timeExceptionValidation(p2.getPhaseID());
 
 			// send message to the committee members that his request was accepted
 			ArrayList<String> comNames3 = db.getComsUsernames();
@@ -520,6 +591,7 @@ public class Server extends AbstractServer {
 			// update phase status to closed of decision phase
 			db.updatePhaseStatus(p1.getPhaseID(), PhaseStatus.Rejected);
 			db.updatePhaseTimeOfCompletion(p1.getPhaseID(), DateUtil.now());
+			timeExceptionValidation(p1.getPhaseID());
 
 			// send message to the committee members that his request was declined
 			ArrayList<String> comNames = db.getComsUsernames();
@@ -546,6 +618,7 @@ public class Server extends AbstractServer {
 
 			db.updatePhaseStatus(phaseId63, PhaseStatus.Closed);
 			db.updatePhaseTimeOfCompletion(phaseId63, DateUtil.now());
+			timeExceptionValidation(phaseId63);
 
 			long requestID53 = db.getRequestIdByPhaseId(phaseId63);
 			// init decision phase
@@ -745,6 +818,9 @@ public class Server extends AbstractServer {
 			sendUserMessage(subject, db.getUsernameOfManager(), content, SYSTEM_EMPLOYEE_NUMBER,
 					SYSTEM_EMPLOYEE_NUMBER);
 
+			sendUserMessage(subject, db.getUsernameOfManager(),
+					"Time extension has been added for the request [id:" + phaseRTE.getRequestID() + "]", -1, -1);
+
 			// Notify the requester for a new treatment requests update
 			notifyEmployeeTreatmentRequestsUpdated(phaseRTE.getEmpNumber());
 
@@ -811,13 +887,14 @@ public class Server extends AbstractServer {
 			if (empNum798 != -1) {
 				isSupervisor = db.isEmployeeIsSupervisor(empNum798);
 				isComMember = db.isEmployeeComMember(empNum798);
-				
+
 				if (isComMember) {
 					isComHead = db.isEmployeeComHead(empNum798);
 				}
 			}
 
-			sendMessageToClient(client, command, isManager, hasAtleastOnePhaseToManage, empNum798, isSupervisor, isComMember, isComHead);
+			sendMessageToClient(client, command, isManager, hasAtleastOnePhaseToManage, empNum798, isSupervisor,
+					isComMember, isComHead);
 
 			break;
 

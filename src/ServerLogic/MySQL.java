@@ -1280,8 +1280,6 @@ public class MySQL extends MySqlConnBase {
 		return results;
 	}
 
-	
-
 	public String getRequestOwnerUsername(long requestID) {
 
 		String query = "SELECT s.userName FROM icm.systemUser as s\r\n"
@@ -1719,6 +1717,7 @@ public class MySQL extends MySqlConnBase {
 
 		return results.size() == 1 ? results.get(0) : -1;
 	}
+
 	public boolean isEmployeeComMember(long empNum) {
 		String query = "SELECT * FROM icm.employee as e\r\n"
 				+ "inner join icm.executionchangescommitteemember t on t.empNumber = e.empNumber\r\n"
@@ -1741,7 +1740,7 @@ public class MySQL extends MySqlConnBase {
 		executeStatement(query, prepS);
 		return results.size() == 1;
 	}
-	
+
 	public boolean isEmployeeComHead(long empNum) {
 		String query = "SELECT * FROM icm.employee as e\r\n"
 				+ "inner join icm.executionchangescommitteemember t on t.empNumber = e.empNumber\r\n"
@@ -1763,5 +1762,161 @@ public class MySQL extends MySqlConnBase {
 		};
 		executeStatement(query, prepS);
 		return results.size() == 1;
+	}
+
+	public boolean canLogIn(String username24, String password) {
+		String query = "SELECT COUNT(*) FROM icm.systemuser as s where s.userName = '" + username24
+				+ "' AND s.password = '" + password + "';";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(rs.getInt(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() == 1 ? results.get(0) == 1 : false;
+	}
+
+	public SystemUser getSystemUserByUsername(String username24) {
+		String query = "SELECT * FROM icm.systemUser as su " + "WHERE su.username = '" + username24 + "';";
+
+		ArrayList<SystemUser> results = new ArrayList<SystemUser>();
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+
+					SystemUser systemUser = new SystemUser(rs.getString(1), rs.getString(2), rs.getString(3),
+							rs.getString(4), rs.getString(5), rs.getString(6), rs.getBoolean(7));
+					results.add(systemUser);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+
+		return results.size() == 1 ? results.get(0) : null;
+	}
+
+	public void insertTimeException(TimeException te) {
+		String query = "INSERT INTO `icm`.`timeexception` (`phaseId`, `from`, `to`) VALUES (?, ?, ?);";
+
+		IPreparedStatement prepS = ps -> {
+			try {
+				ps.setLong(1, te.getPhaseId());
+				ps.setTimestamp(2, te.getFrom());
+				ps.setTimestamp(3, te.getTo());
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		};
+
+		executePreparedStatement(query, prepS);
+
+	}
+
+	public ArrayList<Long> phasesForTimeException() {
+		String query = "SELECT p.phaseID FROM icm.phase as p\r\n"
+				+ "where timediff(now(), p.deadline) > 0 and p.deadline != '1999-01-01 04:30:00'\r\n"
+				+ "and p.phaseID not in (SELECT ph.phaseID FROM icm.phase as ph\r\n"
+				+ "inner join icm.timeexception as te on ph.phaseID = te.phaseID);";
+
+		ArrayList<Long> results = new ArrayList<Long>();
+		IStatement prepS = rs -> {
+			try {
+
+				while (rs.next()) {
+
+					results.add(rs.getLong(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+
+		return results;
+
+	}
+
+	public boolean phaseHasTimeException(long phaseId) {
+		String query = "SELECT COUNT(*) FROM icm.timeexception as t "
+				+ "inner join icm.phase as p on t.phaseId = p.phaseId where p.phaseId = '" + phaseId
+				+ "' and t.to = '1999-01-01 04:30:00';";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(10);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() == 1;
+	}
+
+	public void setTimeExceptionTimeOfCompletion(long phaseId, Timestamp ts) {
+		String query = "UPDATE `icm`.`timeexception` SET `to` = ? WHERE (`phaseId` = ?);";
+
+		IPreparedStatement prepS = ps -> {
+			try {
+				ps.setTimestamp(2, ts);
+				ps.setLong(1, phaseId);
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		};
+
+		executePreparedStatement(query, prepS);
+
+	}
+
+	public ArrayList<String> getMaintainanceManagers() {
+		String query = "SELECT m.* FROM icm.maintainancemanagers as m\r\n"
+				+ "inner join icm.employee as e on e.empNumber = m.empNum\r\n"
+				+ "inner join icm.systemuser as u on e.username = u.username";
+
+		
+		ArrayList<String> results = new ArrayList<String>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				while (rs.next()) {
+					results.add(rs.getString(1));
+					results.add(rs.getString(2));
+
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results;
 	}
 }

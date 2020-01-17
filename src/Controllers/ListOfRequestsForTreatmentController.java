@@ -35,6 +35,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
@@ -156,6 +157,9 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 	private HBox apExamine;
 
 	@FXML
+	private TextField tfSeachByReqId;
+
+	@FXML
 	private Line lineTableJob;
 
 	private ArrayList<Node> tableButtons, jobs;
@@ -178,9 +182,6 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		System.out.println("Init: ListOfRequestsForTreatmentController");
 
-		
-
-		
 		ClientGUI.addOnMenuBtnClickedEvent(getClass().getName() + "3232145125", () -> {
 			System.out.println("Finalize: ListOfRequestsForTreatmentController");
 
@@ -191,6 +192,25 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 		initTable();
 		initXTableX();
+		
+		imgRefresh.setOnMousePressed(event->{
+			NavigationBar.reload();
+		});
+
+		ControllerManager.addListener(tfSeachByReqId, str -> {
+			long id = Integer.parseInt(str);
+			ArrayList<ChangeRequest> temp = (ArrayList<ChangeRequest>) myRequests.clone();
+			temp.removeIf(p -> !(p.getRequestID() + "").startsWith(id + ""));
+			
+			
+			if (tblSupervisorOnly.isDisabled()) {
+				loadIntoTable(temp);
+
+			}else {
+				loadIntoXTableX(temp);
+
+			}
+		});
 
 		requestTypesAPs = ControllerManager.getAllNodes(hbRequestsType);
 
@@ -237,8 +257,6 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 		ControllerManager.setEffect(jobs, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
 		ControllerManager.setEffect(tableButtons, CommonEffects.REQUESTS_TABLE_ELEMENT_GRAY);
-
-		
 
 		Client.addMessageRecievedFromServer(GET_REQS_LIST_CTRL, srMsg -> {
 
@@ -401,7 +419,10 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 				int numOfReq = hbRequestsType.getChildren().size();
 				if (numOfReq == 0) {
-					
+					lineTableJob.setVisible(false);
+				} else {
+					lineTableJob.setVisible(true);
+
 				}
 				if (newNodesForRequestTypes.size() > 0) {
 					selectNode(newNodesForRequestTypes.get(0));
@@ -523,15 +544,13 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 				.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("phaseStartingDate"));
 		tcPhaseStatus.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("phaseStatus"));
 		tcPhaseTimeLeft.setCellValueFactory(new PropertyValueFactory<TableDataRequests, String>("phaseTimeLeft"));
-		
+
 		tcHasBeenTimeExtended.setSortable(false);
 		tcIssuedBy.setSortable(false);
 		tcPhaseDeadline.setSortable(false);
 		tcPhaseStartingDate.setSortable(false);
 		tcPhaseStatus.setSortable(false);
 		tcPhaseTimeLeft.setSortable(false);
-
-
 
 	}
 
@@ -609,8 +628,7 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 		tcXPhaseStatus.setCellValueFactory(new PropertyValueFactory<XTableDataX, String>("phaseStatus"));
 		tcXPhaseTimeLeft.setCellValueFactory(new PropertyValueFactory<XTableDataX, String>("timeLeftForPhase"));
 		tcXRequestId.setCellValueFactory(new PropertyValueFactory<XTableDataX, String>("requestId"));
-		
-		
+
 		tcXHasBeenTimeExtended.setSortable(false);
 		tcXPhaseDeadline.setSortable(false);
 		tcXPhaseName.setSortable(false);
@@ -709,7 +727,7 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 
 			if (selectedIndex != -1) {
 				lastSelectedRequest = myRequests.get(selectedIndex);
-				
+
 				// Set a listener for the requests list from the server.
 
 				Client.addMessageRecievedFromServer(GET_SYSTEM_USER_BY_REQUEST_LIST_OF_REQUESTS, srMsg -> {
@@ -720,10 +738,10 @@ public class ListOfRequestsForTreatmentController implements Initializable {
 						Client.removeMessageRecievedFromServer(GET_SYSTEM_USER_BY_REQUEST_LIST_OF_REQUESTS);
 					}
 				});
-				
+
 				Client.getInstance().request(Command.getSystemUserByRequest, lastSelectedRequest.getRequestID());
 				// go to next page after receiving the request id from the server.
-				
+
 			}
 		}
 	}

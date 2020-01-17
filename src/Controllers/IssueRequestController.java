@@ -139,7 +139,7 @@ public class IssueRequestController implements Initializable {
 			String descCurrState = taDescriptionOfCurrentState.getText();
 			String relateInfoSys = cbInformationSystem.getValue().toString();
 
-			boolean areAllFieldsFilled = ControllerManager.areAllStringsNotEmpty(comments, reqDesc, descReqChange,
+			boolean areAllFieldsFilled = ControllerManager.areAllStringsNotEmpty(reqDesc, descReqChange,
 					descCurrState);
 
 			if (areAllFieldsFilled) {
