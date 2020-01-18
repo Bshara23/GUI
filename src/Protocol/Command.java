@@ -41,7 +41,7 @@ public enum Command {
 	requestOwnerDecline, getRequestFiles, isMyRequestWaitingForMyConfirmation, confirmRequestEndedBySupervisor,
 	declinedRequestEndedBySupervisor, freezePhase, unfreezePhase, checkLogIn, getDepartmentsManagers,
 	updateDepartmentManager, getAllUsers, getSuperviosrDetails, getCommitteeDetails, updateComMember, logOut,
-	UpdateShortcuts, updateDeadline, getSupervisorDeadlineUpdate,
+	UpdateShortcuts, updateDeadline, getSupervisorDeadlineUpdate, getActivityReport,
 //	updateDepartmentManager,
 
 }

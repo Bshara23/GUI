@@ -34,6 +34,7 @@ public class DateUtil {
 		return sdf.format(diff);
 	}
 
+	
 	public static Timestamp add(Timestamp a, int days, int hours) {
 
 		LocalDateTime date = a.toLocalDateTime();
@@ -68,6 +69,12 @@ public class DateUtil {
 		now = now.plusDays(days);
 		return Timestamp.valueOf(now);
 	}
+	
+	public static Timestamp minus(Timestamp ts, int secs) {
+		LocalDateTime now = ts.toLocalDateTime();
+		now = now.minusSeconds(secs);
+		return Timestamp.valueOf(now);
+	}
 
 	public static String differenceInDaysHours(Timestamp a, Timestamp b) {
 		long diff = a.getTime() - b.getTime();
@@ -75,6 +82,13 @@ public class DateUtil {
 		double days = hours * 0.0416667;
 		hours -= (int)days / 0.0416667;
 		return "Days: " + (int)days + ", Hours: " + (int)hours;
+	}
+	
+	public static int diffInDays(Timestamp a, Timestamp b) {
+		long diff = a.getTime() - b.getTime();
+		double hours = diff * 2.77778e-7;
+		double days = hours * 0.0416667;
+		return (int)days;
 	}
 
 	

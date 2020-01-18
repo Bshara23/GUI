@@ -2127,7 +2127,7 @@ public class MySQL extends MySqlConnBase {
 				while (rs.next()) {
 					SupervisorDeadlineUpdate sdu = new SupervisorDeadlineUpdate(rs.getLong(1), rs.getLong(2),
 							rs.getLong(3), rs.getTimestamp(4), rs.getTimestamp(5), rs.getTimestamp(6));
-					
+
 					results.add(sdu);
 				}
 
@@ -2138,6 +2138,221 @@ public class MySQL extends MySqlConnBase {
 		};
 		executeStatement(query, prepS);
 		return results;
+	}
+
+	public int getNewAddr() {
+		String query = "SELECT MAX(a.addr) + 1 FROM icm.array as a;";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(rs.getInt(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+
+		return results.get(0);
+	}
+
+	public int insertArrayList(ArrayList<Integer> arr) {
+
+		String str;
+
+		int addr = getNewAddr();
+
+		int d = 0;
+		for (int i = 0; i < arr.size(); i++) {
+
+			IPreparedStatement prepS = ps -> {
+
+			};
+
+			d = arr.get(0);
+			str = "INSERT INTO `icm`.`array` (`index`, `addr`, `data`) VALUES ('" + i + "', '" + addr + "', '" + d
+					+ "');";
+
+			executePreparedStatement(str, prepS);
+
+		}
+
+		return addr;
+
+	}
+
+	public void insertActivityReport(ActivityReport ar) {
+
+		String query = "INSERT INTO `icm`.`activityreport` (`name`, `date`, `active`, `frozen`, `closed`, `rejected`, `numOfWorkDays`,"
+				+ " `totalActive`, `totalFrozen`, `totalClosed`, `totalRejected`, `totalNumOfWorkDays`) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+
+		int activeAddr = insertArrayList(ar.getActive());
+		int frozenAddr = insertArrayList(ar.getFrozen());
+		int closedAddr = insertArrayList(ar.getClosed());
+		int rejectedAddr = insertArrayList(ar.getRejected());
+		int numOfWorkDaysAddr = insertArrayList(ar.getNumOfWorkDays());
+
+		IPreparedStatement prepS = ps -> {
+
+			try {
+				ps.setString(1, ar.getName());
+				ps.setTimestamp(2, ar.getDate());
+
+				ps.setInt(3, activeAddr);
+				ps.setInt(4, frozenAddr);
+				ps.setInt(5, closedAddr);
+				ps.setInt(6, rejectedAddr);
+				ps.setInt(7, numOfWorkDaysAddr);
+
+				ps.setInt(8, ar.getTotalActive());
+				ps.setInt(9, ar.getTotalFrozen());
+				ps.setInt(10, ar.getTotalClosed());
+				ps.setInt(11, ar.getTotalRejected());
+				ps.setInt(12, ar.getTotalNumOfWorkDays());
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		};
+
+		executePreparedStatement(query, prepS);
+	}
+
+	public int countOfActiveReqests(Timestamp dFrom, Timestamp dTo) {
+
+		String query = "SELECT p.startingDate, p.deadline FROM icm.phase as p;";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+
+		IStatement prepS = rs -> {
+			try {
+				int sum = 0;
+				while (rs.next()) {
+					Timestamp a = rs.getTimestamp(1);
+					Timestamp b = rs.getTimestamp(2);
+					sum += SQLUtil.isActiveInInterval(dFrom, dTo, a, b);
+				}
+
+				results.add(sum);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+
+		return results.get(0);
+
+	}
+
+	public int countOfFreezeReqests(Timestamp dFrom, Timestamp dTo) {
+		String from = SQLUtil.toString(dFrom);
+		String to = SQLUtil.toString(dTo);
+
+		String query = "SELECT COUNT(*) FROM icm.freeze as f where f.initDate > '" + from + "' and f.initDate < '" + to
+				+ "';";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+
+		IStatement prepS = rs -> {
+			try {
+				if (rs.next()) {
+					results.add(rs.getInt(1));
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+
+		return results.size() > 0 ? results.get(0) : 0;
+	}
+
+	public int countOfClosedRequests(Timestamp dFrom, Timestamp dTo) {
+
+		String from = SQLUtil.toString(dFrom);
+		String to = SQLUtil.toString(dTo);
+
+		String query = "SELECT COUNT(*) FROM icm.phase as p\r\n"
+				+ "where p.status = 'Closed' and p.timeOfCompletion > '" + from + "' and p.timeOfCompletion < '" + to
+				+ "';";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+
+		IStatement prepS = rs -> {
+			try {
+				if (rs.next()) {
+					results.add(rs.getInt(1));
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+
+		return results.size() > 0 ? results.get(0) : 0;
+
+	}
+
+	public int countOfDeniedRequests(Timestamp dFrom, Timestamp dTo) {
+		String from = SQLUtil.toString(dFrom);
+		String to = SQLUtil.toString(dTo);
+
+		String query = "SELECT COUNT(*) FROM icm.phase as p\r\n"
+				+ "where p.status = 'Rejected' and p.timeOfCompletion > '" + from + "' and p.timeOfCompletion < '" + to
+				+ "';";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+
+		IStatement prepS = rs -> {
+			try {
+				if (rs.next()) {
+					results.add(rs.getInt(1));
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+
+		return results.size() > 0 ? results.get(0) : 0;
+	}
+
+	public int countOfTotalWorkingDays(Timestamp dFrom, Timestamp dTo) {
+
+		String query = "SELECT p.startingDate, p.deadline FROM icm.phase as p;";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+
+		IStatement prepS = rs -> {
+			try {
+				int sum = 0;
+				while (rs.next()) {
+					Timestamp a = rs.getTimestamp(1);
+					Timestamp b = rs.getTimestamp(2);
+					sum += SQLUtil.getNumOfDaysInInterval(dFrom, dTo, a, b);
+				}
+
+				results.add(sum);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+
+		return results.get(0);
 	}
 
 }

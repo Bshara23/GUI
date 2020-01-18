@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -16,6 +17,7 @@ import Entities.Student;
 import Protocol.PhaseStatus;
 import Protocol.PhaseType;
 import ServerLogic.MySQL;
+import ServerLogic.SQLUtil;
 import Utility.DateUtil;
 
 public class Fieldssss {
@@ -33,19 +35,25 @@ public class Fieldssss {
 
 		// System.out.println(db.getSupervisorEmpNum());
 
-		// System.out.println(db.getMaintainanceManagers());
-		PhaseStatus phStatus = PhaseStatus.Active_And_Waiting_For_Time_Extension;
-		switch (phStatus) {
-		case Active:
-		case Active_And_Waiting_For_Time_Extension:
-			System.out.println("ddd");
-			break;
-		default:
-			System.out.println("GGG");
 
-			break;
+		LocalDate from = LocalDate.of(2020, 1, 16);
+		LocalDate to = LocalDate.of(2020, 1, 20);
+		
+		Timestamp tFrom = DateUtil.get(from);
+		Timestamp tTo = DateUtil.get(to);
+		
+		
+		
+		System.out.println(SQLUtil.toString(tFrom));
+		System.out.println(SQLUtil.toString(tTo));
 
-		}
+
+		
+		System.out.println(db.countOfActiveReqests(tFrom, tTo));
+		
+		//String res = SQLUtil.toString(DateUtil.now());
+		//System.out.println(res);
+		
 	}
 
 }

@@ -1,6 +1,8 @@
 package Entities;
 
-public class ExaminerFailureDescription {
+import java.io.Serializable;
+
+public class ExaminerFailureDescription implements Serializable {
 
 	private long requestID;
 	private long ID;
