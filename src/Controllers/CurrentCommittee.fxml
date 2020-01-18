@@ -11,23 +11,69 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="876.0" prefWidth="1348.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.DepartmentsManagersController">
+<AnchorPane prefHeight="876.0" prefWidth="1348.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.CurrentCommittee">
    <children>
       <TextArea layoutX="-150.0" layoutY="26.0" prefHeight="0.0" prefWidth="0.0" />
       <HBox alignment="TOP_CENTER" layoutY="9.0">
          <children>
             <Canvas fx:id="canvasRight" height="865.0" width="340.0" />
-            <VBox alignment="TOP_CENTER" spacing="120.0" HBox.hgrow="NEVER">
+            <VBox alignment="TOP_CENTER" spacing="30.0" HBox.hgrow="NEVER">
                <children>
-                  <Text fill="#6f6f6f" strokeType="OUTSIDE" strokeWidth="0.0" text="Departments Managers" textAlignment="CENTER" wrappingWidth="631.936767578125">
+                  <Text fill="#6f6f6f" strokeType="OUTSIDE" strokeWidth="0.0" text="Committee Details" textAlignment="CENTER" wrappingWidth="631.936767578125">
                      <font>
                         <Font size="50.0" />
                      </font>
                   </Text>
+                  <HBox alignment="TOP_CENTER" spacing="50.0">
+                     <children>
+                        <HBox fx:id="hbMember1" spacing="10.0">
+                           <children>
+                              <ImageView fitHeight="34.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../Images/Employee/icons8_administrator_male_50px.png" />
+                                 </image>
+                              </ImageView>
+                              <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Member 1">
+                                 <font>
+                                    <Font size="23.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </HBox>
+                        <HBox fx:id="hbComChairman" spacing="10.0">
+                           <children>
+                              <ImageView fitHeight="34.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../Images/Employee/icons8_moderator_50px.png" />
+                                 </image>
+                              </ImageView>
+                              <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Chairman">
+                                 <font>
+                                    <Font size="23.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </HBox>
+                        <HBox fx:id="hbMember2" spacing="10.0">
+                           <children>
+                              <ImageView fitHeight="34.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../Images/Employee/icons8_administrator_male_50px.png" />
+                                 </image>
+                              </ImageView>
+                              <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Member 2">
+                                 <font>
+                                    <Font size="23.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
                   <VBox alignment="CENTER" spacing="5.0">
                      <children>
                         <HBox alignment="TOP_CENTER" spacing="500.0" />
-                        <HBox id="container" fx:id="hbInformationContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="343.0" prefWidth="608.0" spacing="20.0" stylesheets="@blueBorder.css">
+                        <HBox id="container" fx:id="hbInformationContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="343.0" prefWidth="601.0" spacing="20.0" stylesheets="@blueBorder.css">
                            <children>
                               <VBox spacing="25.0">
                                  <children>
@@ -35,32 +81,32 @@
                                        <children>
                                           <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="25.0">
                                              <children>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Braude Website:">
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Full Name:">
                                                    <font>
                                                       <Font size="23.0" />
                                                    </font>
                                                 </Text>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Classroom Computers:">
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Username:">
                                                    <font>
                                                       <Font size="23.0" />
                                                    </font>
                                                 </Text>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Information System:">
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Employee Number:">
                                                    <font>
                                                       <Font size="23.0" />
                                                    </font>
                                                 </Text>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Labs and Computers Farms:">
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Phone Number:">
                                                    <font>
                                                       <Font size="23.0" />
                                                    </font>
                                                 </Text>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Library System:">
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Email:">
                                                    <font>
                                                       <Font size="23.0" />
                                                    </font>
                                                 </Text>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Moodle:">
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="organizational Role:">
                                                    <font>
                                                       <Font size="23.0" />
                                                    </font>
@@ -72,73 +118,36 @@
                                           </VBox>
                                           <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="25.0">
                                              <children>
-                                                <Text fx:id="txtBraudeWebsite" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name (empNum)">
+                                                <Text fx:id="txtFullName" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name (empNum)">
                                                    <font>
                                                       <Font size="23.0" />
                                                    </font>
                                                 </Text>
-                                                <Text fx:id="txtClassroomComputr" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name (empNum)">
+                                                <Text fx:id="txtUsername" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name (empNum)">
                                                    <font>
                                                       <Font size="23.0" />
                                                    </font>
                                                 </Text>
-                                                <Text fx:id="txtInfoSystem" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name (empNum)">
+                                                <Text fx:id="txtEmployeeNumber" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name (empNum)">
                                                    <font>
                                                       <Font size="23.0" />
                                                    </font>
                                                 </Text>
-                                                <Text fx:id="txtLabsAndComputers" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name (empNum)">
+                                                <Text fx:id="txtPhoneNo" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name (empNum)">
                                                    <font>
                                                       <Font size="23.0" />
                                                    </font>
                                                 </Text>
-                                                <Text fx:id="txtLibrarySystem" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name (empNum)">
+                                                <Text fx:id="txtEmail" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name (empNum)">
                                                    <font>
                                                       <Font size="23.0" />
                                                    </font>
                                                 </Text>
-                                                <Text fx:id="txtMoodle" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name (empNum)">
+                                                <Text fx:id="txtOrgRole" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name (empNum)">
                                                    <font>
                                                       <Font size="23.0" />
                                                    </font>
                                                 </Text>
-                                             </children>
-                                             <padding>
-                                                <Insets top="5.0" />
-                                             </padding>
-                                          </VBox>
-                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="22.0">
-                                             <children>
-                                                <ImageView fx:id="imgBraudeWebsite" fitHeight="34.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../Images/Employee/icons8_pencil_50px.png" />
-                                                   </image>
-                                                </ImageView>
-                                                <ImageView fx:id="imgClassroomComputers" fitHeight="34.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../Images/Employee/icons8_pencil_50px.png" />
-                                                   </image>
-                                                </ImageView>
-                                                <ImageView fx:id="imgInfoSystem" fitHeight="34.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../Images/Employee/icons8_pencil_50px.png" />
-                                                   </image>
-                                                </ImageView>
-                                                <ImageView fx:id="imgLabsAndComputers" fitHeight="34.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../Images/Employee/icons8_pencil_50px.png" />
-                                                   </image>
-                                                </ImageView>
-                                                <ImageView fx:id="imgLibrarySystem" fitHeight="34.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../Images/Employee/icons8_pencil_50px.png" />
-                                                   </image>
-                                                </ImageView>
-                                                <ImageView fx:id="imgMoodle" fitHeight="34.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../Images/Employee/icons8_pencil_50px.png" />
-                                                   </image>
-                                                </ImageView>
                                              </children>
                                              <padding>
                                                 <Insets top="5.0" />
@@ -155,6 +164,24 @@
                         </HBox>
                      </children>
                   </VBox>
+                  <HBox>
+                     <children>
+                        <HBox fx:id="hbAssignSupervisor" spacing="10.0">
+                           <children>
+                              <ImageView fitHeight="34.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../Images/Employee/icons8_pencil_50px.png" />
+                                 </image>
+                              </ImageView>
+                              <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Change Committee Member">
+                                 <font>
+                                    <Font size="23.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
                </children>
                <opaqueInsets>
                   <Insets />

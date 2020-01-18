@@ -35,32 +35,32 @@
                                        <children>
                                           <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="25.0">
                                              <children>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Braude Website">
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Braude Website:">
                                                    <font>
                                                       <Font size="23.0" />
                                                    </font>
                                                 </Text>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Classroom Computers">
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Classroom Computers:">
                                                    <font>
                                                       <Font size="23.0" />
                                                    </font>
                                                 </Text>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Information System">
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Information System:">
                                                    <font>
                                                       <Font size="23.0" />
                                                    </font>
                                                 </Text>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Labs and Computers Farms">
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Labs and Computers Farms:">
                                                    <font>
                                                       <Font size="23.0" />
                                                    </font>
                                                 </Text>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Library System">
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Library System:">
                                                    <font>
                                                       <Font size="23.0" />
                                                    </font>
                                                 </Text>
-                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Moodle">
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Moodle:">
                                                    <font>
                                                       <Font size="23.0" />
                                                    </font>
@@ -107,7 +107,7 @@
                                                 <Insets top="5.0" />
                                              </padding>
                                           </VBox>
-                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="25.0">
+                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="22.0">
                                              <children>
                                                 <ImageView fx:id="imgBraudeWebsite" fitHeight="34.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>

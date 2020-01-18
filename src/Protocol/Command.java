@@ -40,5 +40,7 @@ public enum Command {
 	rejectExamination, getExecutionReportForExaminationAndComsNames, assignExaminerForRequest, requestOwnerConfirm,
 	requestOwnerDecline, getRequestFiles, isMyRequestWaitingForMyConfirmation, confirmRequestEndedBySupervisor,
 	declinedRequestEndedBySupervisor, freezePhase, unfreezePhase, checkLogIn, getDepartmentsManagers,
+	updateDepartmentManager, getAllUsers, getSuperviosrDetails, getCommitteeDetails, updateComMember, logOut,
+//	updateDepartmentManager,
 
 }

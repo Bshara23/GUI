@@ -37,6 +37,7 @@ public class Client extends AbstractClient {
 		return instance;
 	}
 
+	public static VoidFunc connExceptionFromClient;
 	// Initialize the client
 	public void initialize(String host, int port) {
 
@@ -44,10 +45,12 @@ public class Client extends AbstractClient {
 		instance.setHost(host);
 		instance.setPort(port);
 		try {
+		
 			instance.openConnection();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if (connExceptionFromClient != null) {
+				connExceptionFromClient.call();
+			}
 		}
 	}
 

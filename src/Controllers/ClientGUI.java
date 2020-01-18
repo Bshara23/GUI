@@ -19,6 +19,7 @@ import Entities.Employee;
 import Entities.SystemUser;
 import Protocol.Command;
 import Protocol.PhaseType;
+import Utility.ControllerSwapper;
 import Utility.Func;
 import Utility.SRMessageFunc;
 import Utility.VoidFunc;
@@ -45,6 +46,8 @@ import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
 public class ClientGUI extends Application implements Initializable {
+
+	private static final String LOG_OUT = "LogOut";
 
 	private static final String ALLOW_EXISTING_TABS_ONLY_F_MAIN_MENU = "allowExistingTabsOnlyFMainMenu";
 
@@ -94,10 +97,31 @@ public class ClientGUI extends Application implements Initializable {
 	private HBox hbNavigator;
 
 	@FXML
+	private Text txtHiName;
+
+	@FXML
 	private Circle cNewMessageMark;
 
 	@FXML
 	private Circle cNewOrUpdateRequestsMark;
+
+	@FXML
+	private VBox DropDownMenu;
+
+	@FXML
+	private HBox hboxHelp;
+
+	@FXML
+	private HBox hboxSignout;
+
+	@FXML
+	private HBox hboxExit;
+
+	@FXML
+	private HBox hbDropMenu;
+
+	@FXML
+	private AnchorPane apDragger;
 
 	private AnchorPane selectedMenuElement;
 
@@ -106,6 +130,8 @@ public class ClientGUI extends Application implements Initializable {
 	private static Stage stage;
 
 	public static Stage getStage() {
+		if (LogInController.username != null)
+			return LogInController.getStage();
 		return stage;
 	}
 
@@ -117,7 +143,7 @@ public class ClientGUI extends Application implements Initializable {
 
 	public static SystemUser systemUser = new SystemUser("userName10", "123", "eee", "Dwayne", "Johnson", "052-2862671",
 			true);
-	
+
 	public static long empNumber = -1;
 	public static boolean isManager = false;
 	public static boolean isSupervisor = true;
@@ -141,7 +167,9 @@ public class ClientGUI extends Application implements Initializable {
 	@Override
 	public void start(Stage stage) {
 		stage.initStyle(StageStyle.UNDECORATED);
-		Client.getInstance().initialize("localhost", 5555);
+
+		if (LogInController.username == null)
+			Client.getInstance().initialize("localhost", 5555);
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(FxmlNames.GLOBAL_MENUS));
 		Parent root = null;
@@ -173,6 +201,11 @@ public class ClientGUI extends Application implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+
+		txtHiName.setText("Hi, " + systemUser.getFirstName());
+		getStage().setX(200);
+		getStage().setY(35);
+
 		System.out.println("Init: ClientGUI");
 		NavigationBar.imgNavigationBarArrow = imgNavigationBarArrow;
 		NavigationBar.navigationBar = hbNavigator;
@@ -191,6 +224,8 @@ public class ClientGUI extends Application implements Initializable {
 		apList.add(apBtnRequestsTreatment);
 		apList.add(apBtnRequestsManager);
 
+		dropDownMenuConfigurations();
+
 		for (Node node : apList) {
 
 			ControllerManager.setMouseHoverPressEffects(node, CommonEffects.MENU_ELEMENT_ON_HOVER,
@@ -204,33 +239,33 @@ public class ClientGUI extends Application implements Initializable {
 		commondMenuBehavior(apBtnLogoMain, "Home", FxmlNames.HOME);
 		ControllerManager.setEffect(apBtnLogoMain, CommonEffects.LOGO_SELECT);
 
-		apHeader.setOnMousePressed(new EventHandler<MouseEvent>() {
+		apDragger.setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				xOffset = getStage().getX() - event.getScreenX();
 				yOffset = getStage().getY() - event.getScreenY();
-				apHeader.setCursor(Cursor.CLOSED_HAND);
+				apDragger.setCursor(Cursor.CLOSED_HAND);
 				// TODO: add the opacity to the settings
 				getStage().setOpacity(0.8);
 
 			}
 		});
-		apHeader.setOnMouseDragged(new EventHandler<MouseEvent>() {
+		apDragger.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				getStage().setX(event.getScreenX() + xOffset);
 				getStage().setY(event.getScreenY() + yOffset);
 			}
 		});
-		apHeader.setOnMouseReleased(new EventHandler<MouseEvent>() {
+		apDragger.setOnMouseReleased(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				apHeader.setCursor(Cursor.OPEN_HAND);
+				apDragger.setCursor(Cursor.OPEN_HAND);
 				getStage().setOpacity(1);
 			}
 		});
 
-		apHeader.setOnMouseClicked(event -> {
+		apDragger.setOnMouseClicked(event -> {
 			if (event.getClickCount() == 2) {
 				getStage().setIconified(true);
 			}
@@ -265,6 +300,93 @@ public class ClientGUI extends Application implements Initializable {
 		allowMenuButtonsByPermissions();
 	}
 
+	private void dropDownMenuConfigurations() {
+
+		DropDownMenu.setVisible(false);
+
+		hbDropMenu.setCursor(Cursor.HAND);
+		ControllerManager.setEffect(hbDropMenu, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		ControllerManager.setOnHoverEffect(hbDropMenu, CommonEffects.REQUESTS_TABLE_ELEMENT_BLACK,
+				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+
+		hbDropMenu.setOnMouseClicked(event -> {
+			DropDownMenu.setVisible(true);
+		});
+		DropDownMenu.setOnMouseExited(event -> {
+
+			DropDownMenu.setVisible(false);
+		});
+
+		hboxHelp.setCursor(Cursor.HAND);
+		ControllerManager.setEffect(hboxHelp, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		ControllerManager.setOnHoverEffect(hboxHelp, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
+				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+
+		hboxHelp.setOnMousePressed(event -> {
+			NavigationBar.next("List Of Employees", FxmlNames.LIST_OF_EMPLOYEES_SIMPLE);
+		});
+
+		hboxSignout.setCursor(Cursor.HAND);
+		ControllerManager.setEffect(hboxSignout, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		ControllerManager.setOnHoverEffect(hboxSignout, CommonEffects.REQUEST_DETAILS_BUTTON_RED,
+				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+
+		hboxSignout.setOnMousePressed(event -> {
+			ControllerManager.showYesNoMessage("Exit", "Exit", "Are you sure you want to sign out?", () -> {
+
+				logOut(() -> {
+					Parent s = ControllerSwapper.loadContentWithLoader(FxmlNames.LOG_IN);
+					LogInController.getStage().setScene(new Scene(s));
+					LogInController.getStage().show();
+				});
+
+			}, null);
+		});
+
+		hboxExit.setCursor(Cursor.HAND);
+		ControllerManager.setEffect(hboxExit, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		ControllerManager.setOnHoverEffect(hboxExit, CommonEffects.REQUEST_DETAILS_BUTTON_RED,
+				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+
+		hboxExit.setOnMousePressed(event -> {
+			ControllerManager.showYesNoMessage("Exit", "Exit", "Are you sure you want to exit?", () -> {
+
+				logOut(() -> {
+					try {
+						Client.getInstance().closeConnection();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					System.exit(1);
+				});
+
+			}, null);
+
+		});
+	}
+
+	private void logOut(VoidFunc f) {
+
+		Client.getInstance().requestWithListener(Command.logOut, srMsg -> {
+			if (srMsg.getCommand() == Command.logOut) {
+
+				boolean logOutSucces = (boolean) srMsg.getAttachedData()[0];
+				if (logOutSucces && f != null) {
+					f.call();
+				} else if (!logOutSucces) {
+					System.out.println(
+							"Error, how did this happend? looks like we are getting wrong data from the system user\n username = "
+									+ systemUser.getUserName());
+				}
+
+				Client.removeMessageRecievedFromServer(LOG_OUT);
+
+			}
+		}, LOG_OUT, systemUser.getUserName());
+
+	}
+
 	private void addNewOrUpdateRequestsMark() {
 		cNewOrUpdateRequestsMark.setOpacity(1);
 	}
@@ -292,7 +414,7 @@ public class ClientGUI extends Application implements Initializable {
 				boolean isManager = (boolean) srMsg.getAttachedData()[0];
 				ClientGUI.isManager = isManager;
 				boolean hasAtleastOnePhaseToManage = (boolean) srMsg.getAttachedData()[1];
-				
+
 				ClientGUI.empNumber = (long) srMsg.getAttachedData()[2];
 				ClientGUI.isSupervisor = (boolean) srMsg.getAttachedData()[3];
 				ClientGUI.isCommitteeMember = (boolean) srMsg.getAttachedData()[4];
@@ -447,6 +569,21 @@ public class ClientGUI extends Application implements Initializable {
 		selectedMenuElement = ap;
 		NavigationBar.clear();
 		NavigationBar.next(pageName, fxmlName);
+	}
+
+	@FXML
+	void MenuExit(MouseEvent event) {
+
+	}
+
+	@FXML
+	void MenuHelp(MouseEvent event) {
+
+	}
+
+	@FXML
+	void MenuSignOut(MouseEvent event) {
+
 	}
 
 }

@@ -1,5 +1,6 @@
 package Controllers;
 
+import java.applet.Applet;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -12,6 +13,7 @@ import Entities.SystemUser;
 import Protocol.Command;
 import Utility.ControllerSwapper;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,6 +29,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -47,10 +51,28 @@ public class LogInController extends Application implements Initializable {
 	private static Stage stage;
 
 	@FXML
+	private HBox apMainAnch;
+
+	@FXML
 	private VBox apHeader;
 
 	@FXML
 	private ImageView exitbtn;
+
+	@FXML
+	private TextField tfIpAddr;
+
+	@FXML
+	private TextField tfPort;
+
+	@FXML
+	private Button connectBtn;
+
+	@FXML
+	private Text txtConnectionStatus;
+
+	@FXML
+	private Circle cConnectionStatus;
 
 	@FXML
 	private TextField usernamefield;
@@ -64,16 +86,7 @@ public class LogInController extends Application implements Initializable {
 	@FXML
 	private Text iFrogotMyPassword;
 
-	@FXML
-	private TextField tfIpAddr;
-
-	@FXML
-	private TextField tfPort;
-
-	@FXML
-	private Button connectBtn;
-	@FXML
-	private HBox apMainAnch;
+	private static boolean connectedToServer;
 
 	@FXML
 	void exitbtnclick(MouseEvent event) {
@@ -83,8 +96,17 @@ public class LogInController extends Application implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
-		
+
+		if (connectedToServer) {
+			txtConnectionStatus.setText("Connection Status: Connected");
+			cConnectionStatus.setFill(Color.GREEN);
+			connectBtn.setText("Disconnect");
+		} else {
+
+			txtConnectionStatus.setText("Connection Status: Disconnected");
+			cConnectionStatus.setFill(Color.RED);
+		}
+
 		// TODO Auto-generated method stub
 		exitbtn.setCursor(Cursor.HAND);
 		ControllerManager.setEffect(exitbtn, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
@@ -92,21 +114,80 @@ public class LogInController extends Application implements Initializable {
 				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 		connectBtn.setOnMouseClicked(event -> {
 
-			boolean ipFill = ControllerManager.areAllStringsNotEmpty(tfIpAddr.getText(), tfPort.getText());
-			if (!ipFill) {
-				ControllerManager.showInformationMessage("Error", "IP Address or Port Fields Are Missing",
-						"Please fill the missing fields", null);
+			if (connectedToServer) {
+
+				try {
+					Client.getInstance().closeConnection();
+
+					connectBtn.setText("Connect");
+				} catch (IOException e) {
+
+				}
 
 			} else {
-				Client.getInstance().initialize(tfIpAddr.getText(), Integer.parseInt(tfPort.getText()));
-				ControllerManager.showInformationMessage("Connecting", "Connecting",
-						"Simple connection, b3'yrha b3deen", null);
+				boolean ipFill = ControllerManager.areAllStringsNotEmpty(tfIpAddr.getText(), tfPort.getText());
+				if (!ipFill) {
+					connectedToServer = false;
+					ControllerManager.showErrorMessage("Error", "IP Address or Port Fields Are Missing",
+							"Please fill the missing fields", null);
 
+				} else {
+
+					txtConnectionStatus.setText("Connection Status: Connecting...");
+					cConnectionStatus.setFill(Color.YELLOW);
+					Client.getInstance().initialize(tfIpAddr.getText(), Integer.parseInt(tfPort.getText()));
+
+				}
 			}
 
 		});
 
+		Client.connExceptionFromClient = () -> {
+			Platform.runLater(() -> {
+				connectedToServer = false;
+
+				txtConnectionStatus.setText("Connection Status: Disconnected");
+				cConnectionStatus.setFill(Color.RED);
+
+				ControllerManager.showErrorMessage("Error", "Connection Error", "Connection could not be established!",
+						null);
+			});
+
+		};
+
+		Client.addServerConnectionEstablishedEvent("ConnEstab", () -> {
+
+			connectedToServer = true;
+
+			txtConnectionStatus.setText("Connection Status: Connected");
+			cConnectionStatus.setFill(Color.GREEN);
+			connectBtn.setText("Disconnect");
+
+		});
+
+		Client.addServerConnectionClosedEvent("connClosed", () -> {
+
+			connectedToServer = false;
+
+			txtConnectionStatus.setText("Connection Status: Disconnected");
+			cConnectionStatus.setFill(Color.RED);
+		});
+
+		Client.addServerExceptionEvent("connClosed", () -> {
+
+			connectedToServer = false;
+
+			txtConnectionStatus.setText("Connection Status: Disconnected");
+			cConnectionStatus.setFill(Color.RED);
+		});
+
 		loginbtn.setOnMouseClicked(event -> {
+			if (!connectedToServer) {
+				ControllerManager.showErrorMessage("Error", "No connection to server",
+						"Please make sure that you are connected to the server before logging in!", null);
+				return;
+			}
+
 			if (numOfLogintimes < 3) {
 				numOfLogintimes++;
 				username = usernamefield.getText();
@@ -123,7 +204,8 @@ public class LogInController extends Application implements Initializable {
 				}
 			} else {
 				Client.removeMessageRecievedFromServer(CHECK_LOG_IN);
-				ControllerManager.showErrorMessage("Error", "You Have Entered WRONG Username or Password 12 times  ",
+				ControllerManager.showErrorMessage("Error",
+						"You Have Entered WRONG Username or Password " + numOfLogintimes + " times  ",
 						" No MORE TRIES FOR YOU ... BYE BYE", null);
 				System.exit(1);
 
@@ -131,23 +213,31 @@ public class LogInController extends Application implements Initializable {
 		});
 
 		Client.addMessageRecievedFromServer(CHECK_LOG_IN, srMsg -> {
+
+			if (connectedToServer == false) {
+				ControllerManager.showErrorMessage("Error", "Connect to server first",
+						"You have to connect to server first in order to log in!", null);
+			}
+
 			if (srMsg.getCommand() == Command.checkLogIn) {
 
 				boolean canLogIn = (boolean) srMsg.getAttachedData()[0];
-				if (canLogIn) {
+				boolean isAlreadyLoggedIn = (boolean) srMsg.getAttachedData()[1];
+				if (canLogIn && !isAlreadyLoggedIn) {
 
-					ClientGUI.systemUser = (SystemUser) srMsg.getAttachedData()[1];
-
-				}
-				if (!canLogIn) {
-					ControllerManager.showErrorMessage("Error", "The username or password is incorrect",
-							"Please Enter the correct username or password", null);
-				} else {
+					ClientGUI.systemUser = (SystemUser) srMsg.getAttachedData()[2];
 					numOfLogintimes = 0;
 					showClientGUI();
-
-					Client.removeMessageRecievedFromServer(CHECK_LOG_IN);
+				}else {
+					if (!canLogIn) {
+						ControllerManager.showErrorMessage("Error", "The username or password is incorrect",
+								"Please Enter the correct username or password", null);
+					} else if (isAlreadyLoggedIn){
+						ControllerManager.showErrorMessage("Error", "You are already logged in",
+								"It seems that you are already logged in to this account from another computer!", null);
+					}
 				}
+				
 
 			}
 
@@ -177,8 +267,6 @@ public class LogInController extends Application implements Initializable {
 		stage.setTitle("ICM System");
 		stage.show();
 
-		
-		
 		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 
 			@Override

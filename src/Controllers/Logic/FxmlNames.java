@@ -52,4 +52,10 @@ public class FxmlNames {
 
 	public static final String REQUEST_DETAILS_MANAGER = "RequestDetailsManager.fxml";
 	public static final String LIST_OF_REQUESTS_FOR_MANAGER = "ListOfRequestsForManagerGUI.fxml";
+	
+	public static final String MAINTAINANCE_MANAGERS = "MaintainanceManagers.fxml";
+
+	public static final String CURRENT_SUPERVISOR = "CurrentSupervisor.fxml";
+
+	public static final String CURRENT_COMMITTEE = "CurrentCommittee.fxml";
 }

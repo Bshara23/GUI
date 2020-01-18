@@ -199,6 +199,90 @@ public class Server extends AbstractServer {
 
 		Command command = srMsg.getCommand();
 		switch (command) {
+		
+		
+		case logOut:
+			
+			String usernameToLogOut = (String) srMsg.getAttachedData()[0];
+			
+			boolean logOutSucces = db.logOut(usernameToLogOut);
+			
+			sendMessageToClient(client, command, logOutSucces);
+
+			
+			break;
+
+		case getCommitteeDetails:
+
+			ArrayList<Employee> comMems = new ArrayList<Employee>(3);
+
+			ArrayList<Long> regComs = db.getComsEmpNumsWithoutManager();
+
+			comMems.add(db.getEmployeeByEmpNumber(regComs.get(0)));
+			comMems.add(db.getEmployeeByEmpNumber(db.getComHeadEmpNum()));
+			comMems.add(db.getEmployeeByEmpNumber(regComs.get(1)));
+
+			sendMessageToClient(client, command, comMems);
+
+			break;
+
+		case updateComMember:
+
+			long oldComMemEmpNum = (long) srMsg.getAttachedData()[0];
+			long newComMemEmpNum = (long) srMsg.getAttachedData()[1];
+
+			boolean isComMem = db.isEmployeeComMember(newComMemEmpNum);
+
+			if (!isComMem) {
+				db.updateCommitteeMember(oldComMemEmpNum, newComMemEmpNum);
+			}
+
+			sendMessageToClient(client, command, isComMem);
+
+			break;
+
+		case updateSupervisor:
+			long supEmpNum = (long) srMsg.getAttachedData()[0];
+
+			db.updateSupervisor(db.getSupervisorEmpNum(), supEmpNum);
+
+			sendMessageToClient(client, command);
+
+			break;
+
+		case getSuperviosrDetails:
+
+			Employee supEmp = db.getEmployeeByEmpNumber(db.getSupervisorEmpNum());
+
+			sendMessageToClient(client, command, supEmp);
+
+			break;
+
+		case getAllUsers:
+
+			ArrayList<SystemUser> users = db.getAllUsers();
+
+			sendMessageToClient(client, command, users);
+
+			break;
+
+		case updateDepartmentManager:
+
+			String department = (String) srMsg.getAttachedData()[0];
+			long empNum090989 = (long) srMsg.getAttachedData()[1];
+
+			db.updateDepartmentManager(department, empNum090989);
+
+			sendMessageToClient(client, command);
+
+			break;
+
+		case getDepartmentsManagers:
+
+			ArrayList<String> depManagers = db.getMaintainanceManagers();
+			sendMessageToClient(client, command, depManagers);
+
+			break;
 
 		case checkLogIn:
 			String username242 = (String) srMsg.getAttachedData()[0];
@@ -207,13 +291,18 @@ public class Server extends AbstractServer {
 			SystemUser sysUser452 = null;
 
 			boolean canLogIn = db.canLogIn(username242, password);
+			boolean isAlreadyLoggedIn = false;
 			if (canLogIn) {
 
-				sysUser452 = db.getSystemUserByUsername(username242);
+				isAlreadyLoggedIn = db.isLoggedIn(username242);
+				if (!isAlreadyLoggedIn) {
+					db.logIn(username242);
+					sysUser452 = db.getSystemUserByUsername(username242);
 
+				}
 			}
 
-			sendMessageToClient(client, command, canLogIn, sysUser452);
+			sendMessageToClient(client, command, canLogIn, isAlreadyLoggedIn, sysUser452);
 
 			break;
 

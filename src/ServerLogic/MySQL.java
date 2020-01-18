@@ -1228,6 +1228,30 @@ public class MySQL extends MySqlConnBase {
 		return results.size() > 0 ? results : null;
 	}
 
+	public ArrayList<Long> getComsEmpNumsWithoutManager() {
+		String query = "SELECT e.empNumber FROM icm.systemUser as su\r\n"
+				+ "inner join icm.employee as e on e.userName=su.userName\r\n"
+				+ "inner join icm.executionchangescommitteemember as c on c.empNumber = e.empNumber"
+				+ " where c.isManager = '0'";
+
+		ArrayList<Long> results = new ArrayList<Long>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				while (rs.next()) {
+					results.add(rs.getLong(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() > 0 ? results : null;
+	}
+
 	public ArrayList<ChangeRequest> getChangeRequestPhaseForCom() {
 		String query = "SELECT * FROM icm.phase p\r\n"
 				+ "inner join icm.changerequest as c on c.requestID = p.requestID\r\n"
@@ -1895,11 +1919,10 @@ public class MySQL extends MySqlConnBase {
 	}
 
 	public ArrayList<String> getMaintainanceManagers() {
-		String query = "SELECT m.* FROM icm.maintainancemanagers as m\r\n"
+		String query = "SELECT m.Department, u.firstName, u.lastName, m.empNum FROM icm.maintainancemanagers as m\r\n"
 				+ "inner join icm.employee as e on e.empNumber = m.empNum\r\n"
-				+ "inner join icm.systemuser as u on e.username = u.username";
+				+ "inner join icm.systemuser as u on e.username = u.username " + "order by m.Department;";
 
-		
 		ArrayList<String> results = new ArrayList<String>();
 
 		IStatement prepS = rs -> {
@@ -1907,7 +1930,7 @@ public class MySQL extends MySqlConnBase {
 
 				while (rs.next()) {
 					results.add(rs.getString(1));
-					results.add(rs.getString(2));
+					results.add(rs.getString(2) + " " + rs.getString(3) + " (" + rs.getString(4) + ")");
 
 				}
 
@@ -1919,4 +1942,136 @@ public class MySQL extends MySqlConnBase {
 		executeStatement(query, prepS);
 		return results;
 	}
+
+	public void updateDepartmentManager(String department, long empNum090989) {
+		String query = "UPDATE `icm`.`maintainancemanagers` SET `empNum` = ? WHERE (`Department` = ?);";
+
+		IPreparedStatement prepS = ps -> {
+			try {
+
+				ps.setLong(1, empNum090989);
+				ps.setString(2, department);
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		};
+
+		executePreparedStatement(query, prepS);
+	}
+
+	public ArrayList<SystemUser> getAllUsers() {
+		String query = "SELECT *  FROM icm.systemUser as u where u.username != 'system';";
+
+		ArrayList<SystemUser> results = new ArrayList<SystemUser>();
+		IStatement prepS = rs -> {
+			try {
+
+				while (rs.next()) {
+
+					SystemUser systemUser = new SystemUser(rs.getString(1), rs.getString(2), rs.getString(3),
+							rs.getString(4), rs.getString(5), rs.getString(6), rs.getBoolean(7));
+					results.add(systemUser);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+
+		return results;
+	}
+
+	public void updateSupervisor(long oldSupEmpNum, long newSupEmpNum) {
+		String query = "UPDATE `icm`.`supervisor` SET `empNumber` = ? WHERE (`empNumber` = ?);";
+
+		IPreparedStatement prepS = ps -> {
+			try {
+
+				ps.setLong(1, newSupEmpNum);
+				ps.setLong(2, oldSupEmpNum);
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		};
+
+		executePreparedStatement(query, prepS);
+
+	}
+
+	public void updateCommitteeMember(long oldComMemEmpNum, long newComMemEmpNum) {
+		String query = "UPDATE `icm`.`executionchangescommitteemember` SET `empNumber` = ? WHERE (`empNumber` = ?);";
+
+		IPreparedStatement prepS = ps -> {
+			try {
+
+				ps.setLong(1, newComMemEmpNum);
+				ps.setLong(2, oldComMemEmpNum);
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		};
+
+		executePreparedStatement(query, prepS);
+
+	}
+
+	public boolean isLoggedIn(String username242) {
+		String query = "SELECT COUNT(*) FROM icm.systemuser as s where s.userName = '" + username242
+				+ "' AND s.isOnline = '1';";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(rs.getInt(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results.size() == 1 ? results.get(0) == 1 : false;
+	}
+
+	public boolean logIn(String usernameToLogIn) {
+		String query = "UPDATE `icm`.`systemuser` SET `isOnline` = '1' WHERE (`userName` = ?);";
+
+		IPreparedStatement prepS = ps -> {
+			try {
+
+				ps.setString(1, usernameToLogIn);
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		};
+
+		return executePreparedStatement(query, prepS) == 1;
+	}
+
+	public boolean logOut(String usernameToLogOut) {
+		String query = "UPDATE `icm`.`systemuser` SET `isOnline` = '0' WHERE (`userName` = ?);";
+
+		IPreparedStatement prepS = ps -> {
+			try {
+
+				ps.setString(1, usernameToLogOut);
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		};
+
+		return executePreparedStatement(query, prepS) == 1;
+	}
+
 }

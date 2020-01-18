@@ -24,19 +24,19 @@
       </HBox>
       <VBox layoutX="14.0" layoutY="199.0" spacing="25.0">
          <children>
-            <TableView id="text" prefHeight="399.0" prefWidth="1332.0">
+            <TableView id="text" fx:id="tblUsers" prefHeight="399.0" prefWidth="1332.0">
               <columns>
-                <TableColumn prefWidth="153.0" text="Username" />
-                <TableColumn prefWidth="243.0" text="First Name" />
-                  <TableColumn prefWidth="227.0" text="Last Name" />
-                  <TableColumn prefWidth="196.0" text="Phone number" />
-                  <TableColumn prefWidth="285.0" text="Email" />
-                  <TableColumn prefWidth="227.0" text="Is online" />
+                <TableColumn fx:id="tcUsername" prefWidth="153.0" text="Username" />
+                <TableColumn fx:id="tcFirstName" prefWidth="243.0" text="First Name" />
+                  <TableColumn fx:id="tcLastName" prefWidth="227.0" text="Last Name" />
+                  <TableColumn fx:id="tcPhoneNumber" prefWidth="196.0" text="Phone number" />
+                  <TableColumn fx:id="tcEmail" prefWidth="285.0" text="Email" />
+                  <TableColumn fx:id="tcIsOnline" prefWidth="195.0" text="Is online" />
               </columns>
             </TableView>
-            <HBox fx:id="hbAssignMaintenance" alignment="CENTER_LEFT" spacing="30.0">
+            <HBox alignment="CENTER_LEFT" spacing="30.0">
                <children>
-                  <HBox fx:id="hbFullRequestDetails" alignment="CENTER" spacing="5.0">
+                  <HBox fx:id="hbAssignMaintenance" alignment="CENTER" spacing="5.0">
                      <children>
                         <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -55,9 +55,9 @@
                   <Insets left="5.0" />
                </padding>
             </HBox>
-            <HBox fx:id="hbAssignSupervisor" alignment="CENTER_LEFT" spacing="30.0">
+            <HBox alignment="CENTER_LEFT" spacing="30.0">
                <children>
-                  <HBox fx:id="hbFullRequestDetails1" alignment="CENTER" spacing="5.0">
+                  <HBox fx:id="hbAssingSupervisor" alignment="CENTER" spacing="5.0">
                      <children>
                         <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -99,7 +99,7 @@
             </HBox>
          </children>
       </VBox>
-      <Text layoutX="14.0" layoutY="182.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Here is a list of all the usrs in the system, double click on a row to view more details">
+      <Text layoutX="14.0" layoutY="182.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Here is a list of all the users in the system, double click on a row to view more details">
          <font>
             <Font size="21.0" />
          </font>

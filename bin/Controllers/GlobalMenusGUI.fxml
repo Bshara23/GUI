@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.effect.GaussianBlur?>
@@ -183,22 +184,18 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </ImageView>
-            <ImageView fitHeight="34.0" fitWidth="28.0" layoutX="21.0" layoutY="35.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../Images/icons8_menu_50px.png" />
-               </image>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </ImageView>
-            <ImageView fitHeight="34.0" fitWidth="28.0" layoutX="65.0" layoutY="35.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../Images/icons8_search_50px.png" />
-               </image>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </ImageView>
+            <AnchorPane fx:id="apDragger" layoutX="4.0" layoutY="3.0" prefHeight="80.0" prefWidth="1038.0">
+               <children>
+                  <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/icons8_search_50px.png" />
+                     </image>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
+               </children>
+            </AnchorPane>
             <Label layoutX="1301.0" layoutY="26.0" text="7" textAlignment="CENTER" textFill="#3f8ec9">
                <font>
                   <Font name="System Bold" size="19.0" />
@@ -215,22 +212,29 @@
                   <Cursor fx:constant="DEFAULT" />
                </cursor>
             </ImageView>
-            <ImageView fitHeight="18.0" fitWidth="192.0" layoutX="1153.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../Images/icons8_expand_arrow_50px.png" />
-               </image>
+            <HBox fx:id="hbDropMenu" layoutX="1077.0" layoutY="38.892578125" spacing="5.0">
+               <children>
+                  <Text fx:id="txtHiName" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Hi, Dwayne">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Text>
+                  <ImageView fitHeight="18.0" fitWidth="192.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/login/icons8_expand_arrow_50px.png" />
+                     </image>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </ImageView>
+               </children>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
-            </ImageView>
-            <Text layoutX="1077.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Hi, Dwayne">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <cursor>
-                  <Cursor fx:constant="DEFAULT" />
-               </cursor>
-            </Text>
+            </HBox>
             <ImageView fx:id="imgNavigationBarArrow" fitHeight="34.0" fitWidth="28.0" layoutX="312.0" layoutY="32.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../Images/general/icons8_forward_100px.png" />
@@ -249,5 +253,81 @@
             <Insets bottom="3.0" left="5.0" top="3.0" />
          </padding>
       </HBox>
+      <VBox fx:id="DropDownMenu" layoutX="1206.0" layoutY="65.0" prefHeight="192.0" prefWidth="121.0" style="-fx-background-color: EEEEEE; -fx-border-color: A6A6A6; -fx-border-width: 1;">
+         <children>
+            <HBox fx:id="hboxHelp" alignment="CENTER_LEFT" onMouseClicked="#MenuHelp" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+               <children>
+                  <ImageView fitHeight="27.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/login/icons8_information_50px.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <viewport>
+                        <Rectangle2D />
+                     </viewport>
+                  </ImageView>
+                  <Label text="Help" textFill="RED" HBox.hgrow="NEVER">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets left="5.0" />
+               </padding>
+            </HBox>
+            <HBox fx:id="hboxSignout" alignment="CENTER_LEFT" onMouseClicked="#MenuSignOut" prefHeight="100.0" prefWidth="200.0" spacing="7.0">
+               <children>
+                  <ImageView fitHeight="26.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/login/icons8_logout_rounded_left_50px.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </ImageView>
+                  <Label text="SignOut" textFill="RED">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets left="5.0" />
+               </padding>
+            </HBox>
+            <HBox fx:id="hboxExit" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+               <children>
+                  <ImageView fitHeight="26.0" fitWidth="30.0" onMouseClicked="#MenuExit" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../Images/login/icons8_cancel_50px.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Exit" textFill="RED">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets left="5.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
    </children>
 </AnchorPane>
