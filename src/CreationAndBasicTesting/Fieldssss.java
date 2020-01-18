@@ -31,13 +31,21 @@ public class Fieldssss {
 
 		// System.out.println(db.getEmployees().size());
 
-		//System.out.println(db.getSupervisorEmpNum());
-		
-		
-		
-		System.out.println(db.getMaintainanceManagers());
+		// System.out.println(db.getSupervisorEmpNum());
 
+		// System.out.println(db.getMaintainanceManagers());
+		PhaseStatus phStatus = PhaseStatus.Active_And_Waiting_For_Time_Extension;
+		switch (phStatus) {
+		case Active:
+		case Active_And_Waiting_For_Time_Extension:
+			System.out.println("ddd");
+			break;
+		default:
+			System.out.println("GGG");
+
+			break;
+
+		}
 	}
-	
 
 }

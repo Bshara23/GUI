@@ -100,9 +100,13 @@ public class ListOfRequestsForManagerController implements Initializable {
 
 	@FXML
 	private ImageView imgMenu;
+
 	@FXML
 	private TextField tfSeachByReqId;
 	private ArrayList<Node> tableButtons;
+
+	@FXML
+	private HBox hbChangesDoneBySupervisor;
 
 	public static PhaseType phaseType;
 
@@ -119,7 +123,7 @@ public class ListOfRequestsForManagerController implements Initializable {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		imgRefresh.setOnMousePressed(event->{
+		imgRefresh.setOnMousePressed(event -> {
 			NavigationBar.reload();
 		});
 		initXTableX();
@@ -206,6 +210,15 @@ public class ListOfRequestsForManagerController implements Initializable {
 						(currentRowIndex + 1) + "-" + (currentRowIndex + rowCountLimit) + " of " + countOfRequests);
 			}
 
+		});
+
+		hbChangesDoneBySupervisor.setCursor(Cursor.HAND);
+		ControllerManager.setEffect(hbChangesDoneBySupervisor, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		ControllerManager.setOnHoverEffect(hbChangesDoneBySupervisor, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
+				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		
+		hbChangesDoneBySupervisor.setOnMousePressed(event -> {
+			NavigationBar.next("Changes Done by Supervisor", FxmlNames.CHANGES_DONE_BY_SUPERVISOR);
 		});
 
 		checkForRequests();

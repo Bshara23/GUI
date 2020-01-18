@@ -18,6 +18,7 @@ import Entities.ExecutionReport;
 import Entities.File;
 import Entities.Message;
 import Entities.SqlObject;
+import Entities.SupervisorDeadlineUpdate;
 import Entities.SystemUser;
 import Entities.TimeException;
 import Entities.Phase;
@@ -199,17 +200,91 @@ public class Server extends AbstractServer {
 
 		Command command = srMsg.getCommand();
 		switch (command) {
-		
-		
-		case logOut:
+
+		case getSupervisorDeadlineUpdate:
 			
-			String usernameToLogOut = (String) srMsg.getAttachedData()[0];
+			ArrayList<SupervisorDeadlineUpdate> sdus = db.getSupervisorDeadlineUpdate();
 			
-			boolean logOutSucces = db.logOut(usernameToLogOut);
-			
-			sendMessageToClient(client, command, logOutSucces);
+			sendMessageToClient(client, command, sdus);
 
 			
+			
+			break;
+		
+		case updateDeadline:
+
+			Phase p48 = (Phase) srMsg.getAttachedData()[0];
+
+			Timestamp oldDeadline = (Timestamp) srMsg.getAttachedData()[1];
+
+			sendUserMessage("Deadline update", db.getUsernameOfManager(),
+					"Deadline changed from: " + DateUtil.toString(oldDeadline) + " to: "
+							+ DateUtil.toString(p48.getDeadline()) + " by the supervisor",
+					-1, -1);
+
+			db.updateByObject(p48);
+
+			SupervisorDeadlineUpdate sdu = new SupervisorDeadlineUpdate(-1, p48.getPhaseID(), db.getSupervisorEmpNum(),
+					DateUtil.now(), oldDeadline, p48.getDeadline());
+			
+			db.insertSupervisorDeadlineUpdate(sdu);
+
+			sendMessageToClient(client, command);
+
+			break;
+
+		case UpdateShortcuts:
+			int count;
+			String IssReqShortcut = (String) srMsg.getAttachedData()[0];
+			String IssReqShortcutbtn = (String) srMsg.getAttachedData()[1];
+
+			String ONotifShortcut = (String) srMsg.getAttachedData()[2];
+			String ONotifShortcutbtn = (String) srMsg.getAttachedData()[3];
+
+			String OMessShortcut = (String) srMsg.getAttachedData()[4];
+			String OMessShortcutbtn = (String) srMsg.getAttachedData()[5];
+
+			String OMyReqShortcut = (String) srMsg.getAttachedData()[6];
+			String OMyReqShortcutbtn = (String) srMsg.getAttachedData()[7];
+
+			String SignOutShortcut = (String) srMsg.getAttachedData()[8];
+			String SignOutShortcutbtn = (String) srMsg.getAttachedData()[9];
+
+			String OpenEmpShortcut = (String) srMsg.getAttachedData()[10];
+			String OpenEmpShortcutbtn = (String) srMsg.getAttachedData()[11];
+
+			String OpenAnalyticsShortcut = (String) srMsg.getAttachedData()[12];
+			String OpenAnalyticsShortcutbtn = (String) srMsg.getAttachedData()[13];
+
+			String OpReqTreatShortcut = (String) srMsg.getAttachedData()[14];
+			String OpReqTreatShortcutbtn = (String) srMsg.getAttachedData()[15];
+
+			String gobackcomb = (String) srMsg.getAttachedData()[16];
+			String gobackcombbtn = (String) srMsg.getAttachedData()[17];
+
+			String username = (String) srMsg.getAttachedData()[18];
+
+			count = +db.UpdateShortcuts(username, IssReqShortcutbtn, IssReqShortcut);
+			count = +db.UpdateShortcuts(username, ONotifShortcutbtn, ONotifShortcut);
+			count = +db.UpdateShortcuts(username, OMessShortcutbtn, OMessShortcut);
+			count = +db.UpdateShortcuts(username, OMyReqShortcutbtn, OMyReqShortcut);
+			count = +db.UpdateShortcuts(username, SignOutShortcutbtn, SignOutShortcut);
+			count = +db.UpdateShortcuts(username, OpenEmpShortcutbtn, OpenEmpShortcut);
+			count = +db.UpdateShortcuts(username, OpenAnalyticsShortcutbtn, OpenAnalyticsShortcut);
+			count = +db.UpdateShortcuts(username, OpReqTreatShortcutbtn, OpReqTreatShortcut);
+
+			sendMessageToClient(client, command, count);
+
+			break;
+
+		case logOut:
+
+			String usernameToLogOut = (String) srMsg.getAttachedData()[0];
+
+			boolean logOutSucces = db.logOut(usernameToLogOut);
+
+			sendMessageToClient(client, command, logOutSucces);
+
 			break;
 
 		case getCommitteeDetails:
@@ -237,12 +312,21 @@ public class Server extends AbstractServer {
 				db.updateCommitteeMember(oldComMemEmpNum, newComMemEmpNum);
 			}
 
+			sendUserMessage("Role change", db.getUsernameByEmpNumber(oldComMemEmpNum),
+					"You are not a committee member anymore.", -1, -1);
+			sendUserMessage("Role change", db.getUsernameByEmpNumber(newComMemEmpNum),
+					"You have been assigned as a committee member!", -1, -1);
+
 			sendMessageToClient(client, command, isComMem);
 
 			break;
 
 		case updateSupervisor:
 			long supEmpNum = (long) srMsg.getAttachedData()[0];
+
+			sendUserMessage("Role change", db.getUsernameOfSupervisor(), "You are not the supervisor anymore.", -1, -1);
+			sendUserMessage("Role change", db.getUsernameByEmpNumber(supEmpNum),
+					"You have been assigned as the supervisor!", -1, -1);
 
 			db.updateSupervisor(db.getSupervisorEmpNum(), supEmpNum);
 
@@ -272,6 +356,10 @@ public class Server extends AbstractServer {
 			long empNum090989 = (long) srMsg.getAttachedData()[1];
 
 			db.updateDepartmentManager(department, empNum090989);
+
+			sendUserMessage("New role: Department " + department + " maintenance manager",
+					db.getUsernameByEmpNumber(empNum090989),
+					"You have been assigned as the department maintenance manager of " + department, -1, -1);
 
 			sendMessageToClient(client, command);
 
@@ -1507,6 +1595,13 @@ public class Server extends AbstractServer {
 
 	public String getHostName() {
 		return inetAddress.getHostName();
+	}
+
+	public static void onShutDown() {
+		ArrayList<SystemUser> users = db.getAllUsers();
+		for (SystemUser s : users) {
+			db.logOut(s.getUserName());
+		}
 	}
 
 }

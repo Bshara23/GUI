@@ -147,6 +147,9 @@ public class ServerGUIController extends Application implements Initializable {
 		Server.addServerStartedEvent(onServerStart);
 
 		VoidFunc onServerStop = () -> {
+			
+			Server.onShutDown();
+			
 			lblStatus.setText("Stopped");
 			cStatus.setFill(Color.RED);
 			Server.stopCheckingForTimeExceptions();

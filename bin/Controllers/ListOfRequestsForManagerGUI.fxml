@@ -78,5 +78,19 @@
             </ImageView>
          </children>
       </AnchorPane>
+      <HBox fx:id="hbChangesDoneBySupervisor" alignment="CENTER" layoutX="328.0" layoutY="162.0" spacing="5.0">
+         <children>
+            <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Images/supervisor/icons8_change_50px.png" />
+               </image>
+            </ImageView>
+            <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="View changes done by supervisor">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Text>
+         </children>
+      </HBox>
    </children>
 </AnchorPane>

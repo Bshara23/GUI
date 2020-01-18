@@ -58,4 +58,6 @@ public class FxmlNames {
 	public static final String CURRENT_SUPERVISOR = "CurrentSupervisor.fxml";
 
 	public static final String CURRENT_COMMITTEE = "CurrentCommittee.fxml";
+
+	public static final String CHANGES_DONE_BY_SUPERVISOR = "ChangesDoneBySupervisor.fxml";
 }

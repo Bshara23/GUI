@@ -176,7 +176,7 @@
       </VBox>
       <AnchorPane fx:id="apHeader" layoutX="155.0" prefHeight="86.0" prefWidth="1348.0" style="-fx-background-color: #ffffff;">
          <children>
-            <ImageView fitHeight="34.0" fitWidth="28.0" layoutX="1287.0" layoutY="37.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="34.0" fitWidth="28.0" layoutX="1287.0" layoutY="37.0" pickOnBounds="true" preserveRatio="true" visible="false">
                <image>
                   <Image url="@../Images/icons8_alarm_100px_2.png" />
                </image>
@@ -186,7 +186,7 @@
             </ImageView>
             <AnchorPane fx:id="apDragger" layoutX="4.0" layoutY="3.0" prefHeight="80.0" prefWidth="1038.0">
                <children>
-                  <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true" visible="false">
                      <image>
                         <Image url="@../Images/icons8_search_50px.png" />
                      </image>
@@ -196,7 +196,7 @@
                   </ImageView>
                </children>
             </AnchorPane>
-            <Label layoutX="1301.0" layoutY="26.0" text="7" textAlignment="CENTER" textFill="#3f8ec9">
+            <Label layoutX="1301.0" layoutY="26.0" text="7" textAlignment="CENTER" textFill="#3f8ec9" visible="false">
                <font>
                   <Font name="System Bold" size="19.0" />
                </font>
@@ -242,7 +242,7 @@
             </ImageView>
          </children>
          <cursor>
-            <Cursor fx:constant="OPEN_HAND" />
+            <Cursor fx:constant="DEFAULT" />
          </cursor>
       </AnchorPane>
       <HBox fx:id="hbNavigator" alignment="CENTER_LEFT" layoutX="155.0" layoutY="86.0" prefHeight="43.0" prefWidth="1336.0" spacing="3.0" style="-fx-border-color: #DDDDDD;">

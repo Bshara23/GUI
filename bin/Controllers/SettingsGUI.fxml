@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="876.0" prefWidth="1348.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.SettingsController">
+<AnchorPane fx:id="anchorpane" prefHeight="876.0" prefWidth="1348.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.SettingsController">
    <children>
       <TextArea layoutX="-150.0" layoutY="26.0" prefHeight="0.0" prefWidth="0.0" />
       <Text fill="#6f6f6f" layoutX="522.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Settings" textAlignment="CENTER" wrappingWidth="323.13671875">
@@ -40,7 +40,7 @@
                   <VBox id="container" prefHeight="128.0" prefWidth="682.0" spacing="15.0" stylesheets="@blueBorder.css">
                      <children>
                         <CheckBox mnemonicParsing="false" text="Colorblind Mode" textFill="#434343" />
-                        <CheckBox mnemonicParsing="false" text="Disable Side Graphics" textFill="#434343" />
+                        <CheckBox fx:id="cbDisableSideGrapgics" mnemonicParsing="false" text="Disable Side Graphics" textFill="#434343" />
                         <CheckBox mnemonicParsing="false" text="Disable Animations" textFill="#434343" />
                         <CheckBox mnemonicParsing="false" text="Disable Loading animations" textFill="#434343" />
                      </children>
@@ -86,12 +86,13 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="25.0" prefWidth="467.0" spacing="15.0">
                            <children>
-                              <HBox prefHeight="25.0" prefWidth="160.0">
+                              <HBox prefHeight="26.0" prefWidth="132.0">
                                  <children>
                                     <Text fill="#434343" strokeType="OUTSIDE" strokeWidth="0.0" text="Issue Request" />
                                  </children>
                               </HBox>
-                              <ComboBox prefWidth="150.0" promptText="Alt + Ctrl + R" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ctrl +" />
+                              <ComboBox fx:id="IssReqShortcut" prefHeight="26.0" prefWidth="159.0" promptText="Alt + Ctrl + R" />
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="25.0" prefWidth="467.0" spacing="15.0">
@@ -101,7 +102,8 @@
                                     <Text fill="#434343" strokeType="OUTSIDE" strokeWidth="0.0" text="Open Notifications" />
                                  </children>
                               </HBox>
-                              <ComboBox prefWidth="150.0" promptText="Alt + Ctrl + N" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ctrl+" />
+                              <ComboBox fx:id="ONotifShortcut" prefWidth="150.0" promptText="Alt + Ctrl + N" />
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="25.0" prefWidth="467.0" spacing="15.0">
@@ -111,7 +113,8 @@
                                     <Text fill="#434343" strokeType="OUTSIDE" strokeWidth="0.0" text="Open Messages" />
                                  </children>
                               </HBox>
-                              <ComboBox prefWidth="150.0" promptText="Alt + Ctrl + M" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ctrl +" />
+                              <ComboBox fx:id="OMessShortcut" prefWidth="150.0" promptText="Alt + Ctrl + M" />
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="25.0" prefWidth="467.0" spacing="15.0">
@@ -121,7 +124,8 @@
                                     <Text fill="#434343" strokeType="OUTSIDE" strokeWidth="0.0" text="Open My Requests" />
                                  </children>
                               </HBox>
-                              <ComboBox prefWidth="150.0" promptText="Unassigned" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ctrl +" />
+                              <ComboBox fx:id="OMyReqShortcut" prefWidth="150.0" promptText="Unassigned" />
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="25.0" prefWidth="467.0" spacing="15.0">
@@ -131,17 +135,8 @@
                                     <Text fill="#434343" strokeType="OUTSIDE" strokeWidth="0.0" text="Sign Out" />
                                  </children>
                               </HBox>
-                              <ComboBox prefWidth="150.0" promptText="Alt + Ctrl + O" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" prefHeight="25.0" prefWidth="467.0" spacing="15.0">
-                           <children>
-                              <HBox minWidth="160.0">
-                                 <children>
-                                    <Text fill="#434343" strokeType="OUTSIDE" strokeWidth="0.0" text="Sing Out and Exit" />
-                                 </children>
-                              </HBox>
-                              <ComboBox prefWidth="150.0" promptText="Alt + Ctrl + E" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ctrl +" />
+                              <ComboBox fx:id="SignOutShortcut" prefWidth="150.0" promptText="Alt + Ctrl + O" />
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="25.0" prefWidth="467.0" spacing="15.0">
@@ -151,7 +146,8 @@
                                     <Text fill="#434343" strokeType="OUTSIDE" strokeWidth="0.0" text="Open Employees" />
                                  </children>
                               </HBox>
-                              <ComboBox prefWidth="150.0" promptText="Unassigned" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ctrl +" />
+                              <ComboBox fx:id="OpenEmpShortcut" prefWidth="150.0" promptText="Unassigned" />
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="25.0" prefWidth="467.0" spacing="15.0">
@@ -161,7 +157,8 @@
                                     <Text fill="#434343" strokeType="OUTSIDE" strokeWidth="0.0" text="Open Analytics" />
                                  </children>
                               </HBox>
-                              <ComboBox prefWidth="150.0" promptText="Alt + Ctrl + A" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ctrl +" />
+                              <ComboBox fx:id="OpenAnalyticsShortcut" prefWidth="150.0" promptText="Alt + Ctrl + A" />
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="25.0" prefWidth="467.0" spacing="15.0">
@@ -171,15 +168,23 @@
                                     <Text fill="#434343" strokeType="OUTSIDE" strokeWidth="0.0" text="Open Requests Treatment" />
                                  </children>
                               </HBox>
-                              <ComboBox prefWidth="150.0" promptText="Alt + Ctrl + T" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ctrl +" />
+                              <ComboBox fx:id="OpReqTreatShortcut" prefWidth="150.0" promptText="Alt + Ctrl + T" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" layoutX="27.0" layoutY="348.0" prefHeight="26.0" prefWidth="549.0" spacing="15.0">
+                           <children>
+                              <HBox minWidth="160.0">
+                                 <children>
+                                    <Text fill="#434343" strokeType="OUTSIDE" strokeWidth="0.0" text="Go back" />
+                                 </children>
+                              </HBox>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ctrl +" />
+                              <ComboBox fx:id="gobackcomb" prefWidth="150.0" promptText="Alt + Ctrl + T" />
                            </children>
                         </HBox>
                      </children>
                   </VBox>
-               </children>
-            </VBox>
-            <HBox alignment="CENTER_RIGHT" spacing="15.0">
-               <children>
                   <HBox fx:id="hbApplyChanges" alignment="CENTER_RIGHT" minWidth="125.0" prefHeight="26.0" prefWidth="125.0" spacing="10.0">
                      <children>
                         <ImageView fitHeight="33.0" fitWidth="39.0" pickOnBounds="true" preserveRatio="true">
@@ -194,7 +199,8 @@
                      </padding>
                   </HBox>
                </children>
-            </HBox>
+            </VBox>
+            <HBox alignment="CENTER_RIGHT" spacing="15.0" />
             <VBox prefHeight="200.0" prefWidth="100.0" />
          </children>
          <padding>

@@ -34,6 +34,7 @@ public class AppManager {
 	private static List<Func> initialFunctions;
 
 	private static Random rnd;
+	public static Timeline timeline;
 	
 	static {
 		initialFunctions = Collections.synchronizedList(new ArrayList<Func>());
@@ -50,7 +51,7 @@ public class AppManager {
 		
 		lastTime = System.nanoTime();
 
-		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(16.6666), event -> {
+		timeline = new Timeline(new KeyFrame(Duration.millis(16.6666), event -> {
 
 			time = new Date().getTime() - startTime;
 			time /= 1000;
@@ -65,6 +66,7 @@ public class AppManager {
 		}));
 		timeline.setCycleCount(Animation.INDEFINITE);
 		timeline.play();
+		
 	}
 
 	// This class has to be static in order to be used in a static function

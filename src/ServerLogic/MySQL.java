@@ -2074,4 +2074,70 @@ public class MySQL extends MySqlConnBase {
 		return executePreparedStatement(query, prepS) == 1;
 	}
 
+	public int UpdateShortcuts(String username, String shortcutsbtn, String shortcutsname) {
+
+		String query = "UPDATE `icm`.`shortcuts` SET `shortcutsbtn`= ? "
+				+ "  WHERE (`shortcutsname` = ? AND `userName` = ?);";
+		IPreparedStatement prepS = ps -> {
+			try {
+
+				ps.setString(1, shortcutsbtn);
+				ps.setString(2, shortcutsname);
+				ps.setString(3, username);
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		return executePreparedStatement(query, prepS);
+
+	}
+
+	public void insertSupervisorDeadlineUpdate(SupervisorDeadlineUpdate sdu) {
+		String query = "INSERT INTO `icm`.`supervisordeadlineupdate` (`phaseId`, `superEmpNum`, `dateOfChange`, `oldDeadline`, `newDeadline`) VALUES (?, ?, ?, ?, ?);";
+		IPreparedStatement prepS = ps -> {
+			try {
+
+				ps.setLong(1, sdu.getPhaseId());
+				ps.setLong(2, sdu.getSuperEmpNum());
+
+				ps.setTimestamp(3, sdu.getDateOfChange());
+				ps.setTimestamp(4, sdu.getOldDeadline());
+				ps.setTimestamp(5, sdu.getNewDeadline());
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		executePreparedStatement(query, prepS);
+	}
+
+	public ArrayList<SupervisorDeadlineUpdate> getSupervisorDeadlineUpdate() {
+		String query = "SELECT * FROM icm.supervisordeadlineupdate;";
+
+		ArrayList<SupervisorDeadlineUpdate> results = new ArrayList<SupervisorDeadlineUpdate>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				while (rs.next()) {
+					SupervisorDeadlineUpdate sdu = new SupervisorDeadlineUpdate(rs.getLong(1), rs.getLong(2),
+							rs.getLong(3), rs.getTimestamp(4), rs.getTimestamp(5), rs.getTimestamp(6));
+					
+					results.add(sdu);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		return results;
+	}
+
 }

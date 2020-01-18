@@ -12,6 +12,7 @@ import Controllers.Logic.FxmlNames;
 import Entities.SystemUser;
 import Protocol.Command;
 import Utility.ControllerSwapper;
+import Utility.ShortcutManager;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -85,6 +86,8 @@ public class LogInController extends Application implements Initializable {
 
 	@FXML
 	private Text iFrogotMyPassword;
+
+	private ShortcutManager sm;
 
 	private static boolean connectedToServer;
 
@@ -263,6 +266,8 @@ public class LogInController extends Application implements Initializable {
 
 			e.printStackTrace();
 		}
+		sm = new ShortcutManager(stage);
+
 		stage.setScene(new Scene(root));
 		stage.setTitle("ICM System");
 		stage.show();

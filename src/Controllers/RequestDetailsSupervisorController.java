@@ -1,6 +1,8 @@
 package Controllers;
 
 import java.net.URL;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -27,12 +29,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.DatePicker;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 public class RequestDetailsSupervisorController implements Initializable {
+
+	private static final String UPDATE_DEADLINE = "UpdateDeadline";
 
 	private static final String FREEZE_PHASE = "freezePhase";
 
@@ -156,6 +161,21 @@ public class RequestDetailsSupervisorController implements Initializable {
 	@FXML
 	private HBox hbFreezeProcess;
 
+	@FXML
+	private HBox hbChangeDeadline;
+
+	@FXML
+	private DatePicker dpChangeDeadline;
+
+	@FXML
+	private HBox hbChangeDeadlineDateContainer;
+
+	@FXML
+	private ImageView imgOnChangeDeadlineApproved;
+
+	@FXML
+	private ImageView imgOnChangeDeadlineReject;
+
 	private ChangeRequest changeRequest;
 	private Phase selectedPhase;
 
@@ -195,6 +215,62 @@ public class RequestDetailsSupervisorController implements Initializable {
 	}
 
 	private void setButtonsBehaviors() {
+
+		hbChangeDeadline.setCursor(Cursor.HAND);
+		ControllerManager.setEffect(hbChangeDeadline, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		ControllerManager.setOnHoverEffect(hbChangeDeadline, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
+				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
+		hbChangeDeadlineDateContainer.setVisible(false);
+
+		hbChangeDeadline.setOnMousePressed(event -> {
+
+			hbChangeDeadlineDateContainer.setVisible(true);
+		});
+
+		imgOnChangeDeadlineApproved.setCursor(Cursor.HAND);
+		imgOnChangeDeadlineReject.setCursor(Cursor.HAND);
+
+		imgOnChangeDeadlineApproved.setOnMousePressed(event -> {
+
+			if (dpChangeDeadline.getValue() == null) {
+
+				ControllerManager.showErrorMessage("Missing Date", "Missing Date", "Please select a date first", null);
+				return;
+			}
+			
+			if (!dpChangeDeadline.getValue().isAfter(LocalDate.now())) {
+
+				ControllerManager.showErrorMessage("Wrong Date", "Wrong Date", "Please select a date that is after today", null);
+				return;
+			}
+			ControllerManager.showYesNoMessage("Confirm", "Change deadline",
+					"Are you sure you want to change the deadline of this request to " + dpChangeDeadline.getValue(),
+					() -> {
+						Timestamp oldDeadline = requestedPhases.get(currentPhaseIndex).getDeadline();
+						requestedPhases.get(currentPhaseIndex).setDeadline(DateUtil.get(dpChangeDeadline.getValue()));
+						Client.getInstance().requestWithListener(Command.updateDeadline, srMsg -> {
+
+							if (srMsg.getCommand() == Command.updateDeadline) {
+
+								ControllerManager.showInformationMessage("Success", "Deadline changed",
+										"The deadline has been successfully change!", () -> {
+											hbChangeDeadlineDateContainer.setVisible(false);
+											NavigationBar.reload();
+										});
+
+								Client.removeMessageRecievedFromServer(UPDATE_DEADLINE);
+							}
+
+						}, UPDATE_DEADLINE, requestedPhases.get(currentPhaseIndex), oldDeadline);
+
+					}, null);
+		});
+
+		imgOnChangeDeadlineReject.setOnMousePressed(event -> {
+
+			hbChangeDeadlineDateContainer.setVisible(false);
+
+		});
 
 		hbFreezeProcess.setCursor(Cursor.HAND);
 		ControllerManager.setEffect(hbFreezeProcess, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
@@ -415,6 +491,17 @@ public class RequestDetailsSupervisorController implements Initializable {
 			ControllerManager.setFreezeBehavior(btnsAffectedBySuspension);
 		}
 
+		switch (phStatus) {
+		case Active:
+		case Active_And_Waiting_For_Time_Extension:
+			hbChangeDeadline.setVisible(true);
+			break;
+		default:
+			hbChangeDeadline.setVisible(false);
+
+			break;
+		}
+
 		// if the estimated time of completion has been set
 		if (!currentPhase.getEstimatedTimeOfCompletion().equals(DateUtil.NA)) {
 
@@ -556,6 +643,7 @@ public class RequestDetailsSupervisorController implements Initializable {
 			txtRequestedTimeExtension.setText("N/A");
 
 		}
+
 	}
 
 	private void onFreezeProcess() {

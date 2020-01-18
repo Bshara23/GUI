@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -38,7 +39,7 @@
                                           </Text>
                                           <HBox spacing="10.0">
                                              <children>
-                                                <HBox fx:id="hbEditPhaseDetails" alignment="CENTER" spacing="5.0">
+                                                <HBox fx:id="hbEditPhaseDetails" alignment="CENTER" disable="true" spacing="5.0" visible="false">
                                                    <children>
                                                       <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
@@ -202,7 +203,7 @@
                                                       <Insets left="5.0" />
                                                    </padding>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" opacity="0.0" prefHeight="52.0" prefWidth="404.0" spacing="5.0">
+                                                <HBox alignment="CENTER_LEFT" opacity="0.0" prefHeight="49.0" prefWidth="404.0" spacing="5.0">
                                                    <children>
                                                       <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
@@ -226,7 +227,7 @@
                                                       <Insets left="5.0" />
                                                    </padding>
                                                 </HBox>
-                                                <HBox fx:id="hbDeadline" alignment="CENTER_LEFT" spacing="30.0">
+                                                <HBox fx:id="hbDeadline" alignment="CENTER_LEFT" prefHeight="34.0" prefWidth="404.0" spacing="30.0">
                                                    <children>
                                                       <ImageView fx:id="imgWarningRequestedTimeExtension2" fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
@@ -272,7 +273,7 @@
                                                       <Insets left="5.0" />
                                                    </padding>
                                                 </HBox>
-                                                <HBox fx:id="hbAssignEvaluatiorContainer" alignment="CENTER_LEFT" spacing="30.0">
+                                                <HBox fx:id="hbAssignEvaluatiorContainer" alignment="CENTER_LEFT" prefHeight="43.0" prefWidth="404.0" spacing="30.0">
                                                    <children>
                                                       <ImageView fx:id="imgWarningAutoAssign" fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                                          <image>
@@ -318,25 +319,44 @@
                                                       <Insets left="5.0" />
                                                    </padding>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" opacity="0.0" prefHeight="38.0" prefWidth="404.0" spacing="5.0">
+                                                <HBox fx:id="hbAssignEvaluatiorContainer1" alignment="CENTER_LEFT" prefHeight="22.0" prefWidth="404.0" spacing="30.0">
                                                    <children>
-                                                      <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../Images/icons8_brake_warning_100px_2.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                      <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../Images/icons8_checkmark_100px.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm" />
-                                                      <ImageView fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../Images/icons8_workers_100px_1.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Choose other employee" />
+                                                      <HBox fx:id="hbChangeDeadline" alignment="CENTER" spacing="5.0">
+                                                         <children>
+                                                            <ImageView fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../Images/supervisor/icons8_edit_50px.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                            <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Change Deadline" underline="true">
+                                                               <font>
+                                                                  <Font size="18.0" />
+                                                               </font>
+                                                            </Text>
+                                                         </children>
+                                                         <cursor>
+                                                            <Cursor fx:constant="HAND" />
+                                                         </cursor>
+                                                      </HBox>
+                                                      <HBox fx:id="hbChangeDeadlineDateContainer" prefHeight="28.0" prefWidth="191.0">
+                                                         <children>
+                                                            <DatePicker fx:id="dpChangeDeadline" prefHeight="25.0" prefWidth="122.0" />
+                                                            <HBox spacing="10.0">
+                                                               <children>
+                                                                  <ImageView fx:id="imgOnChangeDeadlineApproved" fitHeight="27.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                                                     <image>
+                                                                        <Image url="@../Images/Different%20Colors/icons8_checkmark_100px_2.png" />
+                                                                     </image>
+                                                                  </ImageView>
+                                                                  <ImageView fx:id="imgOnChangeDeadlineReject" fitHeight="34.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                                                                     <image>
+                                                                        <Image url="@../Images/login/icons8_delete_50px_1.png" />
+                                                                     </image>
+                                                                  </ImageView>
+                                                               </children>
+                                                            </HBox>
+                                                         </children>
+                                                      </HBox>
                                                    </children>
                                                    <padding>
                                                       <Insets left="5.0" />
