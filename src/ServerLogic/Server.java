@@ -406,16 +406,36 @@ public class Server extends AbstractServer {
 		
 		ArrayList<HashMap<String,Integer>> data = new ArrayList<HashMap<String,Integer>>();
 		
-		int range=(int) ((TimeUnit.DAYS.convert(to.getTime() - from.getTime(), TimeUnit.MILLISECONDS))+1);
-		for (int i = 0; i < range; i++) {
-			
-			data.add(db.GetSumOfTwoDiffernceDateBetweenTwoDates(from,to,range-i-1));
+		int range=(int) ((TimeUnit.DAYS.convert(to.getTime() - from.getTime(), TimeUnit.MILLISECONDS)));
+		
+			int j=0,i=0;
+			boolean end=false;
+			while(j<range) {
+				if(range>10) {
+					if(i+10>range) {
+						j=range%10+i;
+						end=true;
+					}
+					else {
+						
+						j=i+10;
+						end=false;
+					}
+				}else {
+					j++;
+				}
+				System.out.println(i+"->"+j);
+				data.add(db.GetCounterOfPhasesBetweenTwoDates(from,to,i,j));
 			if(range>10) {
-				if(i+10>range)i+=range%10;
-				else i+=10;
+				if(!end) {
+				i+=10;
+				}
+			}else {
+				i++;
 			}
-
-		}
+			
+			}
+		
 		System.out.println(data.toString());
 		// System.out.println(AmountOfData);
 		sendMessageToClient(client, command, data);
@@ -451,7 +471,7 @@ public class Server extends AbstractServer {
 			System.out.println("data of analytic sent to client[Manager]");
 			ArrayList<ArrayList<Integer>> p = new ArrayList<ArrayList<Integer>>();
 
-			for (int i = 0; i < index; i++) {
+			for ( i = 0; i < index; i++) {
 				
 				p.add(db.GetCounterOfPhaseByStatus(i));
 
@@ -506,6 +526,48 @@ public class Server extends AbstractServer {
 			reports=db.getNameOfReports();
 			System.out.println(reports.toString());
 			sendMessageToClient(client, command, reports);
+			break;
+			
+		case GetLatePhases:
+			SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy-MM-dd");
+			Timestamp from3= (Timestamp) srMsg.getAttachedData()[0];
+			Timestamp to3= (Timestamp) srMsg.getAttachedData()[1];
+			ArrayList<HashMap<String,Integer>> results2 =new ArrayList<HashMap<String,Integer>>();
+			range=(int) ((TimeUnit.DAYS.convert(to3.getTime() - from3.getTime(), TimeUnit.MILLISECONDS)));
+			
+			j=i=0;
+			end=false;
+			while(j<range) {
+				if(range>10) {
+					if(i+10>range) {
+						j=range%10+i;
+						end=true;
+					}
+					else {
+						
+						j=i+10;
+						end=false;
+					}
+				}else {
+					j++;
+				}
+				System.out.println(i+"->"+j);
+				results2.add(db.GetLatePhases(from3,i,j));
+			if(range>10) {
+				if(!end) {
+				i+=10;
+				}
+			}else {
+				i++;
+			}
+			
+			}
+		
+		System.out.println(results2.toString());
+		// System.out.println(AmountOfData);
+		sendMessageToClient(client, command, results2);
+			
+			
 			break;
 		default:
 			System.err.println("Error, undefine command [" + srMsg.getCommand() + "]");
@@ -718,11 +780,33 @@ public class Server extends AbstractServer {
 	public Object GetDataByTwoDates(Timestamp from,Timestamp to) {
 		ArrayList<HashMap<String,Integer>> data = new ArrayList<HashMap<String,Integer>>();
 		
-		int range1=(int) ((TimeUnit.DAYS.convert(to.getTime() - from.getTime(), TimeUnit.MILLISECONDS))+1);
-		for (int i = 0; i < range1; i++) {
-			
-			data.add(db.GetCounterOfPhasesBetweenTwoDates(from,to,range1-i-1));
-
+		int range1=(int) (TimeUnit.DAYS.convert(to.getTime() - from.getTime(), TimeUnit.MILLISECONDS));
+		int j=0,i=0;
+		boolean end=false;
+		while(j<range1) {
+			if(range1>10) {
+				if(i+10>range1) {
+					j=range1%10+i;
+					end=true;
+				}
+				else {
+					
+					j=i+10;
+					end=false;
+				}
+			}else {
+				j++;
+			}
+			System.out.println(i+"->"+j);
+			data.add(db.GetCounterOfPhasesBetweenTwoDates(from,to,i,j));
+		if(range1>10) {
+			if(!end) {
+			i+=10;
+			}
+		}else {
+			i++;
+		}
+		
 		}
 		return data;
 	}

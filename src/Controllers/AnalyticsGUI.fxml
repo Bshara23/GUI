@@ -293,21 +293,21 @@
             </HBox>
          </children>
       </VBox>
-      <HBox fx:id="MenuRequestsNumber2" layoutX="305.0" layoutY="384.0" opacity="0.0" prefHeight="43.0" prefWidth="774.0">
+      <HBox fx:id="MenuRequestsNumber2" layoutX="307.0" layoutY="384.0" opacity="0.0" prefHeight="50.0" prefWidth="779.0" style="-fx-border-color: black;">
          <children>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0">
+            <AnchorPane prefHeight="53.0" prefWidth="170.0">
                <children>
-                  <Label fx:id="lblAverageCanceled" alignment="CENTER" contentDisplay="CENTER" layoutX="4.0" layoutY="3.0" prefHeight="48.0" prefWidth="66.6" text="Label" textAlignment="CENTER" textFill="RED">
+                  <Label fx:id="lblAverageCanceled" alignment="CENTER" contentDisplay="CENTER" layoutX="-3.0" prefHeight="53.0" prefWidth="65.0" style="-fx-border-color: black; -fx-background-color: white;" text="Label" textAlignment="CENTER" textFill="RED">
                      <padding>
                         <Insets left="5.0" />
                      </padding>
                   </Label>
-                  <Label fx:id="lblSTDCanceled" alignment="CENTER" layoutX="71.0" layoutY="3.0" prefHeight="48.0" prefWidth="66.6" text="Label" textAlignment="CENTER" textFill="#137930">
+                  <Label fx:id="lblSTDCanceled" alignment="CENTER" layoutX="62.0" prefHeight="53.0" prefWidth="64.3" style="-fx-border-color: black; -fx-background-color: white;" text="Label" textAlignment="CENTER" textFill="#137930">
                      <padding>
                         <Insets left="5.0" />
                      </padding>
                   </Label>
-                  <Label fx:id="lblMedianCanceled" alignment="CENTER" layoutX="138.0" layoutY="3.0" maxHeight="48.0" maxWidth="56.0" prefHeight="48.0" prefWidth="66.0" text="Label" textAlignment="CENTER" textFill="#0073ff">
+                  <Label fx:id="lblMedianCanceled" alignment="CENTER" layoutX="127.0" prefHeight="53.0" prefWidth="65.0" style="-fx-border-color: black; -fx-background-color: white;" text="Label" textAlignment="CENTER" textFill="#0073ff">
                      <padding>
                         <Insets left="5.0" />
                      </padding>
@@ -316,17 +316,17 @@
             </AnchorPane>
             <AnchorPane prefHeight="200.0" prefWidth="200.0">
                <children>
-                  <Label fx:id="lblAverageLocked" alignment="CENTER" prefHeight="53.0" prefWidth="64.3" text="Label" textFill="RED">
+                  <Label fx:id="lblAverageLocked" alignment="CENTER" prefHeight="53.0" prefWidth="64.3" style="-fx-border-color: black; -fx-background-color: white;" text="Label" textFill="RED">
                      <padding>
                         <Insets left="5.0" />
                      </padding>
                   </Label>
-                  <Label fx:id="lblSTDLocked" alignment="CENTER" layoutX="64.0" prefHeight="53.0" prefWidth="64.3" text="Label" textFill="#137930">
+                  <Label fx:id="lblSTDLocked" alignment="CENTER" layoutX="64.0" prefHeight="53.0" prefWidth="64.3" style="-fx-border-color: black; -fx-background-color: white;" text="Label" textFill="#137930">
                      <padding>
                         <Insets left="5.0" />
                      </padding>
                   </Label>
-                  <Label fx:id="lblMedianLocked" alignment="CENTER" layoutX="129.0" prefHeight="53.0" prefWidth="64.3" text="Label" textFill="#0073ff">
+                  <Label fx:id="lblMedianLocked" alignment="CENTER" layoutX="129.0" prefHeight="53.0" prefWidth="64.3" style="-fx-border-color: black; -fx-background-color: white;" text="Label" textFill="#0073ff">
                      <padding>
                         <Insets left="5.0" />
                      </padding>
@@ -335,17 +335,17 @@
             </AnchorPane>
             <AnchorPane prefHeight="200.0" prefWidth="200.0">
                <children>
-                  <Label fx:id="lblAverageClosed" alignment="CENTER" contentDisplay="CENTER" layoutX="-2.0" prefHeight="53.0" prefWidth="64.3" text="Label" textFill="RED">
+                  <Label fx:id="lblAverageClosed" alignment="CENTER" contentDisplay="CENTER" layoutX="-2.0" prefHeight="53.0" prefWidth="67.0" style="-fx-border-color: black; -fx-background-color: white;" text="Label" textFill="RED">
                      <padding>
                         <Insets left="5.0" />
                      </padding>
                   </Label>
-                  <Label fx:id="lblSTDClosed" alignment="CENTER" layoutX="66.0" prefHeight="53.0" prefWidth="64.3" text="Label" textFill="#137930">
+                  <Label fx:id="lblSTDClosed" alignment="CENTER" layoutX="64.0" prefHeight="53.0" prefWidth="67.0" style="-fx-border-color: black; -fx-background-color: white;" text="Label" textFill="#137930">
                      <padding>
                         <Insets left="5.0" />
                      </padding>
                   </Label>
-                  <Label fx:id="lblMedianClosed" alignment="CENTER" layoutX="131.0" prefHeight="53.0" prefWidth="64.3" text="Label" textFill="#0073ff">
+                  <Label fx:id="lblMedianClosed" alignment="CENTER" layoutX="131.0" prefHeight="53.0" prefWidth="64.3" style="-fx-border-color: black; -fx-background-color: white;" text="Label" textFill="#0073ff">
                      <padding>
                         <Insets left="5.0" />
                      </padding>
@@ -354,17 +354,17 @@
             </AnchorPane>
             <AnchorPane prefHeight="200.0" prefWidth="198.0">
                <children>
-                  <Label fx:id="lblAverageActive" alignment="CENTER" contentDisplay="CENTER" prefHeight="53.0" prefWidth="64.3" text="Label" textFill="RED">
+                  <Label fx:id="lblAverageActive" alignment="CENTER" contentDisplay="CENTER" prefHeight="53.0" prefWidth="64.3" style="-fx-border-color: black; -fx-background-color: white;" text="Label" textFill="RED">
                      <padding>
                         <Insets left="5.0" />
                      </padding>
                   </Label>
-                  <Label fx:id="lblSTDActive" alignment="CENTER" layoutX="65.0" prefHeight="53.0" prefWidth="64.3" text="Label" textFill="#137930">
+                  <Label fx:id="lblSTDActive" alignment="CENTER" layoutX="65.0" prefHeight="53.0" prefWidth="64.3" style="-fx-border-color: black; -fx-background-color: white;" text="Label" textFill="#137930">
                      <padding>
                         <Insets left="5.0" />
                      </padding>
                   </Label>
-                  <Label fx:id="lblMedianActive" alignment="CENTER" layoutX="130.0" prefHeight="53.0" prefWidth="64.3" text="Label" textFill="#0073ff">
+                  <Label fx:id="lblMedianActive" alignment="CENTER" layoutX="130.0" prefHeight="53.0" prefWidth="64.3" style="-fx-border-color: black; -fx-background-color: white;" text="Label" textFill="#0073ff">
                      <padding>
                         <Insets left="5.0" />
                      </padding>
@@ -373,7 +373,7 @@
             </AnchorPane>
          </children>
       </HBox>
-      <AnchorPane fx:id="InformationAboutRequests" layoutX="32.0" layoutY="204.0" opacity="0.0" prefHeight="180.0" prefWidth="200.0">
+      <AnchorPane fx:id="InformationAboutRequests" layoutX="32.0" layoutY="204.0" prefHeight="180.0" prefWidth="200.0">
          <children>
             <HBox prefHeight="60.0" prefWidth="200.0">
                <children>
@@ -404,5 +404,49 @@
             </HBox>
          </children>
       </AnchorPane>
+      <Label fx:id="lblWorkingDay" alignment="CENTER" contentDisplay="CENTER" layoutX="32.0" layoutY="390.0" opacity="0.0" prefHeight="28.0" prefWidth="120.0" text="Working Day" textFill="#00c3ff">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblListOftotalWorkingCount" alignment="CENTER" layoutX="172.0" layoutY="396.0" opacity="0.0" prefHeight="17.0" prefWidth="28.0" text="0" textFill="#00d0ff" />
+      <HBox fx:id="hboxPartC" layoutX="389.0" layoutY="333.0" opacity="0.0" prefHeight="50.0" prefWidth="600.0">
+         <children>
+            <AnchorPane prefHeight="50.0" prefWidth="300.0">
+               <children>
+                  <Label fx:id="lblMedianSum" alignment="CENTER" prefHeight="50.0" prefWidth="100.0" style="-fx-background-color: Whie; -fx-border-color: black;" text="0" textFill="#1a78db" AnchorPane.rightAnchor="0.0" />
+                  <Label fx:id="lblStdSum" alignment="CENTER" prefHeight="50.0" prefWidth="100.0" style="-fx-background-color: Whie; -fx-border-color: black;" text="0" textFill="#1ddd53" AnchorPane.rightAnchor="100.0" />
+                  <Label fx:id="lblAvgSum" alignment="CENTER" prefHeight="50.0" prefWidth="100.0" style="-fx-background-color: Whie; -fx-border-color: black;" text="0" textFill="RED" AnchorPane.rightAnchor="200.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="50.0" prefWidth="300.0">
+               <children>
+                  <Label fx:id="lblMedianCount" alignment="CENTER" prefHeight="50.0" prefWidth="100.0" style="-fx-background-color: Whie; -fx-border-color: black;" text="0" textFill="#1a78db" AnchorPane.rightAnchor="0.0" />
+                  <Label fx:id="lblStdCount" alignment="CENTER" prefHeight="50.0" prefWidth="100.0" style="-fx-background-color: Whie; -fx-border-color: black;" text="0" textFill="#1ddd53" AnchorPane.rightAnchor="100.0" />
+                  <Label fx:id="lblAvgCount" alignment="CENTER" prefHeight="50.0" prefWidth="100.0" style="-fx-background-color: Whie; -fx-border-color: black;" text="0" textFill="RED" AnchorPane.rightAnchor="200.0" />
+               </children>
+            </AnchorPane>
+         </children>
+      </HBox>
+      <HBox fx:id="hboxPartCHeader" layoutX="389.0" layoutY="283.0" opacity="0.0" prefHeight="50.0" prefWidth="600.0">
+         <children>
+            <Label alignment="CENTER" text="Sums" textFill="#1a78db">
+               <font>
+                  <Font size="35.0" />
+               </font>
+               <HBox.margin>
+                  <Insets left="105.0" />
+               </HBox.margin>
+            </Label>
+            <Label alignment="CENTER" text="Counts" textFill="#1a78db">
+               <font>
+                  <Font size="35.0" />
+               </font>
+               <HBox.margin>
+                  <Insets left="205.0" />
+               </HBox.margin>
+            </Label>
+         </children>
+      </HBox>
    </children>
 </AnchorPane>

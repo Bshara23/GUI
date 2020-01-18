@@ -174,7 +174,6 @@ public class AnalyticsGUIController implements Initializable {
 
     @FXML
     private Label lblSTDActive;
-
     @FXML
     private Label lblMedianActive;
     @FXML
@@ -183,6 +182,34 @@ public class AnalyticsGUIController implements Initializable {
     private HBox MenuRequestsNumber2;
     @FXML
     private HBox MenuRequestsNumbers;
+    @FXML
+    private Label lblListOftotalWorkingCount;
+    @FXML
+    private Label lblWorkingDay;
+    @FXML
+    private HBox hboxPartC;
+
+    @FXML
+    private Label lblMedianSum;
+
+    @FXML
+    private Label lblStdSum;
+
+    @FXML
+    private Label lblAvgSum;
+
+    @FXML
+    private Label lblMedianCount;
+
+    @FXML
+    private Label lblStdCount;
+
+    @FXML
+    private Label lblAvgCount;
+
+    @FXML
+    private HBox hboxPartCHeader;
+    ArrayList<HashMap<String,ArrayList<Integer>>> results2;
 	Timestamp date1;
 	Timestamp date2;
 	private ArrayList<Node> buttons;
@@ -196,14 +223,15 @@ public class AnalyticsGUIController implements Initializable {
 	Series<String,Number> Canceled =new Series<String,Number>();
 	Series<String,Number> Locked =new Series<String,Number>();
 	Series<String,Number> Closed =new Series<String,Number>();
-	Series<String,Number> totalWorkingCount=new Series<String,Number>();
 	Series<String,Number> SumOfDates=new Series<String,Number>();
+	Series<String,Number> SumOfCounts=new Series<String,Number>();
+	Series<String,Number> SumOfSums =new Series<String,Number>();
 	int requestsNumber = 0;
 	int requestsActive = 0;
 	int requestsLocked = 0;
 	int requestsCanceled = 0;
 	int requestsClosed = 0;
-	int totalWorkingCount1=0;
+	
 	ArrayList<HashMap<String, Integer>> results;
 	private static  ArrayList<XYChart.Series>  ser = new ArrayList<XYChart.Series>();
 
@@ -239,9 +267,12 @@ public class AnalyticsGUIController implements Initializable {
 		}
 
 		ControllerManager.setEffect(hbBtnLineChart, CommonEffects.REQUEST_DETAILS_BUTTON_BLUE);
-		pieChartRequests.setOpacity(0);
-		bc.setOpacity(0);
 		
+		InformationAboutRequests.setOpacity(1);
+		MenuRequestsNumber2.setOpacity(1);
+		MenuRequestsNumbers.setOpacity(1);
+		chartSaReqestExecution.setOpacity(1);
+		bc.setOpacity(0);
 		try {
 	    	 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		 	Timestamp firstDate = new Timestamp(System.currentTimeMillis());
@@ -264,76 +295,163 @@ public class AnalyticsGUIController implements Initializable {
 
 
 	}
-
-	public void setData3() {
-		Client.getInstance().addMessageRecievedFromServer("GetSumOfTwoDiffernceDateBetweenTwoDates", rsMsg -> {
-			if (rsMsg.getCommand() == Command.GetSumOfTwoDiffernceDateBetweenTwoDates) {
+	public void setData4() {
+		Client.addMessageRecievedFromServer("GetLatePhases", rsMsg -> {
+			if (rsMsg.getCommand() == Command.GetLatePhases) {
 				
 				bc.setTitle("");
 				bc.setBarGap(2);
 			    xAxis.setLabel("Day");       
 			    yAxis.setLabel("Value");
-			    bc.getData().removeAll(Canceled,Locked,Active,Closed,totalWorkingCount,SumOfDates);
+			    bc.getData().removeAll(Canceled,Locked,Active,Closed,SumOfDates,SumOfCounts,SumOfSums);
 			    ser.removeAll(ser);
 			    Active =new Series<String,Number>();
 				Canceled =new Series<String,Number>();
 				Locked =new Series<String,Number>();
 				Closed =new Series<String,Number>();
 				SumOfDates=new Series<String,Number>();
-				totalWorkingCount=new Series<String,Number>();
-			    double sum=0;
+				SumOfSums= new Series<String,Number>();
+				SumOfCounts =new Series<String,Number>();
+				SumOfSums.setName("SumOfsums");
+				SumOfCounts.setName("SumOfCounts");
+			    double sumOCounts=0;
+			    double sumOfSums=0;
 			    SumOfDates.setName("Data");
-				ArrayList<Double> data= new ArrayList<>();
-		    	results = (ArrayList<HashMap<String,Integer>>)rsMsg.getAttachedData()[0];
+				ArrayList<Double> ListOfSumOfSums= new ArrayList<>();
+				ArrayList<Double> ListOfSumOfCounts= new ArrayList<>();
+				results =(ArrayList<HashMap<String,Integer>>) rsMsg.getAttachedData()[0];
+		    	ser.add(SumOfSums);
+		    	ser.add(SumOfCounts);
 		    	 int size=results.size();
 		    	
 				for(int i=0;i<results.size();i++)
 				{
 					
-				 for(String r:results.get(i).keySet()) {
-					 
-				 			sum+=(double)results.get(i).get(r);
-				 			data.add((double)results.get(i).get(r));
+					 for(String r:results.get(i).keySet()) {
+						 switch(r) {
+						case "SumOfCounts":
+							 ListOfSumOfCounts.add((double)results.get(i).get(r));
+							 break;
+						 case"SumOfSums":
+							 ListOfSumOfSums.add((double)results.get(i).get(r));
+							 break;
+						 }
+						
 					 }
-					
+					 SumOfCounts.getData().add(new XYChart.Data(i+"",ListOfSumOfCounts.get(i)));
+					 SumOfSums.getData().add(new XYChart.Data(i+"",ListOfSumOfSums.get(i)));
 						 
-						 SumOfDates.getData().add(new XYChart.Data(i+"",sum));
-						 sum=0;
+						
 				 }
+				
 				bc.getData().clear();
 				bc.layout();
-				bc.getData().add(SumOfDates);
+				bc.getData().add(SumOfCounts);
+				bc.getData().add(SumOfSums);
+			
+				
+				double avgSumOfSums,stdSumOfSums,medianSumOfSums,avgSumOfCounts,stdSumOfCounts,medianSumOfCounts;
+				avgSumOfSums=average(ListOfSumOfSums);
+				stdSumOfSums=std(ListOfSumOfSums,avgSumOfSums);
+				medianSumOfSums=median(ListOfSumOfSums);
+				
+				avgSumOfCounts=average(ListOfSumOfCounts);
+				stdSumOfCounts=std(ListOfSumOfCounts,avgSumOfCounts);
+				medianSumOfCounts=median(ListOfSumOfCounts);
+				
 				DecimalFormat df = new DecimalFormat("#.##");
+				
+				lblAvgSum.setText(df.format(avgSumOfSums));
+				lblStdSum.setText(df.format(stdSumOfSums));
+				lblMedianSum.setText(df.format(medianSumOfSums));
+				
+				lblAvgCount.setText(df.format(avgSumOfCounts));
+				lblStdCount.setText(df.format(stdSumOfCounts));
+				lblMedianCount.setText(df.format(medianSumOfCounts));
+				
+				
+				
+			}
+		});
+		Client.getInstance().request(Command.GetLatePhases,date1,date2);
+		
+	}
+	public void setData3() {
+		Client.addMessageRecievedFromServer("GetSumOfTwoDiffernceDateBetweenTwoDates", rsMsg -> {
+			if (rsMsg.getCommand() == Command.GetSumOfTwoDiffernceDateBetweenTwoDates) {
+				
+				bc.setTitle("");
+				bc.setBarGap(2);
+			    xAxis.setLabel("Day");       
+			    yAxis.setLabel("Value");
+			    bc.getData().removeAll(Canceled,Locked,Active,Closed,SumOfDates,SumOfCounts,SumOfSums);
+			    ser.removeAll(ser);
+			    Active =new Series<String,Number>();
+				Canceled =new Series<String,Number>();
+				Locked =new Series<String,Number>();
+				Closed =new Series<String,Number>();
+				SumOfDates=new Series<String,Number>();
+				SumOfSums= new Series<String,Number>();
+				SumOfCounts =new Series<String,Number>();
+				
+			    double sum=0;
+			    SumOfDates.setName("Data");
+				ArrayList<Double> data= new ArrayList<>();
+		    	results = (ArrayList<HashMap<String,Integer>>)rsMsg.getAttachedData()[0];
+		    	 int size=results.size();
+		    	ser.add(SumOfDates);
+				for(int i=0;i<results.size();i++)
+				{
+					
+					for(String r:results.get(i).keySet()) {
+						sum=(double)results.get(i).get(r);
+			 			data.add((double)results.get(i).get(r));
+					}
+						 
+					ser.get(0).getData().add(new XYChart.Data(i+"",sum));
+						 sum=0;
+						 
+				 }
+				
+				bc.getData().clear();
+				bc.layout();
+				for(Series<String, Number> x:ser)	
+					bc.getData().add(x);
+			
+				
 			}
 		});
 		Client.getInstance().request(Command.GetSumOfTwoDiffernceDateBetweenTwoDates,date1,date2);
 		
 	}
 	public void SetData2() {
-		Client.getInstance().addMessageRecievedFromServer("GetCounterOfPhasesByStatusDateRange", rsMsg -> {
+		Client.addMessageRecievedFromServer("GetCounterOfPhasesByStatusDateRange", rsMsg -> {
 			if (rsMsg.getCommand() == Command.GetCounterOfPhasesByStatusDateRange||rsMsg.getCommand()==Command.GetTheData) {
 	
 				bc.setTitle("");
 				bc.setBarGap(2);
 			    xAxis.setLabel("Day");       
 			    yAxis.setLabel("Value");
-			    bc.getData().removeAll(Canceled,Locked,Active,Closed,totalWorkingCount,SumOfDates);
+			    bc.getData().removeAll(Canceled,Locked,Active,Closed,SumOfDates,SumOfCounts,SumOfSums);
 			    ser.removeAll(ser);
-				Active =new Series<String,Number>();
+			    Active =new Series<String,Number>();
 				Canceled =new Series<String,Number>();
 				Locked =new Series<String,Number>();
 				Closed =new Series<String,Number>();
-				totalWorkingCount=new Series<String,Number>();
+				SumOfDates=new Series<String,Number>();
+				SumOfSums= new Series<String,Number>();
+				SumOfCounts =new Series<String,Number>();
+			
 			    Canceled.setName("Canceled");
 			    Locked.setName("Locked");
 			    Active.setName("Active");
 			    Closed.setName("Closed");
-			    totalWorkingCount.setName("totalWorkingCount");
+			  
 		     	ser.add(Canceled);
 		    	ser.add(Locked);
 		    	ser.add(Active);
 		    	ser.add(Closed);
-		    	ser.add(totalWorkingCount);
+		    
 				ArrayList<Double> listofActiveRequest= new ArrayList<>();
 				ArrayList<Double> listofClosedRequest= new ArrayList<>();
 				ArrayList<Double> listofCanceledRequest= new ArrayList<>();
@@ -346,7 +464,7 @@ public class AnalyticsGUIController implements Initializable {
 		    	s3 = new XYChart.Series<String, Number>();
 		    	s4 = new XYChart.Series<String, Number>();
 		    	results = (ArrayList<HashMap<String,Integer>>)rsMsg.getAttachedData()[0];
-		    	requestsActive = requestsActive = requestsLocked = requestsClosed= totalWorkingCount1 = 0;
+		    	requestsActive = requestsActive = requestsLocked = requestsClosed = 0;
 		    	
 		    	 int size=results.size();
 		    	 int j=0;
@@ -393,9 +511,9 @@ public class AnalyticsGUIController implements Initializable {
 				 		case "totalWorkingCount":
 				 			
 				 				
-				 			totalWorkingCount1+=(double)results.get(i).get(r);
+				 			
 				 			listoftotalWorkingCount.add((double)results.get(i).get(r));
-							 ser.get(4).getData().add(new XYChart.Data("Day "+i,results.get(i).get(r)));
+							 
 				 			break;
 					 
 					 }	 
@@ -424,7 +542,7 @@ public class AnalyticsGUIController implements Initializable {
 				        return 0;
 				    }} );
 				
-		
+				lblListOftotalWorkingCount.setText(listoftotalWorkingCount.get(0)+"");
 				DecimalFormat df = new DecimalFormat("#.##"); 
 				lblAverageActive.setText(df.format(average(listofActiveRequest))+"");
 				lblAverageCanceled.setText(df.format(average(listofCanceledRequest))+"");
@@ -521,21 +639,37 @@ public class AnalyticsGUIController implements Initializable {
 			MenuRequestsNumber2.setOpacity(1);
 			MenuRequestsNumbers.setOpacity(1);
 			chartSaReqestExecution.setOpacity(1);
+			hboxPartC.setOpacity(0);
+			hboxPartCHeader.setOpacity(0);
 			bc.setOpacity(0);
+			Client.getInstance().request(Command.GetCounterOfPhasesByStatusDateRange, date1,date2);
+	    	SetData2();
 		}
 		if(res.contains("PartB")) {
 			InformationAboutRequests.setOpacity(0);
 			MenuRequestsNumber2.setOpacity(0);
 			MenuRequestsNumbers.setOpacity(0);
 			chartSaReqestExecution.setOpacity(0);
+			lblListOftotalWorkingCount.setOpacity(0);
+			lblWorkingDay.setOpacity(0);
+			hboxPartC.setOpacity(0);
+			hboxPartCHeader.setOpacity(0);
 			bc.setOpacity(1);
+			Client.getInstance().request(Command.GetSumOfTwoDiffernceDateBetweenTwoDates,date1,date2);
+        	setData3();
 		}
 		if(res.contains("PartC")) {
 			InformationAboutRequests.setOpacity(0);
 			MenuRequestsNumber2.setOpacity(0);
 			MenuRequestsNumbers.setOpacity(0);
 			chartSaReqestExecution.setOpacity(0);
-			bc.setOpacity(0);
+			lblListOftotalWorkingCount.setOpacity(0);
+			lblWorkingDay.setOpacity(0);
+			hboxPartC.setOpacity(1);
+			hboxPartCHeader.setOpacity(1);
+			bc.setOpacity(1);
+			Client.getInstance().request(Command.GetLatePhases,date1,date2);
+        	setData4();
 		}
 		
 		txtStatTitle.setText(res);
@@ -569,8 +703,17 @@ public class AnalyticsGUIController implements Initializable {
 		d2 = sdf.parse(secDate.toString());
 		date2 = new Timestamp(d.getTime());
 		date1 = new Timestamp(d2.getTime());
-     	Client.getInstance().request(Command.GetCounterOfPhasesByStatusDateRange, date1,date2);
-    	SetData2();
+		if(txtStatTitle.getText().contains("PartA")) {
+         	Client.getInstance().request(Command.GetCounterOfPhasesByStatusDateRange,date1,date2);
+        	SetData2();
+        	}else if(txtStatTitle.getText().contains("PartB")){
+        		Client.getInstance().request(Command.GetSumOfTwoDiffernceDateBetweenTwoDates,date1,date2);
+            	setData3();
+        	}
+        	else  {
+        		Client.getInstance().request(Command.GetLatePhases,date1,date2);
+            	setData4();
+        	}
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -600,8 +743,17 @@ public class AnalyticsGUIController implements Initializable {
 		d2 = sdf.parse(secDate.toString());
 		date2 = new Timestamp(d.getTime());
 		date1 = new Timestamp(d2.getTime());
-     	Client.getInstance().request(Command.GetCounterOfPhasesByStatusDateRange, date1,date2);
-    	SetData2();
+		if(txtStatTitle.getText().contains("PartA")) {
+         	Client.getInstance().request(Command.GetCounterOfPhasesByStatusDateRange,date1,date2);
+        	SetData2();
+        	}else if(txtStatTitle.getText().contains("PartB")){
+        		Client.getInstance().request(Command.GetSumOfTwoDiffernceDateBetweenTwoDates,date1,date2);
+            	setData3();
+        	}
+        	else  {
+        		Client.getInstance().request(Command.GetLatePhases,date1,date2);
+            	setData4();
+        	}
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -631,8 +783,18 @@ public class AnalyticsGUIController implements Initializable {
 		date2 = new Timestamp(d.getTime());
 		date1 = new Timestamp(d2.getTime());
 		System.out.println(date1+ " "+ date2);
-     	Client.getInstance().request(Command.GetCounterOfPhasesByStatusDateRange, date1,date2);
-    	SetData2();
+		if(txtStatTitle.getText().contains("PartA")) {
+         	Client.getInstance().request(Command.GetCounterOfPhasesByStatusDateRange,date1,date2);
+        	SetData2();
+        	}else if(txtStatTitle.getText().contains("PartB")){
+        		Client.getInstance().request(Command.GetSumOfTwoDiffernceDateBetweenTwoDates,date1,date2);
+            	setData3();
+        	}
+        	else  {
+        		Client.getInstance().request(Command.GetLatePhases,date1,date2);
+            	setData4();
+        	}
+     	
 		} catch (ParseException e) {
 			
 		}
@@ -703,12 +865,10 @@ public class AnalyticsGUIController implements Initializable {
 		            		Client.getInstance().request(Command.GetSumOfTwoDiffernceDateBetweenTwoDates,date1,date2);
 			            	setData3();
 		            	}
-		            	else if(txtStatTitle.getText().contains("PartC")) {
-		            		
-		            	}else {
-		            		System.out.println("unkown select");
+		            	else  {
+		            		Client.getInstance().request(Command.GetLatePhases,date1,date2);
+			            	setData4();
 		            	}
-		            	
 		            } else {
 		            	SetDateRange(event);
 		            }
@@ -768,18 +928,12 @@ public class AnalyticsGUIController implements Initializable {
     	
    
     	Client.getInstance().request(Command.getNameOfReports);
-    	try {
-			this.wait(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
     	GetNameOfReport();
 
     }
     public void GetNameOfReport() {
-    	Client.getInstance().addMessageRecievedFromServer("getNameOfReports", rsMsg -> {
-		if (rsMsg.getCommand() == Command.SaveTheData) {
+    	Client.addMessageRecievedFromServer("getNameOfReports", rsMsg -> {
+		if (rsMsg.getCommand() == Command.getNameOfReports) {
     	Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Select Report");
         ComboBox comboBox = new ComboBox();
@@ -793,7 +947,7 @@ public class AnalyticsGUIController implements Initializable {
         gridPane.setPadding(new Insets(20, 150, 10, 10));
     	
 				ArrayList<String> reports= (ArrayList<String>)rsMsg.getAttachedData()[0];
-				
+				System.out.println("hellow");
 				for(String x:reports)
 				comboBox.getItems().add(x);
 				comboBox.getSelectionModel();
@@ -816,6 +970,6 @@ public class AnalyticsGUIController implements Initializable {
     	
 			}
     	});
-    	Client.getInstance().request(Command.getNameOfReports);
+    	
     }
 }

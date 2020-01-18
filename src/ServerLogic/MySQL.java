@@ -970,16 +970,16 @@ public class MySQL extends MySqlConnBase {
 	 * @author EliaB
 	 * get counter of phases by status from two different dates
 	 * */
-	public HashMap<String,Integer> GetCounterOfPhasesBetweenTwoDates(Timestamp from,Timestamp to, int i){
-		int d=i;
+	public HashMap<String,Integer> GetCounterOfPhasesBetweenTwoDates(Timestamp from,Timestamp to, int minus,int plus){
+		
 		ArrayList<Integer> totalWorkingCount=new ArrayList<>();
 		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		HashMap<String,Integer> results = new HashMap<String,Integer>();
 		String query="select sum(timestampdiff(day,p.startingDate, p.deadline)) from icm.phase as p " + 
-				"where (p.startingDate>= '"+sdf.format(from)+"' and p.deadline<='"+sdf.format(to).toString()+"' - interval "+d+" day ) or " + 
-				"(p.startingDate<='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(from)+"' and p.deadline<='"+sdf.format(to).toString()+"' - interval "+d+" day )or " + 
-				"(p.startingDate>='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(to).toString()+"' - interval "+d+" day  and p.startingDate<='"+sdf.format(to).toString()+"' - interval "+d+" day ) or " + 
-				"(p.startingDate<='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(to).toString()+"' - interval "+d+" day ) ;";
+				"where (p.startingDate>= '"+sdf.format(from)+"' and p.deadline<='"+sdf.format(to).toString()+"'  ) or " + 
+				"(p.startingDate<='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(from)+"' and p.deadline<='"+sdf.format(to).toString()+"'  )or " + 
+				"(p.startingDate>='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(to).toString()+"'  and p.startingDate<='"+sdf.format(to).toString()+"'  ) or " + 
+				"(p.startingDate<='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(to).toString()+"' ) ;";
 		IStatement prepS = rs -> {
 
 			try {
@@ -999,11 +999,9 @@ public class MySQL extends MySqlConnBase {
 		executeStatement(query, prepS);
 		
 		String query1="select count(p.phaseID),p.status from icm.phase as p " + 
-				"where (p.startingDate>= '"+sdf.format(from)+"' and p.deadline<='"+sdf.format(to).toString()+"' - interval "+d+" day ) or " + 
-				"(p.startingDate<='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(from)+"' and p.deadline<='"+sdf.format(to).toString()+"' - interval "+d+" day )or " + 
-				"(p.startingDate>='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(to).toString()+"' - interval "+d+" day  and p.startingDate<='"+sdf.format(to).toString()+"' - interval "+d+" day ) or " + 
-				"(p.startingDate<='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(to).toString()+"' - interval "+d+" day ) " + 
-				"group by p.status;";
+				"where (p.startingDate>= '"+sdf.format(from)+"'  + interval "+minus+" day and p.startingDate<='"+sdf.format(from).toString()+"' + interval "+plus+" day ) or " + 
+					  "(p.deadline>= '"+sdf.format(from)+"'  + interval "+minus+" day and p.deadline<='"+sdf.format(from).toString()+"' + interval "+plus+" day)or " + 
+				"(p.startingDate<='"+sdf.format(from)+"' + interval "+minus+" day and p.deadline>='"+sdf.format(from).toString()+"' + interval "+plus+" day ) group by p.status;";
 		IStatement prepS1 = rs -> {
 
 			try {
@@ -1029,17 +1027,16 @@ public class MySQL extends MySqlConnBase {
 	 * @author EliaB
 	 * get sum of length (estimatedTimeOfCompletion - deadline) where time has extended from two different dates
 	 * */
-	public HashMap<String,Integer> GetSumOfTwoDiffernceDateBetweenTwoDates(Timestamp from,Timestamp to, int i){
-		int d=i;
+	public HashMap<String,Integer> GetSumOfTwoDiffernceDateBetweenTwoDates(Timestamp from,int minus,int plus){
+	
 		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		HashMap<String,Integer> results = new HashMap<String,Integer>();
 		
 		
-		String query="select  sum(timestampdiff(day, p.deadline,p.estimatedTimeOfCompletion)) AS  sum from icm.phase as p " + 
-				"where p.deadline<=p.estimatedTimeOfCompletion and p.hasBeenTimeExtended=1 and  (p.startingDate>= '"+sdf.format(from)+"' and p.deadline<='"+sdf.format(to).toString()+"' - interval "+d+" day ) or " + 
-				"(p.startingDate<='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(from)+"' and p.deadline<='"+sdf.format(to).toString()+"' - interval "+d+" day )or " + 
-				"(p.startingDate>='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(to).toString()+"' - interval "+d+" day  and p.startingDate<='"+sdf.format(to).toString()+"' - interval "+d+" day ) or " + 
-				"(p.startingDate<='"+sdf.format(from)+"' and p.deadline>='"+sdf.format(to).toString()+"' - interval "+d+" day ) ";
+		String query="select   sum(timestampdiff(day, p.deadline,p.estimatedTimeOfCompletion)) AS  sum from icm.phase as p " + 
+				"where p.deadline<=p.estimatedTimeOfCompletion and p.hasBeenTimeExtended=1 and ((p.startingDate>= '"+sdf.format(from)+"'  + interval "+minus+" day and p.startingDate<='"+sdf.format(from).toString()+"' + interval "+plus+" day ) or " + 
+				  "(p.deadline>= '"+sdf.format(from)+"'  + interval "+minus+" day and p.deadline<='"+sdf.format(from).toString()+"' + interval "+plus+" day)or " + 
+			"(p.startingDate<='"+sdf.format(from)+"' + interval "+minus+" day and p.deadline>='"+sdf.format(from).toString()+"' + interval "+plus+" day ));";
 		IStatement prepS = rs -> {
 
 			try {
@@ -1047,7 +1044,7 @@ public class MySQL extends MySqlConnBase {
 
 				while (rs.next()) {
 					
-					results.put(i+"",rs.getInt(1));
+					results.put("["+minus+"-"+plus+"]",rs.getInt(1));
 					
 				}
 
@@ -1061,6 +1058,10 @@ public class MySQL extends MySqlConnBase {
 		
 		
 	}
+	/**
+	 * @author EliaB
+	 * get saved data by the manager
+	 * */
 	public ArrayList<HashMap<String,Integer>> GetData(String reportName){
 		
 		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -1093,6 +1094,42 @@ public class MySQL extends MySqlConnBase {
 		
 		
 	}
+	
+	
+	public HashMap<String,Integer> GetLatePhases(Timestamp from,int minus,int plus){
+		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			HashMap<String,Integer> results = new HashMap<String,Integer>();
+			
+			
+			String query="select   sum(timestampdiff(day, p.estimatedTimeOfCompletion,p.deadline)), count(p.phaseID) AS  sum from icm.phase as p " + 
+					"where p.deadline>p.estimatedTimeOfCompletion and ((p.startingDate>= '"+sdf.format(from)+"'  + interval "+minus+" day and p.startingDate<='"+sdf.format(from).toString()+"' + interval "+plus+" day ) or " + 
+					  "(p.deadline>= '"+sdf.format(from)+"'  + interval "+minus+" day and p.deadline<='"+sdf.format(from).toString()+"' + interval "+plus+" day)or " + 
+				"(p.startingDate<='"+sdf.format(from)+"' + interval "+minus+" day and p.deadline>='"+sdf.format(from).toString()+"' + interval "+plus+" day ));";
+			IStatement prepS = rs -> {
+
+				try {
+					
+			
+					while (rs.next()) {
+						
+						results.put("SumOfCounts", rs.getInt(2));
+						results.put("SumOfSums", rs.getInt(1));
+					}
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+			};
+			executeStatement(query, prepS);
+			return results;
+			
+		
+	}
+	/**
+	 * @author EliaB
+	 * save the wanted datat by the manager
+	 * */
 	public void SaveData(ArrayList<HashMap<String,Integer>> results,Timestamp today) {
 		String query1 = "SELECT max(reportName) FROM icm.statereport ";
 
@@ -1153,6 +1190,10 @@ public class MySQL extends MySqlConnBase {
 		
 		
 	}
+	/**
+	 * @author EliaB
+	 * get array list of reports name in state report
+	 * */
 	public ArrayList<String> getNameOfReports(){
 		ArrayList<String> reports =new ArrayList<>();
 
