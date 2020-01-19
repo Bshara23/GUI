@@ -68,4 +68,6 @@ public class FxmlNames {
 	public static final String CURRENT_COMMITTEE = "CurrentCommittee.fxml";
 
 	public static final String CHANGES_DONE_BY_SUPERVISOR = "ChangesDoneBySupervisor.fxml";
+
+	public static final String loadReportList = "LoadReportList.fxml";
 }

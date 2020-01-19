@@ -238,4 +238,13 @@ public class ActivityReport implements Serializable {
 		this.totalNumOfWorkDays = totalNumOfWorkDays;
 	}
 
+	@Override
+	public String toString() {
+		return "ActivityReport [id=" + id + ", name=" + name + ", date=" + date + ", active=" + active + ", frozen="
+				+ frozen + ", closed=" + closed + ", rejected=" + rejected + ", numOfWorkDays=" + numOfWorkDays
+				+ ", totalActive=" + totalActive + ", totalFrozen=" + totalFrozen + ", totalClosed=" + totalClosed
+				+ ", totalRejected=" + totalRejected + ", totalNumOfWorkDays=" + totalNumOfWorkDays + "]";
+	}
+
+	
 }

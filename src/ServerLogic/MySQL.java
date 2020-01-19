@@ -17,9 +17,9 @@ import Utility.VoidFunc;
 
 /**
  * A MySql class that is built for fast development of Client/Server
- * application. the class contains various methods that are required for this project.
- * methods like insertion, update and select.
- * the class extends the MySqlConnBase class which contains an sql connection class.
+ * application. the class contains various methods that are required for this
+ * project. methods like insertion, update and select. the class extends the
+ * MySqlConnBase class which contains an sql connection class.
  * 
  * @author Bshara
  * 
@@ -2168,6 +2168,28 @@ public class MySQL extends MySqlConnBase {
 		return results.get(0);
 	}
 
+	public int newReportId() {
+		String query = "SELECT MAX(t.id) + 1 FROM icm.activityreport as t;";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+					results.add(rs.getInt(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+
+		return results.size() == 1 ? results.get(0) : 1;
+	}
+
 	public int insertArrayList(ArrayList<Integer> arr) {
 
 		String str;
@@ -2190,6 +2212,31 @@ public class MySQL extends MySqlConnBase {
 		}
 
 		return addr;
+
+	}
+
+	public ArrayList<Integer> getArrayList(int addr) {
+
+		String query = "SELECT a.data FROM icm.array as a\r\n" + "where a.addr = '" + addr + "'\r\n"
+				+ "order by a.index;";
+
+		ArrayList<Integer> results = new ArrayList<Integer>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				while (rs.next()) {
+					results.add(rs.getInt(1));
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+
+		return results;
 
 	}
 
@@ -2383,11 +2430,139 @@ public class MySQL extends MySqlConnBase {
 
 		};
 		executeStatement(query, prepS);
-		
+
 		System.out.println(results);
 
 		return results;
 
 	}
 
+	public ActivityReport getActivityReport(int id, Timestamp dFrom, Timestamp dTo) {
+
+		ArrayList<Integer> activeCnt = new ArrayList<Integer>();
+		ArrayList<Integer> freezeCnt = new ArrayList<Integer>();
+		ArrayList<Integer> closedCnt = new ArrayList<Integer>();
+		ArrayList<Integer> rejectedCnt = new ArrayList<Integer>();
+		ArrayList<Integer> workingDaysCnt = new ArrayList<Integer>();
+
+		int diff = SQLUtil.diff(dTo, dFrom);
+
+		int interval = 10;
+		if (diff % interval == 0) {
+			interval = diff / interval;
+		} else
+			interval = diff / interval + 1;
+
+		for (Timestamp i = dFrom; !i.equals(dTo);) {
+
+			Timestamp to = DateUtil.add(i, interval - 1, 0);
+
+			if (!to.after(dTo)) {
+
+				activeCnt.add(countOfActiveReqests(i, to));
+				freezeCnt.add(countOfFreezeReqests(i, to));
+				closedCnt.add(countOfClosedRequests(i, to));
+				rejectedCnt.add(countOfDeniedRequests(i, to));
+				workingDaysCnt.add(countOfTotalWorkingDays(i, to));
+
+				i = DateUtil.add(to, 1, 0);
+
+			} else {
+
+				activeCnt.add(countOfActiveReqests(i, dTo));
+				freezeCnt.add(countOfFreezeReqests(i, dTo));
+				closedCnt.add(countOfClosedRequests(i, dTo));
+				rejectedCnt.add(countOfDeniedRequests(i, dTo));
+				workingDaysCnt.add(countOfTotalWorkingDays(i, dTo));
+
+				i = dTo;
+			}
+
+		}
+
+		int totalActiveCnt = countOfActiveReqests(dFrom, dTo);
+		int totalFreezeCnt = countOfFreezeReqests(dFrom, dTo);
+		int totalClosedCnt = countOfClosedRequests(dFrom, dTo);
+		int totalRejectedCnt = countOfDeniedRequests(dFrom, dTo);
+		int totalWorkingCnt = countOfTotalWorkingDays(dFrom, dTo);
+
+		ActivityReport ac = new ActivityReport(id, "ActivityReport" + id, DateUtil.NA, activeCnt, freezeCnt, closedCnt,
+				rejectedCnt, workingDaysCnt, totalActiveCnt, totalFreezeCnt, totalClosedCnt, totalRejectedCnt,
+				totalWorkingCnt);
+
+		return ac;
+
+	}
+
+	public ActivityReport getActivityReportById(int repId) {
+		String query = "SELECT * FROM icm.activityreport as a where a.id = '" + repId + "';";
+
+		ArrayList<ActivityReport> results = new ArrayList<ActivityReport>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				if (rs.next()) {
+
+					long id = rs.getLong(1);
+					String name = rs.getString(2);
+					Timestamp date = rs.getTimestamp(3);
+					ArrayList<Integer> active = getArrayList(rs.getInt(4));
+					ArrayList<Integer> frozen = getArrayList(rs.getInt(5));
+					ArrayList<Integer> closed = getArrayList(rs.getInt(6));
+					ArrayList<Integer> rejected = getArrayList(rs.getInt(7));
+					ArrayList<Integer> numOfWorkDays = getArrayList(rs.getInt(8));
+					int totalActive = rs.getInt(9);
+					int totalFrozen = rs.getInt(10);
+					int totalClosed = rs.getInt(11);
+					int totalRejected = rs.getInt(12);
+					int totalNumOfWorkDays = rs.getInt(13);
+					ActivityReport ac = new ActivityReport(id, name, date, active, frozen, closed, rejected,
+							numOfWorkDays, totalActive, totalFrozen, totalClosed, totalRejected, totalNumOfWorkDays);
+
+					results.add(ac);
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+
+		return results.size() == 1 ? results.get(0) : null;
+	}
+
+	public ArrayList<ArrayList<String>> getSimpleReportsData() {
+		String query = "SELECT a.id, a.date, a.name FROM icm.activityreport as a;";
+
+		ArrayList<ArrayList<String>> results = new ArrayList<ArrayList<String>>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				while (rs.next()) {
+
+					long id = rs.getLong(1);
+					Timestamp date = rs.getTimestamp(2);
+					String name = rs.getString(3);
+
+					ArrayList<String> res = new ArrayList<String>();
+					res.add(id + "");
+					res.add(DateUtil.toString(date));
+					res.add(name);
+					
+					results.add(res);
+					
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+
+		return results;
+	}
 }

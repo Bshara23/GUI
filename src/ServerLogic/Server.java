@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
@@ -220,13 +221,45 @@ public class Server extends AbstractServer {
 			
 			
 			break;
-		
+			
+			
+		case getReportsSimpleData:
+			
+			
+			ArrayList<ArrayList<String>> repsData = db.getSimpleReportsData();
+
+			sendMessageToClient(client, command, repsData);
+			
+			break;
+		case getActivityReportById:
+			
+			int repId = (int) srMsg.getAttachedData()[0];
+
+			ActivityReport ac2 = db.getActivityReportById(repId);
+
+			sendMessageToClient(client, command, ac2);
+
+			
+			break;
+			
+		case saveActivityReport:
+			ActivityReport actReport = (ActivityReport) srMsg.getAttachedData()[0];
+
+			actReport.setDate(DateUtil.now());
+			
+			db.insertActivityReport(actReport);
+			
+			sendMessageToClient(client, command, actReport);
+
+			
+			
+			break;
 		case getActivityReport:
 
-			Timestamp dFrom = (Timestamp) srMsg.getAttachedData()[0];
-			Timestamp dTo = (Timestamp) srMsg.getAttachedData()[0];
+			LocalDate dFrom = (LocalDate) srMsg.getAttachedData()[0];
+			LocalDate dTo = (LocalDate) srMsg.getAttachedData()[1];
 
-			ActivityReport ac = getActivityReport(-1, dFrom, dTo, db);
+			ActivityReport ac = db.getActivityReport(-1, DateUtil.get(dFrom), DateUtil.get(dTo));
 
 			sendMessageToClient(client, command, ac);
 
@@ -1636,63 +1669,6 @@ public class Server extends AbstractServer {
 		}
 	}
 
-	public ActivityReport getActivityReport(int id, Timestamp dFrom, Timestamp dTo, MySQL db) {
-
-		ArrayList<Integer> activeCnt = new ArrayList<Integer>();
-		ArrayList<Integer> freezeCnt = new ArrayList<Integer>();
-		ArrayList<Integer> closedCnt = new ArrayList<Integer>();
-		ArrayList<Integer> rejectedCnt = new ArrayList<Integer>();
-		ArrayList<Integer> workingDaysCnt = new ArrayList<Integer>();
-
-		int diff = SQLUtil.diff(dTo, dFrom);
-
-		int interval = 10;
-		if (diff % interval == 0) {
-			interval = diff / interval;
-		} else
-			interval = diff / interval + 1;
-
-		for (Timestamp i = dFrom; !i.before(dTo);) {
-
-			Timestamp to = DateUtil.add(i, interval - 1, 0);
-
-			if (!to.after(dTo)) {
-
-				activeCnt.add(db.countOfActiveReqests(i, to));
-				freezeCnt.add(db.countOfFreezeReqests(i, to));
-				closedCnt.add(db.countOfClosedRequests(i, to));
-				rejectedCnt.add(db.countOfDeniedRequests(i, to));
-				workingDaysCnt.add(db.countOfTotalWorkingDays(i, to));
-
-				i = DateUtil.add(to, 1, 0);
-
-			} else {
-
-				activeCnt.add(db.countOfActiveReqests(i, dTo));
-				freezeCnt.add(db.countOfFreezeReqests(i, dTo));
-				closedCnt.add(db.countOfClosedRequests(i, dTo));
-				rejectedCnt.add(db.countOfDeniedRequests(i, dTo));
-				workingDaysCnt.add(db.countOfTotalWorkingDays(i, dTo));
-
-				i = dTo;
-			}
-
-		}
-
-		int totalActiveCnt = db.countOfActiveReqests(dFrom, dTo);
-		int totalFreezeCnt = db.countOfFreezeReqests(dFrom, dTo);
-		int totalClosedCnt = db.countOfClosedRequests(dFrom, dTo);
-		int totalRejectedCnt = db.countOfDeniedRequests(dFrom, dTo);
-		int totalWorkingCnt = db.countOfTotalWorkingDays(dFrom, dTo);
-
-		ActivityReport ac = new ActivityReport(id, "ActivityReport" + id, DateUtil.NA, activeCnt, freezeCnt, closedCnt,
-				rejectedCnt, workingDaysCnt, totalActiveCnt, totalFreezeCnt, totalClosedCnt, totalRejectedCnt,
-				totalWorkingCnt);
-
-		return ac;
-
-	}
-	
 	
 	
 	
