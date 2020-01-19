@@ -5,6 +5,12 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 
+
+/**
+ * This class contains all the needed information about the phase time extension request as represented in the database.
+ * 
+ * @author Bshara
+ * */
 public class PhaseTimeExtensionRequest extends SqlObject implements Serializable {
 
 	private static PhaseTimeExtensionRequest emptyInstance = new PhaseTimeExtensionRequest(0, 0, 0, null);

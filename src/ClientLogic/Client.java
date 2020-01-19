@@ -5,12 +5,20 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import Protocol.Command;
 import Protocol.SRMessage;
-import Utility.SRMessageFunc;
+import Protocol.SRMessageFunc;
 import Utility.StringFunc;
 import Utility.VoidFunc;
 import javafx.application.Platform;
 import ocsf.client.AbstractClient;
 
+
+/**
+ * This class extends the AbstractClient class,  contains all the methods necessary to setup the client side of a client-server architecture.
+ *  When a client is thus connected to the server, the two programs can then exchange  Object  instances.
+ *  This class provides methods to register to the handleMessageFromServer as an observer, where is the handleMessageFromServer is the observable.
+ *  Other events that can be registered to are: server exception events, server connection closed events and server connection established events.
+ * 
+ * */
 public class Client extends AbstractClient {
 
 	private static Client instance;

@@ -2,6 +2,13 @@ package Controllers.Logic;
 
 import javafx.scene.effect.ColorAdjust;
 
+
+/**
+ * This class is used as a static class to store constant static ColorAdjust effects that are used with the class ControllerManager
+ * to change the colors of the nodes in the controllers, colors are used for things like hover effects or on mouse clicked effects and more...
+ * 
+ *  @author Bshara
+ * */
 public final class CommonEffects {
 	
 	public final static ColorAdjust REQUESTS_TABLE_ELEMENT_BLUE = new ColorAdjust(-0.78, 0.0, 0.55, 1.0); 

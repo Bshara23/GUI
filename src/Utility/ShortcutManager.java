@@ -7,6 +7,12 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
+
+/**
+ * This class is used by the settings controller in the gui and provides a set of functions to implement a shortcuts system.
+ * 
+ * @author Bshara
+ * */
 public class ShortcutManager {
 	final KeyCombination R = new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN);
 	final KeyCombination N = new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN);

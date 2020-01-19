@@ -85,7 +85,7 @@
       </AnchorPane>
       <AnchorPane layoutX="22.0" layoutY="253.0">
          <children>
-            <HBox alignment="CENTER_LEFT" layoutY="10.0" prefHeight="42.0" prefWidth="1307.0" spacing="15.0">
+            <HBox alignment="CENTER_LEFT" layoutY="10.0" prefHeight="42.0" prefWidth="1307.0" spacing="15.0" visible="false">
                <children>
                   <HBox fx:id="hbPrimary" alignment="CENTER_LEFT" prefWidth="157.0" spacing="10.0">
                      <children>
@@ -157,7 +157,7 @@
             </HBox>
          </children>
       </AnchorPane>
-      <Line fx:id="lineTableJob" endX="102.0" layoutX="94.0" layoutY="309.0" startX="-61.0" stroke="RED" strokeLineCap="ROUND" strokeWidth="3.0" />
+      <Line fx:id="lineTableJob" endX="102.0" layoutX="94.0" layoutY="309.0" startX="-61.0" stroke="RED" strokeLineCap="ROUND" strokeWidth="3.0" visible="false" />
       <VBox fx:id="hbMessagesContainer" layoutX="31.0" layoutY="309.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="561.0" prefWidth="1291.0">
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="49.0" prefWidth="1291.0" spacing="50.0" styleClass="d" stylesheets="@message.css">

@@ -2,6 +2,12 @@ package Entities;
 
 import java.io.Serializable;
 
+
+/**
+ * This class contains all the needed data about execution changes committee member as represented in the database.
+ * 
+ * @author Bshara
+ * */
 public class ExecutionChangesCommitteeMember extends Employee implements Serializable {
 
 	private static ExecutionChangesCommitteeMember emptyInstance = new ExecutionChangesCommitteeMember(null, null, null,

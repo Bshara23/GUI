@@ -11,6 +11,12 @@ import ServerLogic.UtilityInterfaces.IPreparedStatement;
 import ServerLogic.UtilityInterfaces.IStatement;
 import Utility.VoidFunc;
 
+/**
+ * This class acts as a layer between the sql connection class and MySql class
+ * to provide more robust implementations of the sql methods.
+ * 
+ * @author Bshara
+ * */
 public abstract class MySqlConnBase {
 
 	protected String username;

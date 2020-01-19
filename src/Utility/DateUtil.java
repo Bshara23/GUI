@@ -6,6 +6,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.TimeZone;
 
+/**
+ * This is a utility class used for date calculations with the class Timestamp
+ * 
+ * @author Bshara
+ * */
 public class DateUtil {
 
 	public static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");

@@ -24,6 +24,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+/**
+ * This class provides the user of all of the requests that he issued. the user can click on a table of the request and select a row
+ * which represents a request, by double clicking on it the user can see the request in a different page and view it's details and see it's attached files.
+ * 
+ * @author Bshara
+ * */
 public class MyIssuedRequestDetailsController implements Initializable {
 	private static final String REQUEST_OWNER_DECLINE = "requestOwnerDecline";
 	private static final String REQUEST_OWNER_CONFIRM = "requestOwnerConfirm";

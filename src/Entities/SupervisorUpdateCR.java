@@ -4,6 +4,12 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.time.LocalDate;
 
+
+/**
+ * This class contains all the needed information about the supervisor updates with comments as represented in the database.
+ * 
+ * @author Bshara
+ * */
 public class SupervisorUpdateCR extends SqlObject implements Serializable {
 
 	// TODO: this should also be linked to the request or phase that got updated!!

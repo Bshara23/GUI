@@ -1,5 +1,10 @@
 package ServerLogic;
 
+
+/**
+ * This is a simple class that registers to the Server class events to prints simple notifications in the console
+ * the events are server stopped, server exception and server disconnected.
+ * */
 public class ServerConfigurations {
 
 	public static void InjectEvents() {

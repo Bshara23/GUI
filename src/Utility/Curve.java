@@ -1,5 +1,10 @@
 package Utility;
 
+/**
+ * This class is used to define a speed curve for interpolation functions
+ * 
+ * @author Bshara
+ * */
 public class Curve {
 	public static double easeInOutSin(double t) {
 		double x = Math.sin(t * Math.PI - Math.PI / 2);

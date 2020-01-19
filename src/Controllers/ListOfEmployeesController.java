@@ -35,6 +35,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
+
+/**
+ * This class provides the manager with a table of the users and also with the ability to assign and change the supervisor, the execution changes committee
+ * and the maintenance and support managers of the different departments.
+ * 
+ * @author Bshara
+ * */
 public class ListOfEmployeesController implements Initializable {
 
 	private static final String GET_ALL_USERS = "GetAllUsers";

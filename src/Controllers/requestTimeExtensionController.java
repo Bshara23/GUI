@@ -6,13 +6,13 @@ import java.util.ResourceBundle;
 import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
+import Controllers.Logic.ControllerSwapper;
 import Controllers.Logic.NavigationBar;
 import Entities.ChangeRequest;
 import Entities.Phase;
+import Entities.PhaseStatus;
 import Entities.PhaseTimeExtensionRequest;
 import Protocol.Command;
-import Protocol.PhaseStatus;
-import Utility.ControllerSwapper;
 import Utility.DateUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -25,6 +25,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+
+/**
+ * This class is used by other classes where the evaluator or committee member or executer can request a time extension, this class provides the needed
+ * fields to request a time extension for a phase.
+ * 
+ * @author Bshara
+ * */
 public class requestTimeExtensionController implements Initializable {
 
 	private static final String INSERT_TIME_EXTENSION324 = "insertTimeExtension324";

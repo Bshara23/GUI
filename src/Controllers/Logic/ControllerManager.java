@@ -28,6 +28,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.control.Alert.AlertType;
 
+/**
+ * This class provides utility functions that are used by almost all of the controllers, things like changing the color of the nodes (can be icons, images or text)
+ * setting mouse icons, hover effects and display information messages to the user.
+ * 
+ * @author Bshara
+ * */
 public class ControllerManager {
 
 	public static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");

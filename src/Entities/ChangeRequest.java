@@ -6,6 +6,11 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+/**
+ * This class contains the data of the change request as represented in the database.
+ * 
+ * @author Bshara
+ * */
 public class ChangeRequest extends SqlObject implements Serializable {
 
 	

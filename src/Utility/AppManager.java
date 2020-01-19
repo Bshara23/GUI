@@ -18,6 +18,14 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.util.Duration;
 
+/**
+ * This class runs a javafx thread and allows the user to registers behaviors that can be run in this thread
+ * the thread is ran about 60 times a second, to provide a smooth update.
+ * this class is mainly used for graphics, like the graphics that are seen on the sides of most GUIs in this project,
+ * this class can be used for other things than graphics too.
+ * 
+ * @author Bshara
+ * */
 public class AppManager {
 	public static double time = 0;
 	public static double deltaTime = 0.016666;

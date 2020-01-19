@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
@@ -15,12 +16,15 @@ import java.util.logging.Logger;
 import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
+import Controllers.Logic.ControllerSwapper;
 import Controllers.Logic.FxmlNames;
 import Protocol.Command;
 import Protocol.MsgReturnType;
 import Utility.AppManager;
-import Utility.ControllerSwapper;
 import Utility.DateUtil;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -35,8 +39,16 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.util.Duration;
 import Entities.*;
 
+
+/**
+ * This class provides the user with the necessary fields to issue a request, the class checks if all of the fields are valid and then issues
+ * the request by sending a message via the client, the user can also attach files with the request.
+ * 
+ * @author Bshara
+ * */
 public class IssueRequestController implements Initializable {
 
 	public static final int MB_4 = 4194303;
@@ -76,6 +88,8 @@ public class IssueRequestController implements Initializable {
 	@FXML
 	private Canvas canvasLeft;
 
+	private Timeline timeline;
+
 	private static ArrayList<String> filesPaths;
 	static {
 		filesPaths = new ArrayList<String>();
@@ -84,12 +98,12 @@ public class IssueRequestController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		ClientGUI.addOnMenuBtnClickedEvent(getClass().getName() + "3232145125", ()->{
+		ClientGUI.addOnMenuBtnClickedEvent(getClass().getName() + "3232145125", () -> {
 			System.out.println("Finalize: IssueRequestController");
-			
+
 			Client.removeMessageRecievedFromServer(TIME_OF_ISSUE_REQUEST);
 		});
-		
+
 		// Apply the effects for the canvas
 		RequestDetailsUserController.applyCanvasEffects(canvasRight, canvasLeft);
 
@@ -103,11 +117,17 @@ public class IssueRequestController implements Initializable {
 		ControllerManager.setOnHoverEffect(hbBrowseFiles, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
 				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 
-		AppManager.safeUpdate(TIME_OF_ISSUE_REQUEST, () -> {
+		if (timeline != null) {
+			timeline.stop();
+		}
+		timeline = new Timeline(new KeyFrame(Duration.millis(100), event -> {
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 			LocalDateTime now = LocalDateTime.now();
 			txtCurrentDate.setText(dtf.format(now));
-		});
+
+		}));
+		timeline.setCycleCount(Animation.INDEFINITE);
+		timeline.play();
 
 		final FileChooser fileChooser = new FileChooser();
 
@@ -139,15 +159,14 @@ public class IssueRequestController implements Initializable {
 			String descCurrState = taDescriptionOfCurrentState.getText();
 			String relateInfoSys = cbInformationSystem.getValue().toString();
 
-			boolean areAllFieldsFilled = ControllerManager.areAllStringsNotEmpty(reqDesc, descReqChange,
-					descCurrState);
+			boolean areAllFieldsFilled = ControllerManager.areAllStringsNotEmpty(reqDesc, descReqChange, descCurrState);
 
 			if (areAllFieldsFilled) {
 				long reqestID = 9996; // TODO: if id = -1, the server should know that he has to find a fitting id
 
-
-				ChangeRequest changeRequest = new ChangeRequest(reqestID, ClientGUI.systemUser.getUserName(), DateUtil.now(), DateUtil.NA, DateUtil.NA, comments,
-						reqDesc, descReqChange, descCurrState, relateInfoSys);
+				ChangeRequest changeRequest = new ChangeRequest(reqestID, ClientGUI.systemUser.getUserName(),
+						DateUtil.now(), DateUtil.NA, DateUtil.NA, comments, reqDesc, descReqChange, descCurrState,
+						relateInfoSys);
 
 				if (filesPaths.size() == 0) {
 					Client.getInstance().request(Command.insertRequest, changeRequest);
@@ -157,7 +176,7 @@ public class IssueRequestController implements Initializable {
 					for (String path : filesPaths) {
 
 						File file = new File(0, reqestID, path, "");
-						file.loadBytesFromLocal();
+						file.loadBytes();
 						file.autoSetTypeAndNameFromPath();
 						files.add(file);
 						if (file.getStoredBytesSize() > MB_4) {
@@ -230,7 +249,7 @@ public class IssueRequestController implements Initializable {
 		taDescriptionOfCurrentState.setText("");
 		taDescriptionOfRequestedChange.setText("");
 		taRequestDescription.setText("");
-		txtNumberOfAttachedFiles.setText("(0 files)");		
+		txtNumberOfAttachedFiles.setText("(0 files)");
 	}
 
 }

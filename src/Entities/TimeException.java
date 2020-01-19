@@ -3,6 +3,11 @@ package Entities;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+/**
+ * This class contains all the needed information about the time exception as represented in the database.
+ * 
+ * @author Bshara
+ * */
 public class TimeException implements Serializable {
 
 	private long id;

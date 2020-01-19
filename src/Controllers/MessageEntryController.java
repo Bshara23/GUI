@@ -29,6 +29,13 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
+
+/**
+ * This class is an message entry that is used by the message list, it provides the ability to star message and check mark them.
+ * on double click the user can enter to the message details page.
+ * 
+ * @author Bshara
+ * */
 public class MessageEntryController implements Initializable {
 
 	@FXML

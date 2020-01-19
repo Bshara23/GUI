@@ -6,8 +6,8 @@ import java.util.ResourceBundle;
 
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
+import Controllers.Logic.ControllerSwapper;
 import Controllers.Logic.FxmlNames;
-import Utility.ControllerSwapper;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
@@ -16,6 +16,11 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
+/**
+ * This class is the main home page, a simple page that only contains text about the icm system.
+ * 
+ * @author Bshara
+ * */
 public class HomeController implements Initializable {
 
   

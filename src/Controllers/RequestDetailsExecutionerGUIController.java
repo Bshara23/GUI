@@ -8,15 +8,15 @@ import java.util.ResourceBundle;
 import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
+import Controllers.Logic.ControllerSwapper;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Entities.ChangeRequest;
 import Entities.EvaluationReport;
 import Entities.ExecutionReport;
 import Entities.Phase;
+import Entities.PhaseStatus;
 import Protocol.Command;
-import Protocol.PhaseStatus;
-import Utility.ControllerSwapper;
 import Utility.DateUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -28,6 +28,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+/**
+ * This class provides the executioner with the needed information to execute the request, the executioner can view the request details with
+ * a simple click in a button, and also can confirm his execution to the request with the ability to file an execution report.
+ * 
+ * @author Bshara
+ * */
 public class RequestDetailsExecutionerGUIController implements Initializable {
 
 	private static final String INSERT_EXECUTION_REPORT = "InsertExecutionReport";

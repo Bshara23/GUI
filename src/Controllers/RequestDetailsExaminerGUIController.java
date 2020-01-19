@@ -8,15 +8,15 @@ import java.util.ResourceBundle;
 import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
+import Controllers.Logic.ControllerSwapper;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Entities.ChangeRequest;
 import Entities.EvaluationReport;
 import Entities.ExecutionReport;
 import Entities.Phase;
+import Entities.PhaseStatus;
 import Protocol.Command;
-import Protocol.PhaseStatus;
-import Utility.ControllerSwapper;
 import Utility.DateUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -29,6 +29,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+
+/**
+ * This class provides the needed information for the examiner to examine the request, with the ability to see the execution report if needed.
+ * 
+ * @author Bshara
+ * */
 public class RequestDetailsExaminerGUIController implements Initializable {
 
 	private static final String ASSIGN_EXAMINER_FOR_REQUEST = "assignExaminerForRequest";

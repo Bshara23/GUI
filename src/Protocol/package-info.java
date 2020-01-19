@@ -3,7 +3,7 @@
  */
 /**
  * @author Bshara
- * The package is used for ...
+ * This package provides a protocol to communicate between clients and server.
  *
  */
 package Protocol;

@@ -2,29 +2,19 @@ package Controllers;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Random;
 import java.util.ResourceBundle;
-import java.util.ResourceBundle.Control;
 
 import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
+import Controllers.Logic.ControllerSwapper;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Entities.Message;
 import Protocol.Command;
 import Protocol.MsgReturnType;
-import Protocol.PhaseType;
-import Protocol.SeriObject;
-import Utility.AppManager;
-import Utility.ControllerSwapper;
-import Utility.SRMessageFunc;
-import javafx.application.Platform;
+import Protocol.SRMessageFunc;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -32,20 +22,20 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
+/**
+ * This class provides the user with a list of messages that were received from
+ * the system or from other user, this class also provides the user with the ability to delete messages and star them.
+ * 
+ * @author Bshara
+ */
 public class ListOfMessagesController implements Initializable {
-
 
 	private static final String GET_COUNT_OF_MESSAGES = "GetCountOfMessages";
 
@@ -140,6 +130,11 @@ public class ListOfMessagesController implements Initializable {
 		messageTypes.add(hbUpdates);
 		messageTypes.add(hbWork);
 
+		imgRefresh.setOnMousePressed(event -> {
+
+			NavigationBar.reload();
+		});
+
 		for (Node node : buttons) {
 			ControllerManager.setMouseHoverPressEffects(node, CommonEffects.REQUEST_DETAILS_BUTTON_BLACK,
 					CommonEffects.REQUEST_DETAILS_BUTTON_GRAY, CommonEffects.REQUEST_DETAILS_BUTTON_BLUE, Cursor.HAND);
@@ -197,7 +192,8 @@ public class ListOfMessagesController implements Initializable {
 			if (currentRowIndex + rowCountLimit < countOfMessages) {
 				currentRowIndex += rowCountLimit;
 				Client.getInstance().requestWithListener(Command.getMessagesPrimary, getMessagesPrimaryFunc,
-						GET_MESSAGES_PRIMARY_LIST_OF_MESSAGES, ClientGUI.systemUser.getUserName(), currentRowIndex, rowCountLimit);
+						GET_MESSAGES_PRIMARY_LIST_OF_MESSAGES, ClientGUI.systemUser.getUserName(), currentRowIndex,
+						rowCountLimit);
 				txtMessagesCount.setText(
 						(currentRowIndex + 1) + "-" + (currentRowIndex + rowCountLimit) + " of " + countOfMessages);
 
@@ -209,7 +205,8 @@ public class ListOfMessagesController implements Initializable {
 			if (currentRowIndex - rowCountLimit >= 0) {
 				currentRowIndex -= rowCountLimit;
 				Client.getInstance().requestWithListener(Command.getMessagesPrimary, getMessagesPrimaryFunc,
-						GET_MESSAGES_PRIMARY_LIST_OF_MESSAGES, ClientGUI.systemUser.getUserName(), currentRowIndex, rowCountLimit);
+						GET_MESSAGES_PRIMARY_LIST_OF_MESSAGES, ClientGUI.systemUser.getUserName(), currentRowIndex,
+						rowCountLimit);
 
 				txtMessagesCount.setText(
 						(currentRowIndex + 1) + "-" + (currentRowIndex + rowCountLimit) + " of " + countOfMessages);
@@ -246,7 +243,8 @@ public class ListOfMessagesController implements Initializable {
 
 			if (countOfMessages > 0) {
 				Client.getInstance().requestWithListener(Command.getMessagesPrimary, getMessagesPrimaryFunc,
-						GET_MESSAGES_PRIMARY_LIST_OF_MESSAGES, ClientGUI.systemUser.getUserName(), currentRowIndex, rowCountLimit);
+						GET_MESSAGES_PRIMARY_LIST_OF_MESSAGES, ClientGUI.systemUser.getUserName(), currentRowIndex,
+						rowCountLimit);
 			} else {
 				loadEmptyMessagesWindow();
 			}
@@ -270,7 +268,8 @@ public class ListOfMessagesController implements Initializable {
 							"Server was not able to delete the message!", null);
 				}
 				Client.getInstance().requestWithListener(Command.countOfObjects, countOfObjectsFunc,
-						GET_COUNT_OF_MESSAGES, "`to`='" + ClientGUI.systemUser.getUserName() + "'", Message.getEmptyInstance());
+						GET_COUNT_OF_MESSAGES, "`to`='" + ClientGUI.systemUser.getUserName() + "'",
+						Message.getEmptyInstance());
 
 				Client.removeMessageRecievedFromServer(MESSAGES_DELETED_LIST_OF_MESSAGES_RESPONSE);
 			}
@@ -288,7 +287,8 @@ public class ListOfMessagesController implements Initializable {
 
 	private void loadEmptyMessagesWindow() {
 
-		hbMessagesContainer.getChildren().setAll(ControllerSwapper.getChildrenOf(FxmlNames.MESSAGE_NO_MESSAGES_AVAILABLE_FXML));
+		hbMessagesContainer.getChildren()
+				.setAll(ControllerSwapper.getChildrenOf(FxmlNames.MESSAGE_NO_MESSAGES_AVAILABLE_FXML));
 		txtMessagesCount.setText("");
 	}
 

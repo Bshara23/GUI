@@ -7,14 +7,14 @@ import java.util.ResourceBundle;
 import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
+import Controllers.Logic.ControllerSwapper;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Entities.ChangeRequest;
 import Entities.EvaluationReport;
 import Entities.Phase;
+import Entities.PhaseStatus;
 import Protocol.Command;
-import Protocol.PhaseStatus;
-import Utility.ControllerSwapper;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
@@ -25,6 +25,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+
+
+/**
+ * This class contains the information page about the decision phase that is available to the committee members, where they can either approve the execution, reject it or request more
+ * data. also they can view details about the request and view the evaluation report of that request.
+ * 
+ * @author Bshara
+ * */
 public class RequestDetailsDecisionGUIController implements Initializable {
 
 	private static final String GET_LATEST_EVAL_REPORT = "getLatestEvalReport";

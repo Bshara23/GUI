@@ -2,6 +2,12 @@ package Entities;
 
 import java.io.Serializable;
 
+
+/**
+ * This class contains all the needed information about the student as represented in the database.
+ * 
+ * @author Bshara
+ * */
 public class Student extends SystemUser implements Serializable {
 
 	private static Student emptyInstance = new Student(null, null, null, null, null, null, false, 0, null);

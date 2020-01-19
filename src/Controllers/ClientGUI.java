@@ -14,15 +14,15 @@ import javafx.scene.shape.Circle;
 import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
+import Controllers.Logic.ControllerSwapper;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Entities.Employee;
+import Entities.PhaseType;
 import Entities.SystemUser;
 import Protocol.Command;
-import Protocol.PhaseType;
-import Utility.ControllerSwapper;
+import Protocol.SRMessageFunc;
 import Utility.Func;
-import Utility.SRMessageFunc;
 import Utility.VoidFunc;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -47,7 +47,14 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
-public class ClientGUI extends Application implements Initializable {
+/**
+ * This class contains the main menu of the GUI, where we have all of the menu buttons on the right side.
+ * this class acts as the main class, it stays alive unless the user logs off, this class changes only it's center content when loading other classes.
+ * this is used as a median between classes, where it saves all of the needed info of the user once he/she logs in.
+ * 
+ * @author Bshara
+ * */
+public class ClientGUI implements Initializable {
 
 	private static final String LOG_OUT = "LogOut";
 
@@ -128,8 +135,7 @@ public class ClientGUI extends Application implements Initializable {
 	private AnchorPane selectedMenuElement;
 
 	private ArrayList<Node> apList;
-	private List<String> pagenamesfrofollow = new ArrayList<>();
-	private List<Node> followbtn = new ArrayList<>();
+
 	private static Stage stage;
 
 	public static Stage getStage() {
@@ -167,41 +173,7 @@ public class ClientGUI extends Application implements Initializable {
 		onMenuBtnClickedEvents.put(key, func);
 	}
 
-	@Override
-	public void start(Stage stage) {
-		stage.initStyle(StageStyle.UNDECORATED);
-
-		if (LogInController.username == null)
-			Client.getInstance().initialize("localhost", 5555);
-
-		FXMLLoader loader = new FXMLLoader(getClass().getResource(FxmlNames.GLOBAL_MENUS));
-		Parent root = null;
-		try {
-			root = loader.load();
-		} catch (IOException e) {
-
-			e.printStackTrace();
-		}
-		stage.setScene(new Scene(root));
-		stage.setTitle("ICM System");
-		stage.show();
-
-		ClientGUI.stage = stage;
-
-		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-
-			@Override
-			public void handle(WindowEvent event) {
-				System.exit(1);
-			}
-		});
-
-	}
-
-	public static void main(String[] args) {
-		launch(args);
-	}
-
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
@@ -320,89 +292,79 @@ public class ClientGUI extends Application implements Initializable {
 
 	private void serverErrorLogOut() {
 
-		ControllerManager.showErrorMessage("Connection Error", "Connection Error", "The connection is from the server is down!\nExiting back to the log in page.", ()->{
-			Parent s = ControllerSwapper.loadContentWithLoader(FxmlNames.LOG_IN);
-			LogInController.getStage().setScene(new Scene(s));
-			LogInController.getStage().show();
-		});
-		
+		ControllerManager.showErrorMessage("Connection Error", "Connection Error",
+				"The connection is from the server is down!\nExiting back to the log in page.", () -> {
+					Parent s = ControllerSwapper.loadContentWithLoader(FxmlNames.LOG_IN);
+					LogInController.getStage().setScene(new Scene(s));
+					LogInController.getStage().show();
+				});
+
 	}
 
 	private void shortcuts() {
 
 		SettingsController.IssueRequest = () -> {
 			commondMenuBehavior(apBtnIssueRequest, "Issue Request", FxmlNames.ISSUE_REQUEST);
-			pagenamesfrofollow.add(FxmlNames.ISSUE_REQUEST);
-			followbtn.add(apBtnIssueRequest);
 			lightBtnOnAndOff();
 			ControllerManager.setEffect(apBtnIssueRequest, CommonEffects.MENU_ELEMENT_ON_HOVER);
 
 		};
-		/*
-		 * SettingsController.NotifShortcut = ()-> {
-		 * commondMenuBehavior(apBtnIssueRequest, "Issue Request",
-		 * FxmlNames.ISSUE_REQUEST);
-		 * 
-		 * };
-		 */
+	
 		SettingsController.MessShortcut = () -> {
+
 			commondMenuBehavior(apBtnMessages, "Messages", FxmlNames.MESSAGES);
-			pagenamesfrofollow.add(FxmlNames.MESSAGES);
-			followbtn.add(apBtnMessages);
 			lightBtnOnAndOff();
 			ControllerManager.setEffect(apBtnMessages, CommonEffects.MENU_ELEMENT_ON_HOVER);
 
 		};
 		SettingsController.MyReqShortcut = () -> {
 			commondMenuBehavior(apBtnMyRequests, "My Requests", FxmlNames.REQUESTS_LIST);
-			pagenamesfrofollow.add(FxmlNames.REQUESTS_LIST);
-			followbtn.add(apBtnMyRequests);
 			lightBtnOnAndOff();
 			ControllerManager.setEffect(apBtnMyRequests, CommonEffects.MENU_ELEMENT_ON_HOVER);
 
 		};
 		SettingsController.SignOutShort = () -> {
-			// signoutfunc();
-			// commondMenuBehavior(apBtnIssueRequest, "log in", FxmlNames.LOG_IN);
+			ControllerManager.showYesNoMessage("Exit", "Exit", "Are you sure you want to sign out?", () -> {
+
+				logOut(() -> {
+					Parent s = ControllerSwapper.loadContentWithLoader(FxmlNames.LOG_IN);
+					LogInController.getStage().setScene(new Scene(s));
+					LogInController.getStage().show();
+				});
+
+			}, null);
 
 		};
 		SettingsController.EmpShortcut = () -> {
-			commondMenuBehavior(apBtnEmployees, "Employees", FxmlNames.EMPLOYEES);
-			lightBtnOnAndOff();
-			ControllerManager.setEffect(apBtnEmployees, CommonEffects.MENU_ELEMENT_ON_HOVER);
+
+			if (isManager) {
+				commondMenuBehavior(apBtnEmployees, "Employees", FxmlNames.EMPLOYEES);
+				lightBtnOnAndOff();
+				ControllerManager.setEffect(apBtnEmployees, CommonEffects.MENU_ELEMENT_ON_HOVER);
+			}
 
 		};
 		SettingsController.AnalyticsShortcut = () -> {
-			commondMenuBehavior(apBtnAnalytics, "Analytics", FxmlNames.ANALYTICS);
-			pagenamesfrofollow.add(FxmlNames.ANALYTICS);
-			followbtn.add(apBtnAnalytics);
-			lightBtnOnAndOff();
-			ControllerManager.setEffect(apBtnAnalytics, CommonEffects.MENU_ELEMENT_ON_HOVER);
+
+			if (isManager) {
+				commondMenuBehavior(apBtnAnalytics, "Analytics", FxmlNames.ANALYTICS);
+				lightBtnOnAndOff();
+				ControllerManager.setEffect(apBtnAnalytics, CommonEffects.MENU_ELEMENT_ON_HOVER);
+			}
 
 		};
 		SettingsController.ReqTreatShortcut = () -> {
-			commondMenuBehavior(apBtnMyRequests, "Requests Treatment", FxmlNames.LIST_OF_REQUESTS_FOR_TREATMENT);
-			pagenamesfrofollow.add(FxmlNames.LIST_OF_REQUESTS_FOR_TREATMENT);
-			followbtn.add(apBtnMyRequests);
-			lightBtnOnAndOff();
-			ControllerManager.setEffect(apBtnMyRequests, CommonEffects.MENU_ELEMENT_ON_HOVER);
+			if (empNumber != -1) {
+				commondMenuBehavior(apBtnMyRequests, "Requests Treatment", FxmlNames.LIST_OF_REQUESTS_FOR_TREATMENT);
+				lightBtnOnAndOff();
+				ControllerManager.setEffect(apBtnMyRequests, CommonEffects.MENU_ELEMENT_ON_HOVER);
+			}
 
 		};
 		SettingsController.GOBACKFUNC = () -> {
 
-			if (pagenamesfrofollow.size() > 0) {
-				String temp = pagenamesfrofollow.get(pagenamesfrofollow.size() - 1);
+			NavigationBar.back(true);
 
-				pagenamesfrofollow.remove(pagenamesfrofollow.size() - 1);
-
-				Node tempbtn = followbtn.get(followbtn.size() - 1);
-				followbtn.remove(followbtn.size() - 1);
-				commondMenuBehavior(apBtnMyRequests, temp, temp);
-
-				lightBtnOnAndOff();
-
-				ControllerManager.setEffect(tempbtn, CommonEffects.MENU_ELEMENT_ON_HOVER);
-			}
 		};
 
 	}
@@ -632,60 +594,44 @@ public class ClientGUI extends Application implements Initializable {
 
 	@FXML
 	void onIssueRequestPress(MouseEvent event) {
-		pagenamesfrofollow.add(FxmlNames.ISSUE_REQUEST);
-		followbtn.add(apBtnIssueRequest);
 		commondMenuBehavior(apBtnIssueRequest, "Issue Request", FxmlNames.ISSUE_REQUEST);
 
 	}
 
 	@FXML
 	void onMessagesPress(MouseEvent event) {
-		pagenamesfrofollow.add(FxmlNames.MESSAGES);
-		followbtn.add(apBtnMessages);
 		removeNewMessageMark();
 		commondMenuBehavior(apBtnMessages, "Messages", FxmlNames.MESSAGES);
 	}
 
 	@FXML
 	void onMyRequestsPress(MouseEvent event) {
-		pagenamesfrofollow.add(FxmlNames.REQUESTS_LIST);
-		followbtn.add(apBtnMyRequests);
 		commondMenuBehavior(apBtnMyRequests, "My Requests", FxmlNames.REQUESTS_LIST);
 	}
 
 	@FXML
 	void onSettingsPress(MouseEvent event) {
-		pagenamesfrofollow.add(FxmlNames.SETTINGS);
-		followbtn.add(apBtnSettings);
 		commondMenuBehavior(apBtnSettings, "Settings", FxmlNames.SETTINGS);
 
 	}
 
 	@FXML
 	void onAnalyticsPress(MouseEvent event) {
-		pagenamesfrofollow.add(FxmlNames.ANALYTICS);
-		followbtn.add(apBtnAnalytics);
 		commondMenuBehavior(apBtnAnalytics, "Analytics", FxmlNames.ANALYTICS);
 	}
 
 	@FXML
 	void onEmployeesPress(MouseEvent event) {
-		pagenamesfrofollow.add(FxmlNames.EMPLOYEES);
-		followbtn.add(apBtnEmployees);
 		commondMenuBehavior(apBtnEmployees, "Employees", FxmlNames.EMPLOYEES);
 	}
 
 	@FXML
 	void onLogoMainPress(MouseEvent event) {
-		pagenamesfrofollow.add(FxmlNames.HOME);
-		followbtn.add(apBtnLogoMain);
 		commondMenuBehavior(apBtnLogoMain, "Home", FxmlNames.HOME);
 	}
 
 	@FXML
 	void onRequestTreatmentPress(MouseEvent event) {
-		pagenamesfrofollow.add(FxmlNames.LIST_OF_REQUESTS_FOR_TREATMENT);
-		followbtn.add(apBtnMyRequests);
 		removeNewOrUpdateRequestsMark();
 		commondMenuBehavior(apBtnMyRequests, "Requests Treatment", FxmlNames.LIST_OF_REQUESTS_FOR_TREATMENT);
 

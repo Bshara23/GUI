@@ -5,6 +5,13 @@ import java.sql.Timestamp;
 
 import Utility.DateUtil;
 
+
+/**
+ * This abstract class is used for objects that can be inserted, updated and deleted generally without the need to make a different query
+ * for every new entite, the class uses java reflection in order to set the fields of the class for the different queries.
+ * 
+ * @author Bshara
+ * */
 public abstract class SqlObject {
 
 	/**

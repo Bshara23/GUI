@@ -11,6 +11,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 
+
+/**
+ * This page loads once the user double clicks on a request from the my requests page, with this page provides the user
+ * with all of the needed information about the request and it's current state, the user can also view and open the attached files
+ * that has been attached with the request.
+ * 
+ * @author Bshara
+ * */
 public class RequestDetailsUserController implements Initializable {
 
 	@FXML

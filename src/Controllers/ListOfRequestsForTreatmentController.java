@@ -18,9 +18,9 @@ import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Entities.ChangeRequest;
 import Entities.Phase;
+import Entities.PhaseType;
 import Entities.SystemUser;
 import Protocol.Command;
-import Protocol.PhaseType;
 import Utility.AppManager;
 import Utility.DateUtil;
 import javafx.collections.FXCollections;
@@ -45,6 +45,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
+
+/**
+ * This class contains the tables of the supervisor, examiner, executer, evaluator and decision maker.
+ * it provides the ability to traverse between jobs and select a phase from the table to begin the request treatment.
+ * 
+ * @author Bshara
+ * */
 public class ListOfRequestsForTreatmentController implements Initializable {
 
 	private static final String GET_SYSTEM_USER_BY_REQUEST_LIST_OF_REQUESTS = "getSystemUserByRequestListOfRequests";

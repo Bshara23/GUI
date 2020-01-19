@@ -2,6 +2,13 @@ package Protocol;
 
 import java.io.Serializable;
 
+
+/**
+ * This class contains all the needed information to communicate between server-client,
+ * the message contains a command, a return type (success or failure) and an array of objects that can be attached to the message.
+ * 
+ * @author Bshara
+ * */
 public class SRMessage implements Serializable {
 
 	private Command command;

@@ -2,6 +2,11 @@ package Entities;
 
 import java.io.Serializable;
 
+/**
+ * This class contains all the needed information about the system user as represented in the database.
+ * 
+ * @author Bshara
+ * */
 public class SystemUser extends SqlObject implements Serializable {
 
 	public String userName, password, email;

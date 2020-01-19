@@ -9,9 +9,9 @@ import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
 import Controllers.Logic.NavigationBar;
 import Entities.ChangeRequest;
+import Entities.PhaseType;
 import Protocol.Command;
-import Protocol.PhaseType;
-import Utility.SRMessageFunc;
+import Protocol.SRMessageFunc;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -28,6 +28,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
+
+/**
+ * This class provides the user of the list of requests that he/she issued, with the ability to view information about the request and it's current status.
+ * 
+ * @author Bshara
+ * */
 public class ListOfRequestsController implements Initializable {
 
 	private static final String MY_ISSUED_REQUEST_DETAILS_FXML = "MyIssuedRequestDetails.fxml";

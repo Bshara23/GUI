@@ -5,6 +5,12 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 
+
+/**
+ * This Class contains all the needed data for the activity report
+ * 
+ * @author Bshara
+ * */
 public class ActivityReport implements Serializable {
 
 	public long id;

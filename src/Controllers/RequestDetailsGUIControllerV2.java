@@ -6,11 +6,11 @@ import java.util.ResourceBundle;
 import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
+import Controllers.Logic.ControllerSwapper;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Entities.ExecutionReport;
 import Protocol.Command;
-import Utility.ControllerSwapper;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
@@ -20,6 +20,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+
+/**
+ * This class provides a details for examiner where he can approve the execution of the request or report a failure.
+ * This class is currently been used for testing purposes, ignore the confusing name.
+ * @author Bshara
+ * */
 public class RequestDetailsGUIControllerV2 implements Initializable {
 
 	@FXML
@@ -49,6 +55,7 @@ public class RequestDetailsGUIControllerV2 implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
+		System.out.println("RequestDetailsGUIControllerV2");
 		// Apply the effects for the canvas
 		RequestDetailsUserController.applyCanvasEffects(canvasRight, canvasLeft);
 

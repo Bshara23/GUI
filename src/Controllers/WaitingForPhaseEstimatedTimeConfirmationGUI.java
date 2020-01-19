@@ -10,6 +10,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+
+/**
+ * This class only contains a simple message that an employee can get if he has sat an estimation time of phase
+ * and still didn't get a respond from the supervisor.
+ * 
+ * @author Bshara
+ * */
 public class WaitingForPhaseEstimatedTimeConfirmationGUI implements Initializable {
 
 	

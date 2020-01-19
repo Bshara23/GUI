@@ -20,6 +20,13 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 
+
+/**
+ * This class is used by other classes to view a list of attached files with a request.
+ * also provides the ability to select and open the files in the user pc.
+ * 
+ * @author Bshara
+ * */
 public class filesListController implements Initializable {
 
 	private static final String GET_REQUEST_FILES = "getRequestFiles";
@@ -76,7 +83,7 @@ public class filesListController implements Initializable {
 	private void loadFilesIntoPC(ArrayList<File> files) {
 
 		for (File file : files) {
-			file.writeFileToLocal(appData);
+			file.writeData(appData);
 		}
 		
 	}

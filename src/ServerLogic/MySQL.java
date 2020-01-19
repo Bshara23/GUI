@@ -9,8 +9,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import Entities.*;
-import Protocol.PhaseStatus;
-import Protocol.PhaseType;
 import ServerLogic.UtilityInterfaces.IPreparedStatement;
 import ServerLogic.UtilityInterfaces.IStatement;
 import ServerLogic.UtilityInterfaces.UpdateFunc;
@@ -19,9 +17,11 @@ import Utility.VoidFunc;
 
 /**
  * A MySql class that is built for fast development of Client/Server
- * application.
+ * application. the class contains various methods that are required for this project.
+ * methods like insertion, update and select.
+ * the class extends the MySqlConnBase class which contains an sql connection class.
  * 
- * @author G7_BsharaZahran
+ * @author Bshara
  * 
  */
 public class MySQL extends MySqlConnBase {
@@ -1906,8 +1906,8 @@ public class MySQL extends MySqlConnBase {
 
 		IPreparedStatement prepS = ps -> {
 			try {
-				ps.setTimestamp(2, ts);
-				ps.setLong(1, phaseId);
+				ps.setTimestamp(1, ts);
+				ps.setLong(2, phaseId);
 
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -2091,7 +2091,13 @@ public class MySQL extends MySqlConnBase {
 
 		};
 
-		return executePreparedStatement(query, prepS);
+		int res = executePreparedStatement(query, prepS);
+
+		if (res == 0) {
+			System.out.println(shortcutsbtn + " : " + shortcutsname);
+		}
+
+		return res;
 
 	}
 
@@ -2175,7 +2181,7 @@ public class MySQL extends MySqlConnBase {
 
 			};
 
-			d = arr.get(0);
+			d = arr.get(i);
 			str = "INSERT INTO `icm`.`array` (`index`, `addr`, `data`) VALUES ('" + i + "', '" + addr + "', '" + d
 					+ "');";
 
@@ -2228,7 +2234,7 @@ public class MySQL extends MySqlConnBase {
 
 	public int countOfActiveReqests(Timestamp dFrom, Timestamp dTo) {
 
-		String query = "SELECT p.startingDate, p.deadline FROM icm.phase as p;";
+		String query = "SELECT c.startDateOfRequest, c.endDateOfRequest FROM icm.changerequest as c;"; // todo
 
 		ArrayList<Integer> results = new ArrayList<Integer>();
 
@@ -2331,7 +2337,7 @@ public class MySQL extends MySqlConnBase {
 
 	public int countOfTotalWorkingDays(Timestamp dFrom, Timestamp dTo) {
 
-		String query = "SELECT p.startingDate, p.deadline FROM icm.phase as p;";
+		String query = "SELECT p.startingDate, p.timeOfCompletion FROM icm.phase as p;";
 
 		ArrayList<Integer> results = new ArrayList<Integer>();
 
@@ -2353,6 +2359,35 @@ public class MySQL extends MySqlConnBase {
 		executeStatement(query, prepS);
 
 		return results.get(0);
+	}
+
+	public ArrayList<String> getShortcuts(String username) {
+		String query = "SELECT shortcutsbtn , shortcutsname FROM icm.shortcuts where username = '" + username
+				+ "' order by shortcutsname;";
+
+		ArrayList<String> results = new ArrayList<String>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				while (rs.next()) {
+
+					results.add(rs.getString(1));
+					results.add(rs.getString(2));
+
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+		
+		System.out.println(results);
+
+		return results;
+
 	}
 
 }

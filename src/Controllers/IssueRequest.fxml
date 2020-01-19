@@ -37,7 +37,7 @@
                               <Text fx:id="txtCurrentDate" strokeType="OUTSIDE" strokeWidth="0.0" text="5/5/2020" />
                            </children>
                         </HBox>
-                        <HBox spacing="75.0">
+                        <HBox spacing="110.0">
                            <children>
                               <HBox minWidth="180.0">
                                  <children>
@@ -57,14 +57,14 @@
                               <TextArea fx:id="taRequestDescription" minHeight="-Infinity" prefHeight="85.0" prefWidth="526.0" promptText="Enter request description" />
                            </children>
                         </HBox>
-                        <HBox spacing="64.0">
+                        <HBox spacing="100.0">
                            <children>
                               <HBox minWidth="180.0">
                                  <children>
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description of current state:" />
                                  </children>
                               </HBox>
-                              <TextArea fx:id="taDescriptionOfCurrentState" minHeight="-Infinity" minWidth="-Infinity" prefHeight="85.0" prefWidth="526.0" promptText="Enter description of the request current state" />
+                              <TextArea fx:id="taDescriptionOfCurrentState" minHeight="-Infinity" minWidth="-Infinity" prefHeight="85.0" prefWidth="531.0" promptText="Enter description of the request current state" />
                            </children>
                         </HBox>
                         <HBox spacing="130.0">

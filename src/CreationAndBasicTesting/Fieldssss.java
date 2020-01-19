@@ -13,13 +13,18 @@ import Entities.Employee;
 import Entities.EvaluationReport;
 import Entities.File;
 import Entities.Phase;
+import Entities.PhaseStatus;
+import Entities.PhaseType;
 import Entities.Student;
-import Protocol.PhaseStatus;
-import Protocol.PhaseType;
 import ServerLogic.MySQL;
 import ServerLogic.SQLUtil;
 import Utility.DateUtil;
 
+/**
+ * This class is only used for debugging purposes
+ * 
+ * @author Bshara
+ */
 public class Fieldssss {
 	private static MySQL db = new MySQL("root", "Aa123456", "ICM", null);
 
@@ -35,25 +40,20 @@ public class Fieldssss {
 
 		// System.out.println(db.getSupervisorEmpNum());
 
-
 		LocalDate from = LocalDate.of(2020, 1, 16);
 		LocalDate to = LocalDate.of(2020, 1, 20);
-		
+
 		Timestamp tFrom = DateUtil.get(from);
 		Timestamp tTo = DateUtil.get(to);
-		
-		
-		
+
 		System.out.println(SQLUtil.toString(tFrom));
 		System.out.println(SQLUtil.toString(tTo));
 
-
-		
 		System.out.println(db.countOfActiveReqests(tFrom, tTo));
-		
-		//String res = SQLUtil.toString(DateUtil.now());
-		//System.out.println(res);
-		
+
+		// String res = SQLUtil.toString(DateUtil.now());
+		// System.out.println(res);
+
 	}
 
 }

@@ -32,6 +32,14 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+
+/**
+ * This class provides the user with the needed information to start and run the server, the user can also stop the server,
+ * the user can define the database parameters, like user and password.
+ * it also shows the ip address of the server so that clients on other computers can connect to it.
+ * 
+ * @author Bshara
+ * */
 public class ServerGUIController extends Application implements Initializable {
 	private static final int WIDTH = 600;
 	private static final int HEIGHT = (int) (WIDTH / MathUtil.goldenRatio);

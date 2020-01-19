@@ -5,6 +5,12 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 
+
+/**
+ * This class contains all the needed information about the evaluation report as represented in the database.
+ * 
+ * @author Bshara
+ * */
 public class EvaluationReport extends Report implements Serializable {
 
 	private static EvaluationReport emptyInstance = new EvaluationReport(0, 0, null, null, null, null, null, null);

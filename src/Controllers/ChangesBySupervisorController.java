@@ -23,6 +23,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import Entities.Employee;
 
+
+/**
+ * This class displays a list the contains all of the deadline changes that the supervisor did in the past,
+ * it shows the date of the change and the change it self, also the supervisor who did that change at that time.
+ * 
+ * @author Bshara
+ * */
 public class ChangesBySupervisorController implements Initializable {
 
 	private static final String GET_SUPERVISOR_UPDATES = "getSupervisorUpdates";

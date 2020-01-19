@@ -8,6 +8,11 @@ import Utility.Vector2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+/**
+ * This class is used to create the particle animation on the sides that appears in most of the GUI of this project.
+ * 
+ * @author Bshara
+ * */
 public class ParticlePlexus {
 
 	private ArrayList<Particle> particles;

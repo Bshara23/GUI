@@ -20,6 +20,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
+/**
+ * This class provides the user with the details about the message, this class is used by the message entry for when
+ * the user double clicks on a message to view more details
+ * 
+ * @author Bshara
+ * */
 public class MessageSingalController implements Initializable {
 
 	@FXML

@@ -3,6 +3,12 @@ package Entities;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+
+/**
+ * This class contains all the needed information about the supervisor deadline update as represented in the database.
+ * 
+ * @author Bshara
+ * */
 public class SupervisorDeadlineUpdate implements Serializable {
 
 	private long id, phaseId, superEmpNum;

@@ -1,5 +1,12 @@
 package Protocol;
 
+
+/**
+ * @author Bshara
+ * This emum is used as the title for the messages sent between client and server
+ * this is used to identify the type of the message so that the client or the server knows what or how to respond. 
+ * 
+ * */
 public enum Command {
 
 	LogIn, LogOut, Update, Insert, Delete, Search, DoesExist, GetAllData, countOfObjects, updateProfile,
@@ -27,7 +34,7 @@ public enum Command {
 
 	insertPeriodicalReport,
 
-	getExecutedTimeExtensions, // ask malki
+	getExecutedTimeExtensions, 
 	getExtraTimeRelateToEvaluatedTime,
 
 	debug_simulateBigCalculations, getCountOfPhasesTypes, getPhasesOfRequestWithTimeExtensionsIfPossible,
@@ -41,7 +48,7 @@ public enum Command {
 	requestOwnerDecline, getRequestFiles, isMyRequestWaitingForMyConfirmation, confirmRequestEndedBySupervisor,
 	declinedRequestEndedBySupervisor, freezePhase, unfreezePhase, checkLogIn, getDepartmentsManagers,
 	updateDepartmentManager, getAllUsers, getSuperviosrDetails, getCommitteeDetails, updateComMember, logOut,
-	UpdateShortcuts, updateDeadline, getSupervisorDeadlineUpdate, getActivityReport,
+	UpdateShortcuts, updateDeadline, getSupervisorDeadlineUpdate, getActivityReport, getMyShortcuts,
 //	updateDepartmentManager,
 
 }

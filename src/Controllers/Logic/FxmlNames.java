@@ -1,5 +1,13 @@
 package Controllers.Logic;
 
+
+
+/**
+ * This class is used as a static class to store static constants of strings that contains the names of the FXML files that are used in this project.
+ * The main reason for this is to lower the probability of textual errors.
+ * 
+ * @author Bshara
+ * */
 public class FxmlNames {
 
 	public static final String MESSAGE_ENTRY_FXML = "MessageEntry.fxml";

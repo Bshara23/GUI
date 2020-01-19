@@ -17,6 +17,12 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import java.io.File;
 
+
+/**
+ * This class provides some basic utility functions for images and buttons
+ * 
+ * @author Bshara
+ * */
 public class Util {
 
 	public static void setBtnFont(Button btn, String fontName, int size) {

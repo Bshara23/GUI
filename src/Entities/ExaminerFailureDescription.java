@@ -2,6 +2,11 @@ package Entities;
 
 import java.io.Serializable;
 
+/**
+ * This class contains all the needed information about the examiner failure report as represented in the database.
+ * 
+ * @author Bshara
+ * */
 public class ExaminerFailureDescription implements Serializable {
 
 	private long requestID;

@@ -10,16 +10,16 @@ import java.util.ResourceBundle;
 import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
+import Controllers.Logic.ControllerSwapper;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Entities.ChangeRequest;
 import Entities.Employee;
 import Entities.Phase;
+import Entities.PhaseStatus;
+import Entities.PhaseType;
 import Protocol.Command;
-import Protocol.PhaseStatus;
-import Protocol.PhaseType;
 import Utility.AppManager;
-import Utility.ControllerSwapper;
 import Utility.Curve;
 import Utility.DateUtil;
 import Utility.Particle;
@@ -35,6 +35,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+
+/**
+ * This class is what the supervisor sees once he double click on a phase, it provides details about the phase and the supervisor can change deadline,
+ * assign evaluator, assign executer, approve or reject time extension and approve or reject estimate time of completion.
+ * 
+ * @author Bshara
+ * */
 public class RequestDetailsSupervisorController implements Initializable {
 
 	private static final String UPDATE_DEADLINE = "UpdateDeadline";

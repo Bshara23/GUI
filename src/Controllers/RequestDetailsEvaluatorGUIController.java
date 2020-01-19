@@ -9,14 +9,14 @@ import java.util.ResourceBundle;
 import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
+import Controllers.Logic.ControllerSwapper;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Entities.ChangeRequest;
 import Entities.EvaluationReport;
 import Entities.Phase;
+import Entities.PhaseStatus;
 import Protocol.Command;
-import Protocol.PhaseStatus;
-import Utility.ControllerSwapper;
 import Utility.DateUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -30,6 +30,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+
+/**
+ * This class provides the evaluation with the needed needed fields in order to file an evaluation report for a request, also 
+ * the evaluation can see the request details by clicking on a button.
+ * 
+ * @author Bshara
+ * */
 public class RequestDetailsEvaluatorGUIController implements Initializable {
 
 	private static final String INSERT_EVALUATION_REPORT = "InsertEvaluationReport";

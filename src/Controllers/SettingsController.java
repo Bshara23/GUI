@@ -27,7 +27,15 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
+
+/**
+ * This page provides the user the ability to select and configure the shortcuts of the application, it also provides the user the ability
+ * to disable graphics if he wishes to.
+ * 
+ * @author Bshara
+ * */
 public class SettingsController implements Initializable {
+	private static final String GET_MY_SHORTCUTS = "getMyShortcuts";
 	private Stage stage;
 	private static final String UpdateShortcuts = "UpdateShortcuts";
 
@@ -85,10 +93,10 @@ public class SettingsController implements Initializable {
 
 	@FXML
 	private Canvas canvasLeft;
-	
+
 	@FXML
 	private CheckBox cbDisableSideGrapgics;
-	
+
 	@FXML
 	private Button btnDebug;
 
@@ -106,6 +114,7 @@ public class SettingsController implements Initializable {
 	public static Func GOBACKFUNC;
 
 	private static boolean disableGraphics = false;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
@@ -118,32 +127,43 @@ public class SettingsController implements Initializable {
 		ControllerManager.setOnHoverEffect(hbApplyChanges, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
 				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 
-		IssReqShortcut.setItems(FXCollections.observableArrayList(KeyComb.values()));
-		IssReqShortcut.setValue(KeyComb.R);
+		Client.getInstance().requestWithListener(Command.getMyShortcuts, srMsg -> {
 
-		ONotifShortcut.setItems(FXCollections.observableArrayList(KeyComb.values()));
-		ONotifShortcut.setValue(KeyComb.N);
+			if (srMsg.getCommand() == Command.getMyShortcuts) {
 
-		OMessShortcut.setItems(FXCollections.observableArrayList(KeyComb.values()));
-		OMessShortcut.setValue(KeyComb.M);
+				ArrayList<String> strs = (ArrayList<String>) srMsg.getAttachedData()[0];
 
-		OMyReqShortcut.setItems(FXCollections.observableArrayList(KeyComb.values()));
-		OMyReqShortcut.setValue(KeyComb.Unassigned);
+				gobackcomb.setItems(FXCollections.observableArrayList(KeyComb.values()));
+				gobackcomb.setValue(KeyComb.valueOf(strs.get(0)));
 
-		SignOutShortcut.setItems(FXCollections.observableArrayList(KeyComb.values()));
-		SignOutShortcut.setValue(KeyComb.O);
+				IssReqShortcut.setItems(FXCollections.observableArrayList(KeyComb.values()));
+				IssReqShortcut.setValue(KeyComb.valueOf(strs.get(2)));
 
-		OpenEmpShortcut.setItems(FXCollections.observableArrayList(KeyComb.values()));
-		OpenEmpShortcut.setValue(KeyComb.Unassigned);
+				OMessShortcut.setItems(FXCollections.observableArrayList(KeyComb.values()));
+				OMessShortcut.setValue(KeyComb.valueOf(strs.get(4)));
 
-		OpenAnalyticsShortcut.setItems(FXCollections.observableArrayList(KeyComb.values()));
-		OpenAnalyticsShortcut.setValue(KeyComb.A);
+				OMyReqShortcut.setItems(FXCollections.observableArrayList(KeyComb.values()));
+				OMyReqShortcut.setValue(KeyComb.valueOf(strs.get(6)));
 
-		OpReqTreatShortcut.setItems(FXCollections.observableArrayList(KeyComb.values()));
-		OpReqTreatShortcut.setValue(KeyComb.T);
+				ONotifShortcut.setItems(FXCollections.observableArrayList(KeyComb.values()));
+				ONotifShortcut.setValue(KeyComb.valueOf(strs.get(8)));
 
-		gobackcomb.setItems(FXCollections.observableArrayList(KeyComb.values()));
-		gobackcomb.setValue(KeyComb.BACK_SPACE);
+				OpenAnalyticsShortcut.setItems(FXCollections.observableArrayList(KeyComb.values()));
+				OpenAnalyticsShortcut.setValue(KeyComb.valueOf(strs.get(10)));
+
+				OpenEmpShortcut.setItems(FXCollections.observableArrayList(KeyComb.values()));
+				OpenEmpShortcut.setValue(KeyComb.valueOf(strs.get(12)));
+
+				OpReqTreatShortcut.setItems(FXCollections.observableArrayList(KeyComb.values()));
+				OpReqTreatShortcut.setValue(KeyComb.valueOf(strs.get(14)));
+
+				SignOutShortcut.setItems(FXCollections.observableArrayList(KeyComb.values()));
+				SignOutShortcut.setValue(KeyComb.valueOf(strs.get(16)));
+
+				Client.removeMessageRecievedFromServer(GET_MY_SHORTCUTS);
+			}
+
+		}, GET_MY_SHORTCUTS, ClientGUI.systemUser.getUserName());
 
 		hbApplyChanges.setOnMousePressed(event -> {
 
@@ -157,21 +177,12 @@ public class SettingsController implements Initializable {
 				disableGraphics = newValue;
 				if (newValue) {
 					AppManager.timeline.stop();
-				}else {
+				} else {
 					AppManager.timeline.play();
 				}
-				
+
 			}
 		});
-
-//		tfDebug.setOnMousePressed(event -> {
-//			ArrayList<String> sss = new ArrayList<String>();
-//			sss.add(AppManager.getRnd().nextInt(100) + "");
-//			System.out.println("Debugging with " + sss.get(0));
-//
-//			Client.getInstance().request(Command.debug_simulateBigCalculations, sss);
-//			
-//		});
 
 	}
 
@@ -187,19 +198,20 @@ public class SettingsController implements Initializable {
 		setBehavior(OpReqTreatShortcut.getValue(), ReqTreatShortcut);
 		setBehavior(gobackcomb.getValue(), GOBACKFUNC);
 
-		Client.getInstance().request(Command.UpdateShortcuts, "IssReqShortcut", IssReqShortcut.getValue(),
-				"ONotifShortcut", ONotifShortcut.getValue(), "OMessShortcut", OMessShortcut.getValue(),
-				"OMyReqShortcut", OMyReqShortcut.getValue(), "SignOutShortcut", SignOutShortcut.getValue(),
-				"OpenEmpShortcut", OpenEmpShortcut.getValue(), "OpenAnalyticsShortcut",
-				OpenAnalyticsShortcut.getValue(), "OpReqTreatShortcut", OpReqTreatShortcut.getValue(), "gobackcomb",
-				gobackcomb.getValue(), ClientGUI.systemUser.getUserName());
+		Client.getInstance().request(Command.UpdateShortcuts, "IssReqShortcut", IssReqShortcut.getValue().name(),
+				"ONotifShortcut", ONotifShortcut.getValue().name(), "OMessShortcut", OMessShortcut.getValue().name(),
+				"OMyReqShortcut", OMyReqShortcut.getValue().name(), "SignOutShortcut",
+				SignOutShortcut.getValue().name(), "OpenEmpShortcut", OpenEmpShortcut.getValue().name(),
+				"OpenAnalyticsShortcut", OpenAnalyticsShortcut.getValue().name(), "OpReqTreatShortcut",
+				OpReqTreatShortcut.getValue().name(), "gobackcomb", gobackcomb.getValue().name(),
+				ClientGUI.systemUser.getUserName());
 
 		Client.addMessageRecievedFromServer(UpdateShortcuts, srMsg -> {
 
 			int contChange = (int) srMsg.getAttachedData()[0];
 
 			System.out.println(contChange);
-			if (contChange < 8) {
+			if (contChange != 9) {
 				ControllerManager.showErrorMessage("Error", "Update Shortcuts Erorr", "Please try again", null);
 			} else {
 

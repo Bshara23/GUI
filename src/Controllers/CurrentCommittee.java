@@ -19,6 +19,13 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
+
+/**
+ * This class shows the current committee of execution changes, this class provides the ability to changes the members
+ * of the committee and view their details.
+ * 
+ * @author Bshara
+ * */
 public class CurrentCommittee implements Initializable {
 
 	private static final String UPDATE_COM_MEMBER = "updateComMember";

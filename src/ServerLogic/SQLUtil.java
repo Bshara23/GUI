@@ -5,6 +5,10 @@ import java.time.LocalDateTime;
 
 import Utility.DateUtil;
 
+/**
+ * This package is used with the MySQL class as a utility class that contains a
+ * set of static methods. Most of these methods are used for dates calculations.
+ */
 public class SQLUtil {
 	public static final Timestamp NA = Timestamp.valueOf(LocalDateTime.of(2002, 1, 1, 1, 0));
 
@@ -71,20 +75,15 @@ public class SQLUtil {
 		}
 
 		if (isAfterEq(a, limA) && isBeforeEq(a, limB) && isAfterEq(b, limB)) {
-
 			return 1;
 		}
 
 		if (isBeforeEq(a, limA) && isBeforeEq(b, limB) && isAfterEq(b, limA)) {
-
 			return 1;
-
 		}
 
 		if (isAfterEq(a, limA) && isBeforeEq(b, limB)) {
-
 			return 1;
-
 		}
 
 		return 0;

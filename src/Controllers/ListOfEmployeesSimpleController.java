@@ -22,6 +22,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import Entities.Employee;
 
+
+/**
+ * This class is used as a simple list of employees to pick an employee to assign for various classes that might require the user to select an employee
+ * the class contains an event that can be registered to, which invokes the event on double clicking a row from the employee table.
+ * 
+ * @author Bshara
+ * */
 public class ListOfEmployeesSimpleController implements Initializable {
 
 	private static final String GET_E_MPLOYEES_SIMPLE = "GetEMployeesSimple";

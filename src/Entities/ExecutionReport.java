@@ -2,6 +2,11 @@ package Entities;
 
 import java.io.Serializable;
 
+/**
+ * This class contains all the needed data about the execution report as represented in the database.
+ * 
+ * @author Bshara
+ * */
 public class ExecutionReport extends Report implements Serializable {
 
 	private static ExecutionReport emptyInstance = new ExecutionReport(0, 0, null, null);

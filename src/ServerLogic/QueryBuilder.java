@@ -1,5 +1,10 @@
 package ServerLogic;
 
+
+/**
+ * This class provides the means to make a dynamic query at run time.
+ * By using the Builder pattern, the user can create queries easily with less chance of making type mistakes.
+ * */
 public class QueryBuilder {
 
 	StringBuilder query;

@@ -18,9 +18,9 @@ import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Entities.ChangeRequest;
 import Entities.Phase;
+import Entities.PhaseType;
 import Entities.SystemUser;
 import Protocol.Command;
-import Protocol.PhaseType;
 import Utility.AppManager;
 import Utility.DateUtil;
 import javafx.collections.FXCollections;
@@ -45,6 +45,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 
+
+/**
+ * This class provides the manager with the ability to view the information about the requests with their current status and the ability to unfreeze a request.
+ * also the manager can view the changes that were made by the supervisor, changes are things like changing the deadline of a request.
+ * 
+ * @author Bshara
+ * */
 public class ListOfRequestsForManagerController implements Initializable {
 
 	private static final String GET_SYSTEM_USER_BY_REQUEST_LIST_OF_REQUESTS = "getSy21452stemUserByRequestListOfRequests";

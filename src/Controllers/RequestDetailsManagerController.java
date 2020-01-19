@@ -8,16 +8,16 @@ import java.util.ResourceBundle;
 import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
+import Controllers.Logic.ControllerSwapper;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Entities.ChangeRequest;
 import Entities.Employee;
 import Entities.Phase;
+import Entities.PhaseStatus;
+import Entities.PhaseType;
 import Protocol.Command;
-import Protocol.PhaseStatus;
-import Protocol.PhaseType;
 import Utility.AppManager;
-import Utility.ControllerSwapper;
 import Utility.Curve;
 import Utility.DateUtil;
 import Utility.Particle;
@@ -32,6 +32,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+
+/**
+ * This class provides the manager with a list of all the request with the ability to view details of a phase and unfreeze it if he wishes to.
+ * also the manager can view the updates that the supervisor has made by click on a button.
+ * 
+ * @author Bshara
+ * */
 public class RequestDetailsManagerController implements Initializable {
 
 	private static final String UNFREEZE_PHASE = "UnfreezePhase";

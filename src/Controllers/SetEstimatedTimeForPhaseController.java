@@ -11,8 +11,8 @@ import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
 import Controllers.Logic.NavigationBar;
 import Entities.Phase;
+import Entities.PhaseStatus;
 import Protocol.Command;
-import Protocol.PhaseStatus;
 import Utility.DateUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,6 +21,11 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+/**
+ * This class is used by other class to allow the employee to set the estimated time of completion for the phase that he manages.
+ * 
+ * @author Bshara
+ * */
 public class SetEstimatedTimeForPhaseController implements Initializable {
 
 	private static final String UPDATE_PHASE_ESTIMATED_TIME = "UpdatePhaseEstimatedTime";

@@ -5,6 +5,12 @@ import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+/**
+ * This class provides a particles object that can be define as a point on the 2D axis
+ * it has a initial speed and life and can change size.
+ * 
+ * @author Bshara
+ * */
 public class Particle {
 	public static double globalSpeedFactor = 1.0;
 	private double x;

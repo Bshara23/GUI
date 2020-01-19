@@ -18,6 +18,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
+
+/**
+ * This class provides the ability to change the maintenance and support managers of the departments.
+ * 
+ * @author Bshara
+ * */
 public class DepartmentsManagersController implements Initializable {
 
 	private static final String UPDATE_DEPARTMENT_MANAGER = "updateDepartmentManager";

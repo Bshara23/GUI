@@ -5,11 +5,11 @@ import java.util.ResourceBundle;
 
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
+import Controllers.Logic.ControllerSwapper;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
 import Entities.EvaluationReport;
 import Entities.Phase;
-import Utility.ControllerSwapper;
 import Utility.DateUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,6 +18,12 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+
+/**
+ * This class is used by other controllers to display the evaluation report, it shows the information about the evaluation report.
+ * 
+ * @author Bshara
+ * */
 public class EvaluationReportComViewController implements Initializable {
 
 	@FXML

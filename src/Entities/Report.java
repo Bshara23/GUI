@@ -2,6 +2,11 @@ package Entities;
 
 import java.io.Serializable;
 
+/**
+ * This abstract class contains all the needed information for a basic report.
+ * 
+ * @author Bshara
+ * */
 public abstract class Report extends SqlObject implements Serializable {
 
 	public long reportID;

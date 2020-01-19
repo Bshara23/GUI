@@ -3,6 +3,11 @@ package Utility;
 import javafx.scene.Node;
 import javafx.scene.shape.Circle;
 
+/**
+ * This class defined a 2D vector.
+ * 
+ * @author Bshara
+ * */
 public class Vector2D {
 	private double x, y;
 

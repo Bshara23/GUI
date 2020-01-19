@@ -6,6 +6,12 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+
+/**
+ * This class contains all the needed information about the phase as represented in the database.
+ * 
+ * @author Bshara
+ * */
 public class Phase extends SqlObject implements Serializable {
 
 	private static Phase emptyInstance = new Phase(0, 0, null, null, 0, null, null, null, null, false);

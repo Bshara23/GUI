@@ -11,6 +11,13 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Arrays;
 
+
+/**
+ * This class contains all the needed data about the file as represented in the database.
+ * it also contains functions that allows for writing to local hard drive and to copy from hard drive and convert the data to binary.
+ * 
+ * @author Bshara
+ * */
 public class File extends SqlObject implements Serializable {
 
 	private static File emptyInstance = new File(0, 0, null, null);
@@ -101,7 +108,7 @@ public class File extends SqlObject implements Serializable {
 
 	private byte[] storedBytes;
 	
-	public void loadBytesFromLocal() {
+	public void loadBytes() {
 		java.io.File file= new java.io.File(fileName);
 		try {
 			FileInputStream inputStream= new FileInputStream(file);
@@ -141,7 +148,7 @@ public class File extends SqlObject implements Serializable {
 		}
 	}
 	
-	public void writeFileToLocal(String path) {
+	public void writeData(String path) {
 		try {
 			InputStream is = getBinaryStream();
 			FileOutputStream fos = new FileOutputStream(path + getFileName());

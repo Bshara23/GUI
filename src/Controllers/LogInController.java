@@ -8,10 +8,10 @@ import java.util.ResourceBundle;
 import ClientLogic.Client;
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
+import Controllers.Logic.ControllerSwapper;
 import Controllers.Logic.FxmlNames;
 import Entities.SystemUser;
 import Protocol.Command;
-import Utility.ControllerSwapper;
 import Utility.ShortcutManager;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -37,6 +37,10 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
+
+/**
+ * This class provides the user with the ability to connect to the server by given it the ip address of the server
+ * */
 public class LogInController extends Application implements Initializable {
 
 	private static final String CHECK_LOG_IN = "CheckLogIn";

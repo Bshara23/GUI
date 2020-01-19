@@ -20,6 +20,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
+
+/**
+ * This class provides the ability to view the current supervisor details and to change the current supervisor
+ * by selecting another employee.
+ * 
+ * @author Bshara
+ * */
 public class CurrentSupervisor implements Initializable {
 
 	private static final String UPDATE_SUPERVISOR = "updateSupervisor";

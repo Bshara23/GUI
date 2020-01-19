@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.sun.javafx.cursor.CursorType;
 
 import Controllers.Logic.NavigationBar.NextPage;
-import Utility.ControllerSwapper;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
@@ -15,6 +14,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+
+/**
+ * This class manages the transition between pages, with the ability to reload pages, go back to previous pages and save the history of pages.
+ * By using this class, the navigation bar in the GUI also changes the address of the page, given the user the necessary information to know where
+ * he is at any given time with the ability to traverse between them.
+ * */
 public class NavigationBar {
 
 	public static ImageView imgNavigationBarArrow;

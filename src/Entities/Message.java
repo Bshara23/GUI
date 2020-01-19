@@ -6,6 +6,12 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+
+/**
+ * This class contains all the needed information about the message as represented in the database.
+ * 
+ * @author Bshara
+ * */
 public class Message extends SqlObject implements Serializable {
 
 	private static Message emptyInstance = new Message(0, null, null, null, null, false, null, false, false, false);

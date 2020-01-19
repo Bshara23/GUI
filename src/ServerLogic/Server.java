@@ -23,11 +23,11 @@ import Entities.SupervisorDeadlineUpdate;
 import Entities.SystemUser;
 import Entities.TimeException;
 import Entities.Phase;
+import Entities.PhaseStatus;
 import Entities.PhaseTimeExtensionRequest;
+import Entities.PhaseType;
 import Protocol.Command;
 import Protocol.MsgReturnType;
-import Protocol.PhaseStatus;
-import Protocol.PhaseType;
 import Protocol.SRMessage;
 import ServerLogic.UtilityInterfaces.ClientFunc;
 import ServerLogic.UtilityInterfaces.ClientThrowableFunc;
@@ -38,8 +38,12 @@ import Utility.VoidFunc;
 import javafx.application.Platform;
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
-import Protocol.SeriObject;
 
+/**
+ * This class extends the AbstractServer class and provides
+ * The class contains a lists of events that can be registered to, for events such as server closed, server stopped, server started events.
+ * This class is also a Singleton, and can not be initialized externally.
+ * */
 public class Server extends AbstractServer {
 
 	private static final int SYSTEM_EMPLOYEE_NUMBER = -1;
@@ -202,15 +206,29 @@ public class Server extends AbstractServer {
 		Command command = srMsg.getCommand();
 		switch (command) {
 
+		
+		case getMyShortcuts:
+			
+			String username35235 = (String)srMsg.getAttachedData()[0];
+			
+			ArrayList<String> shortcuts = db.getShortcuts(username35235);
+			
+			
+			sendMessageToClient(client, command, shortcuts);
+
+			
+			
+			
+			break;
+		
 		case getActivityReport:
 
 			Timestamp dFrom = (Timestamp) srMsg.getAttachedData()[0];
 			Timestamp dTo = (Timestamp) srMsg.getAttachedData()[0];
 
 			ActivityReport ac = getActivityReport(-1, dFrom, dTo, db);
-			
-			sendMessageToClient(client, command, ac);
 
+			sendMessageToClient(client, command, ac);
 
 			break;
 
@@ -245,7 +263,7 @@ public class Server extends AbstractServer {
 			break;
 
 		case UpdateShortcuts:
-			int count;
+			int count = 0;
 			String IssReqShortcut = (String) srMsg.getAttachedData()[0];
 			String IssReqShortcutbtn = (String) srMsg.getAttachedData()[1];
 
@@ -275,14 +293,17 @@ public class Server extends AbstractServer {
 
 			String username = (String) srMsg.getAttachedData()[18];
 
-			count = +db.UpdateShortcuts(username, IssReqShortcutbtn, IssReqShortcut);
-			count = +db.UpdateShortcuts(username, ONotifShortcutbtn, ONotifShortcut);
-			count = +db.UpdateShortcuts(username, OMessShortcutbtn, OMessShortcut);
-			count = +db.UpdateShortcuts(username, OMyReqShortcutbtn, OMyReqShortcut);
-			count = +db.UpdateShortcuts(username, SignOutShortcutbtn, SignOutShortcut);
-			count = +db.UpdateShortcuts(username, OpenEmpShortcutbtn, OpenEmpShortcut);
-			count = +db.UpdateShortcuts(username, OpenAnalyticsShortcutbtn, OpenAnalyticsShortcut);
-			count = +db.UpdateShortcuts(username, OpReqTreatShortcutbtn, OpReqTreatShortcut);
+			count += db.UpdateShortcuts(username, IssReqShortcutbtn, IssReqShortcut);
+			count += db.UpdateShortcuts(username, ONotifShortcutbtn, ONotifShortcut);
+			count += db.UpdateShortcuts(username, OMessShortcutbtn, OMessShortcut);
+			count += db.UpdateShortcuts(username, OMyReqShortcutbtn, OMyReqShortcut);
+			
+			count += db.UpdateShortcuts(username, SignOutShortcutbtn, SignOutShortcut);
+			count += db.UpdateShortcuts(username, OpenEmpShortcutbtn, OpenEmpShortcut);
+			count += db.UpdateShortcuts(username, OpenAnalyticsShortcutbtn, OpenAnalyticsShortcut);
+			count += db.UpdateShortcuts(username, OpReqTreatShortcutbtn, OpReqTreatShortcut);
+			
+			count += db.UpdateShortcuts(username, gobackcombbtn, gobackcomb);
 
 			sendMessageToClient(client, command, count);
 
@@ -1631,7 +1652,7 @@ public class Server extends AbstractServer {
 		} else
 			interval = diff / interval + 1;
 
-		for (Timestamp i = dFrom; !i.equals(dTo);) {
+		for (Timestamp i = dFrom; !i.before(dTo);) {
 
 			Timestamp to = DateUtil.add(i, interval - 1, 0);
 
@@ -1671,5 +1692,9 @@ public class Server extends AbstractServer {
 		return ac;
 
 	}
+	
+	
+	
+	
 
 }

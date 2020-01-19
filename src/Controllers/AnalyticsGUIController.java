@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 
 import Controllers.Logic.CommonEffects;
 import Controllers.Logic.ControllerManager;
-import Utility.ControllerSwapper;
+import Controllers.Logic.ControllerSwapper;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -29,6 +29,13 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
+/**
+ * This class is used to connect the FXML with the client, main functions are to display statistical reports to the manager on demand
+ * to save reports and show graphs.
+ * 
+ * @author Bshara
+ * 
+ * */
 public class AnalyticsGUIController implements Initializable {
 
 	@FXML

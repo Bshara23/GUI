@@ -2,6 +2,11 @@ package Entities;
 
 import java.io.Serializable;
 
+/**
+ * This class contains all of the information about the employee as represented in the database.
+ * 
+ * @author Bshara
+ * */
 public class Employee extends SystemUser implements Serializable {
 
 	public long empNumber;
