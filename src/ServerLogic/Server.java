@@ -41,10 +41,11 @@ import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
 
 /**
- * This class extends the AbstractServer class and provides
- * The class contains a lists of events that can be registered to, for events such as server closed, server stopped, server started events.
- * This class is also a Singleton, and can not be initialized externally.
- * */
+ * This class extends the AbstractServer class and provides The class contains a
+ * lists of events that can be registered to, for events such as server closed,
+ * server stopped, server started events. This class is also a Singleton, and
+ * can not be initialized externally.
+ */
 public class Server extends AbstractServer {
 
 	private static final int SYSTEM_EMPLOYEE_NUMBER = -1;
@@ -195,6 +196,8 @@ public class Server extends AbstractServer {
 		return sqlException;
 	}
 
+	
+	
 	private Integer result;
 
 	@SuppressWarnings("unchecked")
@@ -207,52 +210,46 @@ public class Server extends AbstractServer {
 		Command command = srMsg.getCommand();
 		switch (command) {
 
-		
 		case getMyShortcuts:
-			
-			String username35235 = (String)srMsg.getAttachedData()[0];
-			
+
+			String username35235 = (String) srMsg.getAttachedData()[0];
+
 			ArrayList<String> shortcuts = db.getShortcuts(username35235);
-			
-			
+
 			sendMessageToClient(client, command, shortcuts);
 
-			
-			
-			
 			break;
-			
-			
+
 		case getReportsSimpleData:
-			
-			
+
 			ArrayList<ArrayList<String>> repsData = db.getSimpleReportsData();
 
 			sendMessageToClient(client, command, repsData);
-			
+
 			break;
 		case getActivityReportById:
-			
+
 			int repId = (int) srMsg.getAttachedData()[0];
 
 			ActivityReport ac2 = db.getActivityReportById(repId);
 
 			sendMessageToClient(client, command, ac2);
 
-			
 			break;
-			
+
 		case saveActivityReport:
 			ActivityReport actReport = (ActivityReport) srMsg.getAttachedData()[0];
 
 			actReport.setDate(DateUtil.now());
-			
-			db.insertActivityReport(actReport);
-			
-			sendMessageToClient(client, command, actReport);
 
+			boolean insertToDB = checkIfReportIsValid(actReport);
 			
+			if (insertToDB) {
+				db.insertActivityReport(actReport);
+			}
 			
+			sendMessageToClient(client, command, insertToDB);
+
 			break;
 		case getActivityReport:
 
@@ -330,12 +327,12 @@ public class Server extends AbstractServer {
 			count += db.UpdateShortcuts(username, ONotifShortcutbtn, ONotifShortcut);
 			count += db.UpdateShortcuts(username, OMessShortcutbtn, OMessShortcut);
 			count += db.UpdateShortcuts(username, OMyReqShortcutbtn, OMyReqShortcut);
-			
+
 			count += db.UpdateShortcuts(username, SignOutShortcutbtn, SignOutShortcut);
 			count += db.UpdateShortcuts(username, OpenEmpShortcutbtn, OpenEmpShortcut);
 			count += db.UpdateShortcuts(username, OpenAnalyticsShortcutbtn, OpenAnalyticsShortcut);
 			count += db.UpdateShortcuts(username, OpReqTreatShortcutbtn, OpReqTreatShortcut);
-			
+
 			count += db.UpdateShortcuts(username, gobackcombbtn, gobackcomb);
 
 			sendMessageToClient(client, command, count);
@@ -1357,6 +1354,106 @@ public class Server extends AbstractServer {
 
 	}
 
+	public boolean checkIfReportIsValid(ActivityReport actReport) {
+		if (actReport == null) {
+			return false;
+		}
+
+		if (actReport.getTotalActive() < 0) {
+			return false;
+		}
+		if (actReport.getTotalClosed() < 0) {
+			return false;
+		}
+		if (actReport.getTotalFrozen() < 0) {
+			return false;
+		}
+		if (actReport.getTotalRejected() < 0) {
+			return false;
+		}
+		if (actReport.getTotalNumOfWorkDays() < 0) {
+			return false;
+		}
+
+		if (actReport.getName().length() == 0) {
+			return false;
+		}
+
+		if (actReport.getId() < 0) {
+			return false;
+		}
+
+		if (actReport.getActive() == null) {
+			return false;
+		}
+		if (actReport.getFrozen() == null) {
+			return false;
+		}
+		if (actReport.getClosed() == null) {
+			return false;
+		}
+		if (actReport.getRejected() == null) {
+			return false;
+		}
+		if (actReport.getNumOfWorkDays() == null) {
+			return false;
+		}
+
+		if (actReport.getActive().size() == 0) {
+			return false;
+		}
+		if (actReport.getFrozen().size() == 0) {
+			return false;
+		}
+		if (actReport.getClosed().size() == 0) {
+			return false;
+		}
+		if (actReport.getRejected().size() == 0) {
+			return false;
+		}
+		if (actReport.getNumOfWorkDays().size() == 0) {
+			return false;
+		}
+
+		ArrayList<Integer> arr = actReport.getActive();
+		for (Integer i : arr) {
+			if (i < 0) {
+				return false;
+			}
+		}
+
+		arr = actReport.getClosed();
+		for (Integer i : arr) {
+			if (i < 0) {
+				return false;
+			}
+		}
+
+		arr = actReport.getFrozen();
+		for (Integer i : arr) {
+			if (i < 0) {
+				return false;
+			}
+		}
+
+		arr = actReport.getNumOfWorkDays();
+		for (Integer i : arr) {
+			if (i < 0) {
+				return false;
+			}
+		}
+
+		arr = actReport.getRejected();
+		for (Integer i : arr) {
+			if (i < 0) {
+				return false;
+			}
+		}
+
+		return true;
+
+	}
+
 	private void initExecutionPhase(Phase p1) {
 		long nextPhaseId = db.getNewMaxID(Phase.getEmptyInstance());
 		Phase phase = new Phase(nextPhaseId, p1.getRequestID(), PhaseType.Execution.name(),
@@ -1668,9 +1765,5 @@ public class Server extends AbstractServer {
 			db.logOut(s.getUserName());
 		}
 	}
-
-	
-	
-	
 
 }
