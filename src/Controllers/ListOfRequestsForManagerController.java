@@ -244,11 +244,11 @@ public class ListOfRequestsForManagerController implements Initializable {
 							FxmlNames.REQUEST_DETAILS_SUPERVISOR);
 				} else {
 
-					ControllerManager.showInformationMessage("No requests", "You have no requests",
-							"There are no requests in the system, going back to the previous page", () -> {
-								NavigationBar.back(true);
-
-							});
+//					ControllerManager.showInformationMessage("No requests", "You have no requests",
+//							"There are no requests in the system, going back to the previous page", () -> {
+//								NavigationBar.back(true);
+//
+//							});
 				}
 
 			}

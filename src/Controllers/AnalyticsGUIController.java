@@ -3,6 +3,7 @@ package Controllers;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 import java.util.ResourceBundle;
 
@@ -14,6 +15,7 @@ import Controllers.Logic.ControllerManager;
 import Controllers.Logic.ControllerSwapper;
 import Controllers.Logic.FxmlNames;
 import Controllers.Logic.NavigationBar;
+import Controllers.Logic.getActivityReportInject;
 import Entities.ActivityReport;
 import Protocol.Command;
 import javafx.application.Application;
@@ -157,7 +159,19 @@ public class AnalyticsGUIController implements Initializable {
 
 	private ArrayList<Node> buttons;
 
-	private static ActivityReport ac;
+	private ActivityReport ac;
+
+	private getActivityReportInject getAct = s -> {
+		return s;
+	};
+
+	public getActivityReportInject getGetAct() {
+		return getAct;
+	}
+
+	public void setGetAct(getActivityReportInject getAct) {
+		this.getAct = getAct;
+	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -166,13 +180,12 @@ public class AnalyticsGUIController implements Initializable {
 		ControllerManager.setEffect(hbDateRange, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 		ControllerManager.setOnHoverEffect(hbDateRange, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
 				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
-		
+
 		hbSaveReport.setCursor(Cursor.HAND);
 		ControllerManager.setEffect(hbSaveReport, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 		ControllerManager.setOnHoverEffect(hbSaveReport, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
 				CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
-		
-		
+
 		hbLoadReport.setCursor(Cursor.HAND);
 		ControllerManager.setEffect(hbLoadReport, CommonEffects.REQUEST_DETAILS_BUTTON_GRAY);
 		ControllerManager.setOnHoverEffect(hbLoadReport, CommonEffects.REQUESTS_TABLE_ELEMENT_BLUE,
@@ -194,6 +207,7 @@ public class AnalyticsGUIController implements Initializable {
 				if (srMsg.getCommand() == Command.getActivityReport) {
 
 					ac = (ActivityReport) srMsg.getAttachedData()[0];
+					// ac = (ActivityReport) srMsg.getAttachedData()[0];
 
 					ac.setName(dpFrom.getValue() + " : " + dpTo.getValue());
 					loadActivityReport(ac);
@@ -202,13 +216,10 @@ public class AnalyticsGUIController implements Initializable {
 			}, "dawdawfawgwg24", dpFrom.getValue(), dpTo.getValue());
 		});
 
-		
-		
 		hbSaveReport.setOnMousePressed(event -> {
-			
+
 			if (dpTo.getValue() == null || dpFrom.getValue() == null) {
-				ControllerManager.showErrorMessage("Invalid Date", "Invalid Date",
-						"Please pick a date", null);
+				ControllerManager.showErrorMessage("Invalid Date", "Invalid Date", "Please pick a date", null);
 				return;
 			}
 			if (dpTo.getValue().isAfter(LocalDate.now())) {
@@ -224,20 +235,19 @@ public class AnalyticsGUIController implements Initializable {
 				ControllerManager.showErrorMessage("Error", "No report", "Please load a report before saving", null);
 				return;
 			}
-			
-			
+
 			Client.getInstance().requestWithListener(Command.saveActivityReport, srMsg -> {
 				if (srMsg.getCommand() == Command.saveActivityReport) {
 
-					ControllerManager.showInformationMessage("Success", "Report Saved", "The report has been saved", null);
+					ControllerManager.showInformationMessage("Success", "Report Saved", "The report has been saved",
+							null);
 
 				}
 			}, "wadawfwa35236236236632632342", ac);
 		});
 
-		
 		hbLoadReport.setOnMousePressed(event -> {
-			
+
 			LoadReportList.setOnRowDoubleClicked(id -> {
 				Client.getInstance().requestWithListener(Command.getActivityReportById, srMsg -> {
 					if (srMsg.getCommand() == Command.getActivityReportById) {
@@ -250,8 +260,7 @@ public class AnalyticsGUIController implements Initializable {
 			});
 			NavigationBar.next("Load Report", FxmlNames.loadReportList);
 		});
-		
-		
+
 		buttons = new ArrayList<Node>();
 
 		for (Node node : buttons) {
@@ -260,11 +269,10 @@ public class AnalyticsGUIController implements Initializable {
 					Cursor.HAND);
 		}
 
-		
 		if (ac != null) {
 			loadActivityReport(ac);
 		}
-		
+
 	}
 
 	private void loadActivityReport(ActivityReport ac) {
@@ -295,9 +303,9 @@ public class AnalyticsGUIController implements Initializable {
 		bcTotalWorking.getData().clear();
 		bcTotalWorking.getData().addAll(s5);
 
-		ArrayList<Double> avg = ac.getAverages();
-		ArrayList<Double> std = ac.getSTD();
-		ArrayList<Double> med = ac.getMedian();
+		ArrayList<Double> avg = getAverages(ac);
+		ArrayList<Double> std = getSTD(ac);
+		ArrayList<Double> med = getMedian(ac);
 //		
 
 		txtActiveAverage.setText("Average: " + avg.get(0));
@@ -343,6 +351,107 @@ public class AnalyticsGUIController implements Initializable {
 	private int percentile(int num, int whole, int dummy) {
 
 		return ((100 * num / whole));
+	}
+
+	public ArrayList<Double> getMedian(ActivityReport ac) {
+		ac = getAct.getReport(ac);
+
+		ArrayList<Double> medians = new ArrayList<Double>();
+
+		medians.add(CalcMedian(ac.getActive()));
+
+		medians.add(CalcMedian(ac.getFrozen()));
+
+		medians.add(CalcMedian(ac.getClosed()));
+
+		medians.add(CalcMedian(ac.getRejected()));
+
+		medians.add(CalcMedian(ac.getNumOfWorkDays()));
+
+		return medians;
+	}
+
+	public ArrayList<Double> getSTD(ActivityReport ac) {
+
+		ac = getAct.getReport(ac);
+
+		ArrayList<Double> std = new ArrayList<Double>();
+
+		ArrayList<Double> avgs = ac.getAverages();
+
+		std.add(CalcStandardDeviation(ac.getActive(), avgs.get(0)));
+		std.add(CalcStandardDeviation(ac.getFrozen(), avgs.get(1)));
+		std.add(CalcStandardDeviation(ac.getClosed(), avgs.get(2)));
+		std.add(CalcStandardDeviation(ac.getRejected(), avgs.get(3)));
+		std.add(CalcStandardDeviation(ac.getNumOfWorkDays(), avgs.get(4)));
+		
+		return std;
+	}
+
+	public ArrayList<Double> getAverages(ActivityReport ac) {
+		ac = getAct.getReport(ac);
+
+		ArrayList<Double> avgs = new ArrayList<Double>();
+
+		avgs.add(CalcAvg(ac.getActive()));
+		avgs.add(CalcAvg(ac.getFrozen()));
+		avgs.add(CalcAvg(ac.getClosed()));
+		avgs.add(CalcAvg(ac.getRejected()));
+		avgs.add(CalcAvg(ac.getNumOfWorkDays()));
+
+		return avgs;
+	}
+
+	private double CalcMedian(ArrayList<Integer> arrList) {
+		ArrayList<Integer> arr = (ArrayList<Integer>) arrList.clone();
+		Collections.sort(arr);
+		int median;
+		int a, b;
+
+		if (arrList.size() == 0) {
+			return 0;
+		}
+
+		if (arr.get(0) < 0) {
+			return 0;
+		}
+		if (arr.size() % 2 == 0) {
+			median = arr.size() / 2;
+		} else {
+			median = (arr.size() + 1) / 2;
+		}
+		a = arr.get(median - 1);
+		b = arr.get(median);
+		return (a + b) / 2.0;
+	}
+
+	private double CalcAvg(ArrayList<Integer> arrList) {
+		Integer sum = 0;
+
+		if (arrList.size() == 0) {
+			return 0;
+		}
+
+		for (Integer i : arrList) {
+			sum += i;
+			if (i < 0) {
+				return 0;
+			}
+		}
+		return (double) sum / arrList.size();
+	}
+
+	private double CalcStandardDeviation(ArrayList<Integer> arrList, double avg) {
+		double sum = 0;
+		if (arrList.size() == 0)
+			return 0;
+		for (Integer i : arrList) {
+			if (i < 0) {
+				return 0;
+			}
+			sum += Math.pow((double) i - avg, 2);
+		}
+		return Math.sqrt(sum / arrList.size());
 	}
 
 	@FXML
