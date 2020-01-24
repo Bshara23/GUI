@@ -10,7 +10,7 @@ import java.util.TimeZone;
  * This is a utility class used for date calculations with the class Timestamp
  * 
  * @author Bshara
- * */
+ */
 public class DateUtil {
 
 	public static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -39,7 +39,6 @@ public class DateUtil {
 		return sdf.format(diff);
 	}
 
-	
 	public static Timestamp add(Timestamp a, int days, int hours) {
 
 		LocalDateTime date = a.toLocalDateTime();
@@ -49,6 +48,16 @@ public class DateUtil {
 		return Timestamp.valueOf(date);
 	}
 	
+	public static Timestamp addTime(Timestamp a, long add) {
+
+		LocalDateTime date = a.toLocalDateTime();
+		//date = date.plusDays(days);
+		//date = date.plusHours(hours);
+
+		return Timestamp.valueOf(date);
+	}
+
+
 	public static Timestamp add(Timestamp a, int days, int hours, int minutes) {
 		LocalDateTime date = a.toLocalDateTime();
 		date = date.plusDays(days);
@@ -58,13 +67,6 @@ public class DateUtil {
 		return Timestamp.valueOf(date);
 	}
 
-	public static void main(String[] args) {
-
-		String str = DateUtil.differenceInDaysHours(DateUtil.add(DateUtil.now(),  3, 7), DateUtil.now());
-		System.out.println(str);
-
-	}
-	
 	public static Timestamp get(LocalDate date) {
 		return Timestamp.valueOf(date.atStartOfDay());
 	}
@@ -74,7 +76,7 @@ public class DateUtil {
 		now = now.plusDays(days);
 		return Timestamp.valueOf(now);
 	}
-	
+
 	public static Timestamp minus(Timestamp ts, int secs) {
 		LocalDateTime now = ts.toLocalDateTime();
 		now = now.minusSeconds(secs);
@@ -85,17 +87,28 @@ public class DateUtil {
 		long diff = a.getTime() - b.getTime();
 		double hours = diff * 2.77778e-7;
 		double days = hours * 0.0416667;
-		hours -= (int)days / 0.0416667;
-		return "Days: " + (int)days + ", Hours: " + (int)hours;
+		hours -= (int) days / 0.0416667;
+		return "Days: " + (int) days + ", Hours: " + (int) hours;
 	}
-	
+
 	public static int diffInDays(Timestamp a, Timestamp b) {
 		long diff = a.getTime() - b.getTime();
 		double hours = diff * 2.77778e-7;
 		double days = hours * 0.0416667;
-		return (int)days;
+		return (int) days;
 	}
 
-	
+	public static String toString2(Timestamp dFrom) {
+		String res = dFrom.toString();
+		res = res.substring(0, res.length() - 4);
+		return res;
+	}
+
+	public static void main(String[] args) {
+
+		String str = DateUtil.toString2(DateUtil.now());
+		System.out.println(str);
+
+	}
 
 }

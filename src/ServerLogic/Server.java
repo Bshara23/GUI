@@ -196,8 +196,6 @@ public class Server extends AbstractServer {
 		return sqlException;
 	}
 
-	
-	
 	private Integer result;
 
 	@SuppressWarnings("unchecked")
@@ -242,12 +240,8 @@ public class Server extends AbstractServer {
 
 			actReport.setDate(DateUtil.now());
 
-			boolean insertToDB = checkIfReportIsValid(actReport);
-			
-			if (insertToDB) {
-				db.insertActivityReport(actReport);
-			}
-			
+			boolean insertToDB = InsertActivityReport(actReport);
+
 			sendMessageToClient(client, command, insertToDB);
 
 			break;
@@ -256,7 +250,7 @@ public class Server extends AbstractServer {
 			LocalDate dFrom = (LocalDate) srMsg.getAttachedData()[0];
 			LocalDate dTo = (LocalDate) srMsg.getAttachedData()[1];
 
-			ActivityReport ac = db.getActivityReport(-1, DateUtil.get(dFrom), DateUtil.get(dTo));
+			ActivityReport ac = getActivityReport(dFrom, dTo);
 
 			sendMessageToClient(client, command, ac);
 
@@ -1354,6 +1348,23 @@ public class Server extends AbstractServer {
 
 	}
 
+	public ActivityReport getActivityReport(LocalDate dFrom, LocalDate dTo) {
+		ActivityReport ac = db.getActivityReport(-1, DateUtil.get(dFrom), DateUtil.get(dTo));
+
+		System.out.println(ac.getActive());
+		System.out.println(ac.getTotalActive());
+		return ac;
+	}
+
+	public boolean InsertActivityReport(ActivityReport actReport) {
+		boolean insertToDB = checkIfReportIsValid(actReport);
+
+		if (insertToDB) {
+			insertToDB &= db.insertActivityReport(actReport);
+		}
+		return insertToDB;
+	}
+
 	public boolean checkIfReportIsValid(ActivityReport actReport) {
 		if (actReport == null) {
 			return false;
@@ -1379,7 +1390,7 @@ public class Server extends AbstractServer {
 			return false;
 		}
 
-		if (actReport.getId() < 0) {
+		if (actReport.getDate() == null) {
 			return false;
 		}
 
@@ -1683,18 +1694,16 @@ public class Server extends AbstractServer {
 
 	@Override
 	protected void serverStarted() {
+//		Platform.runLater(new Runnable() {
+//
+//			public void run() {
+//				for (VoidFunc f : serverStartedEvents) {
+//					if (f != null)
+//						f.call();
+//				}
+//			}
+//		});
 
-		Platform.runLater(new Runnable() {
-
-			@Override
-			public void run() {
-				for (VoidFunc f : serverStartedEvents) {
-					if (f != null)
-						f.call();
-				}
-
-			}
-		});
 	}
 
 	@Override

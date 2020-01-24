@@ -2197,6 +2197,7 @@ public class MySQL extends MySqlConnBase {
 		int addr = getNewAddr();
 
 		int d = 0;
+		boolean allAdded = true;
 		for (int i = 0; i < arr.size(); i++) {
 
 			IPreparedStatement prepS = ps -> {
@@ -2207,11 +2208,12 @@ public class MySQL extends MySqlConnBase {
 			str = "INSERT INTO `icm`.`array` (`index`, `addr`, `data`) VALUES ('" + i + "', '" + addr + "', '" + d
 					+ "');";
 
-			executePreparedStatement(str, prepS);
+			int ins = executePreparedStatement(str, prepS);
+			allAdded &= ins == 1;
 
 		}
 
-		return addr;
+		return allAdded ? addr : -1;
 
 	}
 
@@ -2240,7 +2242,7 @@ public class MySQL extends MySqlConnBase {
 
 	}
 
-	public void insertActivityReport(ActivityReport ar) {
+	public boolean insertActivityReport(ActivityReport ar) {
 
 		String query = "INSERT INTO `icm`.`activityreport` (`name`, `date`, `active`, `frozen`, `closed`, `rejected`, `numOfWorkDays`,"
 				+ " `totalActive`, `totalFrozen`, `totalClosed`, `totalRejected`, `totalNumOfWorkDays`) "
@@ -2251,6 +2253,13 @@ public class MySQL extends MySqlConnBase {
 		int closedAddr = insertArrayList(ar.getClosed());
 		int rejectedAddr = insertArrayList(ar.getRejected());
 		int numOfWorkDaysAddr = insertArrayList(ar.getNumOfWorkDays());
+
+		boolean allAdded = true;
+		allAdded &= activeAddr != -1;
+		allAdded &= frozenAddr != -1;
+		allAdded &= closedAddr != -1;
+		allAdded &= rejectedAddr != -1;
+		allAdded &= numOfWorkDaysAddr != -1;
 
 		IPreparedStatement prepS = ps -> {
 
@@ -2269,29 +2278,34 @@ public class MySQL extends MySqlConnBase {
 				ps.setInt(10, ar.getTotalClosed());
 				ps.setInt(11, ar.getTotalRejected());
 				ps.setInt(12, ar.getTotalNumOfWorkDays());
+
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
 		};
 
-		executePreparedStatement(query, prepS);
+		int res = executePreparedStatement(query, prepS);
+		allAdded &= res == 1;
+		return allAdded;
 	}
 
 	public int countOfActiveReqests(Timestamp dFrom, Timestamp dTo) {
 
-		String query = "SELECT c.startDateOfRequest, c.endDateOfRequest FROM icm.changerequest as c;"; // todo
+		String dateFrom = DateUtil.toString2(dFrom);
+		String dateTo = DateUtil.toString2(dTo);
+
+		String query = "SELECT COUNT(*) FROM icm.changerequest as c\r\n" + "where c.startDateOfRequest >= '" + dateFrom
+				+ "' AND c.startDateOfRequest <= '" + dateTo + "'\r\n" + "OR c.endDateOfRequest >= '" + dateFrom
+				+ "' AND c.endDateOfRequest <= '" + dateTo + "';";
 
 		ArrayList<Integer> results = new ArrayList<Integer>();
 
 		IStatement prepS = rs -> {
 			try {
 				int sum = 0;
-				while (rs.next()) {
-					Timestamp a = rs.getTimestamp(1);
-					Timestamp b = rs.getTimestamp(2);
-					sum += SQLUtil.isActiveInInterval(dFrom, dTo, a, b);
+				if (rs.next()) {
+					results.add(rs.getInt(1));
 				}
 
 				results.add(sum);
@@ -2447,33 +2461,47 @@ public class MySQL extends MySqlConnBase {
 
 		int diff = SQLUtil.diff(dTo, dFrom);
 
-		int interval = 10;
-		if (diff % interval == 0) {
-			interval = diff / interval;
-		} else
-			interval = diff / interval + 1;
+//		int interval = 10;
+//		if (diff % interval == 0) {
+//			interval = diff / interval;
+//		} else
+//			interval = diff / interval + 1;
+
+		int diffInDays = diff / 10;
+		int diffInHours = (int) ((24 * diff / 10.0) - diffInDays * 24);
+		int diffInMinutes = (int) Math.ceil((((24.0 * diff / 10.0) - diffInDays * 24.0) - diffInHours) * 60.0);
+
+		ArrayList<Timestamp> intervals = getIntervals(dFrom, dTo);
+
+		for (int i = 0; i < 10; i++) {
+			activeCnt.add(countOfActiveReqests(intervals.get(i), intervals.get(i + 1)));
+		}
 
 		for (Timestamp i = dFrom; !i.equals(dTo);) {
 
-			Timestamp to = DateUtil.add(i, interval - 1, 0);
+			Timestamp to = DateUtil.add(i, diffInDays, diffInHours, diffInMinutes);
 
 			if (!to.after(dTo)) {
 
-				activeCnt.add(countOfActiveReqests(i, to));
+				// activeCnt.add(countOfActiveReqests(i, to));
 				freezeCnt.add(countOfFreezeReqests(i, to));
 				closedCnt.add(countOfClosedRequests(i, to));
 				rejectedCnt.add(countOfDeniedRequests(i, to));
 				workingDaysCnt.add(countOfTotalWorkingDays(i, to));
 
+				System.out.println(i.toString() + " - " + to.toString());
+
 				i = DateUtil.add(to, 1, 0);
 
 			} else {
 
-				activeCnt.add(countOfActiveReqests(i, dTo));
+				// activeCnt.add(countOfActiveReqests(i, dTo));
 				freezeCnt.add(countOfFreezeReqests(i, dTo));
 				closedCnt.add(countOfClosedRequests(i, dTo));
 				rejectedCnt.add(countOfDeniedRequests(i, dTo));
 				workingDaysCnt.add(countOfTotalWorkingDays(i, dTo));
+
+				System.out.println(i.toString() + " - " + dTo.toString());
 
 				i = dTo;
 			}
@@ -2491,6 +2519,24 @@ public class MySQL extends MySqlConnBase {
 				totalWorkingCnt);
 
 		return ac;
+
+	}
+
+	private ArrayList<Timestamp> getIntervals(Timestamp dFrom, Timestamp dTo) {
+
+		ArrayList<Timestamp> res = new ArrayList<Timestamp>();
+		int diff = SQLUtil.diff(dTo, dFrom);
+		int diffInDays = diff / 10;
+		int diffInHours = (int) ((24 * diff / 10.0) - diffInDays * 24);
+		int diffInMinutes = (int) Math.ceil((((24.0 * diff / 10.0) - diffInDays * 24.0) - diffInHours) * 60.0);
+
+		res.add(dFrom);
+		for (int i = 1; i < 11; i++) {
+
+			res.add(DateUtil.add(res.get(i - 1), diffInDays, diffInHours, diffInMinutes));
+		}
+
+		return res;
 
 	}
 
@@ -2551,9 +2597,9 @@ public class MySQL extends MySqlConnBase {
 					res.add(id + "");
 					res.add(DateUtil.toString(date));
 					res.add(name);
-					
+
 					results.add(res);
-					
+
 				}
 
 			} catch (SQLException e) {
@@ -2564,5 +2610,40 @@ public class MySQL extends MySqlConnBase {
 		executeStatement(query, prepS);
 
 		return results;
+	}
+
+	public int getMaxReportId() {
+		String query = "SELECT max(t.id) FROM icm.activityreport as t;";
+		ArrayList<Integer> results = new ArrayList<Integer>();
+
+		IStatement prepS = rs -> {
+			try {
+
+				results.add(rs.getInt(1));
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+		executeStatement(query, prepS);
+
+		return results.size() == 1 ? results.get(0) : -1;
+
+	}
+
+	public void deleteLatestActivityReport() {
+		String query = "DELETE FROM `icm`.`activityreport` WHERE (`id` = ?);";
+		IPreparedStatement prepS = ps -> {
+
+			try {
+				ps.setInt(1, getMaxReportId());
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		};
+
+		executePreparedStatement(query, prepS);
 	}
 }

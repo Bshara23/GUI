@@ -97,4 +97,6 @@ public class SQLUtil {
 		double days = hours * 0.0416667;
 		return (int) days;
 	}
+	
+	
 }
