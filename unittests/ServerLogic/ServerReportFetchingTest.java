@@ -15,7 +15,7 @@ import Entities.ActivityReport;
  * that were defined in the server. In this case, we are just testing the active
  * requests.
  */
-class ServerFetchReportTest {
+class ServerReportFetchingTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -33,6 +33,8 @@ class ServerFetchReportTest {
 
 		LocalDate dFrom = LocalDate.of(2018, 1, 1);
 		LocalDate dTo = LocalDate.of(2018, 1, 20);
+		
+		Server.TEST_MODE = true;
 		ActivityReport res = Server.getInstance().getActivityReport(dFrom, dTo);
 		ArrayList<Integer> intervals = res.getActive();
 		int total = res.getTotalActive();

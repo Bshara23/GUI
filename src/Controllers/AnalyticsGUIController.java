@@ -353,6 +353,10 @@ public class AnalyticsGUIController implements Initializable {
 		return ((100 * num / whole));
 	}
 
+	
+	/**
+	 * Returns the medians of the given report
+	 * */
 	public ArrayList<Double> getMedian(ActivityReport ac) {
 		ac = getAct.getReport(ac);
 
@@ -371,6 +375,10 @@ public class AnalyticsGUIController implements Initializable {
 		return medians;
 	}
 
+	
+	/**
+	 * Returns the STDs of the given report
+	 * */
 	public ArrayList<Double> getSTD(ActivityReport ac) {
 
 		ac = getAct.getReport(ac);
@@ -388,6 +396,10 @@ public class AnalyticsGUIController implements Initializable {
 		return std;
 	}
 
+	
+	/**
+	 * Returns the averages of the given report
+	 * */
 	public ArrayList<Double> getAverages(ActivityReport ac) {
 		ac = getAct.getReport(ac);
 
@@ -401,6 +413,8 @@ public class AnalyticsGUIController implements Initializable {
 
 		return avgs;
 	}
+
+	
 
 	private double CalcMedian(ArrayList<Integer> arrList) {
 		ArrayList<Integer> arr = (ArrayList<Integer>) arrList.clone();

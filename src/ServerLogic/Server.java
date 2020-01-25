@@ -1694,21 +1694,25 @@ public class Server extends AbstractServer {
 
 	@Override
 	protected void serverStarted() {
-//		Platform.runLater(new Runnable() {
-//
-//			public void run() {
-//				for (VoidFunc f : serverStartedEvents) {
-//					if (f != null)
-//						f.call();
-//				}
-//			}
-//		});
+		Platform.runLater(new Runnable() {
+
+			public void run() {
+				for (VoidFunc f : serverStartedEvents) {
+					if (f != null)
+						f.call();
+				}
+			}
+		});
 
 	}
 
+	public static boolean TEST_MODE = false;
 	@Override
 	protected void serverStopped() {
 
+		if (TEST_MODE) {
+			return;
+		}
 		Platform.runLater(new Runnable() {
 
 			@Override

@@ -42,13 +42,14 @@ import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import Entities.*;
 
-
 /**
- * This class provides the user with the necessary fields to issue a request, the class checks if all of the fields are valid and then issues
- * the request by sending a message via the client, the user can also attach files with the request.
+ * This class provides the user with the necessary fields to issue a request,
+ * the class checks if all of the fields are valid and then issues the request
+ * by sending a message via the client, the user can also attach files with the
+ * request.
  * 
  * @author Bshara
- * */
+ */
 public class IssueRequestController implements Initializable {
 
 	public static final int MB_4 = 4194303;
@@ -158,12 +159,27 @@ public class IssueRequestController implements Initializable {
 			String descReqChange = taDescriptionOfRequestedChange.getText();
 			String descCurrState = taDescriptionOfCurrentState.getText();
 			String relateInfoSys = cbInformationSystem.getValue().toString();
+			
+			if (cbInformationSystem.getValue().toString().equals("Select a system")) {
+				ControllerManager.showErrorMessage("Error", "Select a related system",
+						"Please select a related system", null);
+				return;
+			}
 
 			boolean areAllFieldsFilled = ControllerManager.areAllStringsNotEmpty(reqDesc, descReqChange, descCurrState);
 
 			if (areAllFieldsFilled) {
 				long reqestID = 9996; // TODO: if id = -1, the server should know that he has to find a fitting id
 
+				boolean isAllFieldsLessThen300Characters = areAllLessThan300Chars(taRequestDescription, taComments, taDescriptionOfRequestedChange, taDescriptionOfCurrentState);
+
+				if (!isAllFieldsLessThen300Characters) {
+					ControllerManager.showErrorMessage("Error", "One or more fields contains more than 300 characters",
+							"Please enter up to 300 characters in the fields", null);
+					return;
+				}
+				
+				
 				ChangeRequest changeRequest = new ChangeRequest(reqestID, ClientGUI.systemUser.getUserName(),
 						DateUtil.now(), DateUtil.NA, DateUtil.NA, comments, reqDesc, descReqChange, descCurrState,
 						relateInfoSys);
@@ -240,8 +256,18 @@ public class IssueRequestController implements Initializable {
 
 		cbInformationSystem.setItems(FXCollections.observableArrayList("Moodle", "Information System", "Library System",
 				"Classroom Computers", "Braude Website", "Labs and Computers Farms"));
-		cbInformationSystem.setValue("Information System");
+		cbInformationSystem.setValue("Select a system");
 
+	}
+
+	private boolean areAllLessThan300Chars(TextArea... ta) {
+
+		for (int i = 0; i < ta.length; i++) {
+			if (ta[i].getText().length() >= 300) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private void resetFields() {

@@ -17,7 +17,7 @@ import Utility.DateUtil;
  * the function checks if the reports is valid before inserting it
  * after passing the server test, we also check if the MySql has succeeded in inserting the report.
  * */
-class ServerRenameTest {
+class ServerReportSavingTest {
 
 	private ArrayList<Integer> s2;
 	private ArrayList<Integer> s3;
@@ -35,6 +35,7 @@ class ServerRenameTest {
 
 		activityReport = new ActivityReport(999, "rr", DateUtil.now(), null, s2, s3, s4, s5, 0, 0, 0, 0, 0);
 
+		Server.TEST_MODE = true;
 		Server.getInstance().initialize(5555, "root", "Aa123456", "icm", 5);
 	}
 
