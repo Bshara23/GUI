@@ -8,4 +8,8 @@ This project was designed during the course "Engineering Methods for Software Sy
 Overview:
 <br><br>
 
-![Alt Text](https://media.giphy.com/media/fwhEtm7rgIlmOBQ7SC/giphy.gif) 
+![Alt Text](https://media.giphy.com/media/fwhEtm7rgIlmOBQ7SC/giphy.gif) <br>
+
+![Alt Text](https://media.giphy.com/media/SU3VO11WH6JLs9afVP/giphy.gif) <br>
+
+![Alt Text](https://media.giphy.com/media/d8FLDk35eoIoD5hvSE/giphy.gif) <br>
